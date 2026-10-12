@@ -1,0 +1,22 @@
+name: CI web
+
+on:
+  pull_request:
+    branches: [develop, main]
+    paths: ['web/**', 'global.json', '.github/workflows/web.yml']
+  push:
+    branches: [develop, main]
+    paths: ['web/**', 'global.json', '.github/workflows/web.yml']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore web/GestionGimnasios.Web.slnx
+      - run: dotnet build web/GestionGimnasios.Web.slnx --no-restore -c Release
+      - run: dotnet test web/GestionGimnasios.Web.slnx --no-build -c Release
+  # El job de despliegue se agrega cuando se elija el hosting (Azure App Service o MonsterASP.NET).
