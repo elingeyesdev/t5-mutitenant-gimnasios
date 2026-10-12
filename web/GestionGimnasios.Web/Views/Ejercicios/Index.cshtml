@@ -1,0 +1,60 @@
+@model List<EjercicioDto>
+@{
+    ViewData["Title"] = "Biblioteca de ejercicios";
+    ViewData["Pretitulo"] = "Sistema";
+    var grupos = (List<string>)ViewBag.Grupos;
+    var grupo = (string?)ViewBag.Grupo;
+}
+@section Acciones {
+    <a class="btn btn-primary" asp-action="Crear"><i class="ti ti-plus me-1"></i>Nuevo ejercicio</a>
+}
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4"><label class="form-label">Buscar</label><input name="buscar" value="@ViewBag.Buscar" class="form-control" placeholder="Nombre del ejercicio" /></div>
+            <div class="col-md-4">
+                <label class="form-label">Grupo muscular</label>
+                <select name="grupo" class="form-select">
+                    <option value="">Todos</option>
+                    @foreach (var g in grupos)
+                    {
+                        <option selected="@(g == grupo)">@g</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"><button class="btn btn-primary w-100">Filtrar</button></div>
+            <div class="col-md-2 text-secondary">@Model.Count ejercicios</div>
+        </form>
+    </div>
+</div>
+<div class="row row-cards">
+    @foreach (var e in Model)
+    {
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card card-sm @(e.Activo ? "" : "opacity-50")">
+                @if (e.YoutubeVideoId is not null)
+                {
+                    <a href="https://www.youtube.com/watch?v=@e.YoutubeVideoId" target="_blank" rel="noopener" class="d-block">
+                        <img src="@(e.ImagenUrl ?? $"https://img.youtube.com/vi/{e.YoutubeVideoId}/mqdefault.jpg")" class="card-img-top" alt="@e.Nombre" loading="lazy" />
+                    </a>
+                }
+                <div class="card-body">
+                    <div class="fw-medium">@e.Nombre</div>
+                    <div class="text-secondary small">@e.GrupoMuscular · @e.Equipo</div>
+                    <div class="mt-2 d-flex gap-1 flex-wrap">
+                        <span class="badge bg-blue-lt">@e.Dificultad</span>
+                        <span class="badge bg-secondary-lt">@e.Categoria</span>
+                        @if (!e.Activo)
+                        {
+                            <span class="badge bg-red-lt">Inactivo</span>
+                        }
+                    </div>
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@e.Id">Editar</a>
+                    <form method="post" asp-action="Eliminar" asp-route-id="@e.Id" data-confirmar="¿Eliminar @e.Nombre?"><button class="btn btn-sm btn-outline-danger">Eliminar</button></form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

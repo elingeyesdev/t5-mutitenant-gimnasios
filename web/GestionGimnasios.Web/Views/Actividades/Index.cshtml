@@ -1,0 +1,93 @@
+@model List<ActividadDto>
+@{
+    ViewData["Title"] = "Actividades";
+    ViewData["Pretitulo"] = "Catálogo de servicios";
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    var sucursalId = (int?)ViewBag.SucursalId;
+    var inactivas = (bool)ViewBag.Inactivas;
+    string[] dias = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"];
+}
+@section Acciones {
+    <a class="btn btn-primary" asp-action="Crear"><i class="ti ti-plus me-1"></i>Nueva actividad</a>
+}
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">Sucursal</label>
+                <select name="sucursalId" class="form-select" onchange="this.form.submit()">
+                    <option value="">Todas</option>
+                    @foreach (var s in sucursales)
+                    {
+                        <option value="@s.Id" selected="@(sucursalId == s.Id)">@s.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-check mb-2">
+                    <input type="checkbox" name="inactivas" value="true" class="form-check-input" checked="@inactivas" onchange="this.form.submit()" />
+                    <span class="form-check-label">Incluir inactivas</span>
+                </label>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead><tr><th>Actividad</th><th>Sucursal</th><th>Tipo</th><th>Horarios</th><th>Estado</th><th class="w-1"></th></tr></thead>
+            <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td><div class="fw-medium">@a.Nombre</div><div class="text-secondary small">@a.Descripcion</div></td>
+                    <td class="text-secondary">@a.Sucursal</td>
+                    <td>
+                        @if (a.AccesoLibre)
+                        {
+                            <span class="badge bg-teal-lt">Acceso libre</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-purple-lt">Clase · @a.DuracionMin min</span>
+                        }
+                    </td>
+                    <td class="small">
+                        @foreach (var g in a.Horarios.GroupBy(h => $"{h.Inicio:HH\\:mm}–{h.Fin:HH\\:mm}"))
+                        {
+                            <div>@string.Join(", ", g.OrderBy(h => Array.IndexOf(dias, h.DiaSemana)).Select(h => h.DiaSemana[..3])) <span class="text-secondary">@g.Key · @g.First().Instructor</span></div>
+                        }
+                        @if (a.Horarios.Count == 0 && !a.AccesoLibre)
+                        {
+                            <span class="text-warning">Sin horarios</span>
+                        }
+                    </td>
+                    <td>
+                        @if (a.Activa)
+                        {
+                            <span class="badge bg-green-lt">Activa</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary-lt">Inactiva</span>
+                        }
+                    </td>
+                    <td class="text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@a.Id"><i class="ti ti-edit"></i></a>
+                        @if (a.Activa)
+                        {
+                            <form method="post" asp-action="Eliminar" asp-route-id="@a.Id" class="d-inline" data-confirmar="¿Desactivar @a.Nombre y eliminar sus horarios?">
+                                <button class="btn btn-sm btn-outline-danger"><i class="ti ti-trash"></i></button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-secondary py-4">No hay actividades.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

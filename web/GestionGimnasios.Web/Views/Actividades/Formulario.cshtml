@@ -1,0 +1,106 @@
+@model ActividadForm
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@{
+    var actividad = ViewBag.Actividad as ActividadDto;
+    var editando = actividad is not null;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    var instructores = ViewBag.Instructores as List<InstructorDto> ?? [];
+    ViewData["Title"] = editando ? actividad!.Nombre : "Nueva actividad";
+    ViewData["Pretitulo"] = "Actividades";
+    string[] dias = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"];
+}
+<div class="row row-cards">
+    <div class="col-lg-5">
+        <form method="post" asp-action="@(editando ? "Editar" : "Crear")" asp-route-id="@actividad?.Id" class="card">
+            <div class="card-header"><h3 class="card-title">Datos de la actividad</h3></div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label required">Sucursal</label>
+                    <select asp-for="SucursalId" class="form-select" required disabled="@(Actual.SucursalFiltro is not null)">
+                        <option value="">Elegir…</option>
+                        @foreach (var s in sucursales)
+                        {
+                            <option value="@s.Id">@s.Nombre</option>
+                        }
+                    </select>
+                    @if (Actual.SucursalFiltro is not null)
+                    {
+                        <input type="hidden" asp-for="SucursalId" />
+                    }
+                </div>
+                <div class="mb-3"><label class="form-label required">Nombre</label><input asp-for="Nombre" class="form-control" required /></div>
+                <div class="mb-3"><label class="form-label">Descripción</label><textarea asp-for="Descripcion" class="form-control" rows="2"></textarea></div>
+                <div class="row g-3">
+                    <div class="col-6"><label class="form-label">Duración (min)</label><input asp-for="DuracionMin" type="number" min="0" class="form-control" /></div>
+                    <div class="col-6 pt-4">
+                        <label class="form-check"><input asp-for="AccesoLibre" class="form-check-input" type="checkbox" /><span class="form-check-label">Acceso libre (sin horario fijo)</span></label>
+                        <label class="form-check"><input asp-for="Activa" class="form-check-input" type="checkbox" /><span class="form-check-label">Activa</span></label>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex gap-2"><button class="btn btn-primary">Guardar</button><a class="btn btn-link" asp-action="Index">Volver</a></div>
+        </form>
+    </div>
+    @if (editando)
+    {
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Horarios de clase</h3></div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead><tr><th>Día</th><th>Hora</th><th>Cupo</th><th>Instructor</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var h in actividad!.Horarios)
+                        {
+                            <tr>
+                                <td>@h.DiaSemana</td>
+                                <td>@h.Inicio.ToString("HH:mm")–@h.Fin.ToString("HH:mm")</td>
+                                <td>@h.CupoMaximo</td>
+                                <td class="text-secondary">@(h.Instructor ?? "—")</td>
+                                <td class="w-1">
+                                    <form method="post" asp-action="EliminarHorario" asp-route-id="@actividad.Id" asp-route-horarioId="@h.Id" data-confirmar="¿Eliminar este horario?">
+                                        <button class="btn btn-sm btn-outline-danger"><i class="ti ti-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                        @if (actividad.Horarios.Count == 0)
+                        {
+                            <tr><td colspan="5" class="text-secondary text-center py-3">Sin horarios todavía.</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-body border-top">
+                    <form method="post" asp-action="AgregarHorario" asp-route-id="@actividad.Id" class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Día</label>
+                            <select name="DiaSemana" class="form-select">
+                                @foreach (var d in dias)
+                                {
+                                    <option>@d</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2"><label class="form-label">Inicio</label><input type="time" name="Inicio" value="07:00" class="form-control" required /></div>
+                        <div class="col-md-2"><label class="form-label">Fin</label><input type="time" name="Fin" value="08:00" class="form-control" required /></div>
+                        <div class="col-md-2"><label class="form-label">Cupo</label><input type="number" name="CupoMaximo" value="15" min="1" class="form-control" required /></div>
+                        <div class="col-md-3">
+                            <label class="form-label">Instructor</label>
+                            <select name="InstructorId" class="form-select">
+                                <option value="">Sin instructor</option>
+                                @foreach (var i in instructores)
+                                {
+                                    <option value="@i.Id">@i.NombreCompleto</option>
+                                }
+                            </select>
+                        </div>
+                        <input type="hidden" name="Recurrente" value="true" />
+                        <div class="col-12"><button class="btn btn-outline-primary"><i class="ti ti-plus me-1"></i>Agregar horario</button></div>
+                    </form>
+                    <small class="text-secondary d-block mt-2">Se valida que el instructor sea de esta sucursal, que no tenga otra clase a esa hora y que la clase quede dentro del horario de atención.</small>
+                </div>
+            </div>
+        </div>
+    }
+</div>

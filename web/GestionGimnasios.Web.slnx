@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="GestionGimnasios.Web.Tests/GestionGimnasios.Web.Tests.csproj" />
+  <Project Path="GestionGimnasios.Web/GestionGimnasios.Web.csproj" />
+</Solution>

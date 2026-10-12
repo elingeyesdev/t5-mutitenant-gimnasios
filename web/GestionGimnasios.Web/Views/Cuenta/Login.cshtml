@@ -1,0 +1,32 @@
+@model LoginForm
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    Layout = "_LayoutPublico";
+}
+<div class="card card-md">
+    <div class="card-body">
+        <h2 class="h2 text-center mb-4">Ingresa al panel</h2>
+        <form method="post" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" autocomplete="off">
+            <div class="mb-3">
+                <label class="form-label" asp-for="Email">Correo electrónico</label>
+                <input asp-for="Email" type="email" class="form-control" placeholder="tu@correo.com" required autofocus />
+            </div>
+            <div class="mb-2">
+                <label class="form-label" asp-for="Password">Contraseña</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Tu contraseña" required />
+            </div>
+            <div class="mb-2">
+                <label class="form-check">
+                    <input asp-for="Recordar" type="checkbox" class="form-check-input" />
+                    <span class="form-check-label">Mantener la sesión en este equipo</span>
+                </label>
+            </div>
+            <div class="form-footer">
+                <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="text-center text-secondary mt-3">
+    ¿Eres cliente y no tienes cuenta? <a asp-action="Registro">Regístrate</a>
+</div>

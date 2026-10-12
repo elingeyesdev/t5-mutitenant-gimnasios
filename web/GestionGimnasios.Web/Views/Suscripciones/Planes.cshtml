@@ -1,0 +1,52 @@
+@model List<PlanDto>
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@{
+    ViewData["Title"] = "Planes de suscripción";
+    ViewData["Pretitulo"] = "Gestión";
+    var cadenas = (List<CadenaDto>)ViewBag.Cadenas;
+}
+<div class="row row-cards">
+    <div class="col-lg-8">
+        <div class="row row-cards">
+            @foreach (var p in Model)
+            {
+                var editable = Actual.EsSuperAdmin || p.CadenaId == Actual.CadenaId;
+                <div class="col-md-6">
+                    <div class="card @(p.Activo ? "" : "opacity-50")">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div><div class="text-secondary small">@(p.Cadena ?? "Plan global")</div><h3 class="card-title">@p.Nombre</h3></div>
+                                <div class="ms-auto h2">Bs @p.PrecioMensual.ToString("0")</div>
+                            </div>
+                            <div class="text-secondary">@p.Descripcion</div>
+                            <ul class="list-unstyled mt-2 mb-0">
+                                @foreach (var b in p.Beneficios)
+                                {
+                                    <li><i class="ti ti-check text-green me-1"></i>@b</li>
+                                }
+                            </ul>
+                            <div class="text-secondary small mt-2">@(p.MaxSucursales is null ? "Todas las sucursales de la cadena" : $"{p.MaxSucursales} sucursal(es)")</div>
+                        </div>
+                        @if (editable)
+                        {
+                            <div class="card-footer d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#plan-@p.Id">Editar</button>
+                                <form method="post" asp-action="EliminarPlan" asp-route-id="@p.Id" data-confirmar="¿Eliminar el plan @p.Nombre?"><button class="btn btn-sm btn-outline-danger">Eliminar</button></form>
+                            </div>
+                            <div class="collapse" id="plan-@p.Id">
+                                <div class="card-body border-top"><partial name="_FormPlan" model="p" view-data='new ViewDataDictionary(ViewData) { ["Cadenas"] = cadenas }' /></div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Nuevo plan</h3></div>
+            <div class="card-body"><partial name="_FormPlan" model="(PlanDto?)null" view-data='new ViewDataDictionary(ViewData) { ["Cadenas"] = cadenas }' /></div>
+        </div>
+        <div class="text-secondary small mt-2">Cada cadena define sus propios planes; los planes sin cadena son globales (pregunta 4 al docente).</div>
+    </div>
+</div>

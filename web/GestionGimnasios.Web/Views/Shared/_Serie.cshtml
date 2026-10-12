@@ -1,0 +1,17 @@
+@model Serie
+@{
+    var max = Model.Puntos.Count == 0 ? 1 : Math.Max(1, Model.Puntos.Max(p => p.Valor));
+    var muchos = Model.Puntos.Count > 16;
+}
+<div class="barra-serie" role="img" aria-label="@Model.Titulo">
+    @foreach (var p in Model.Puntos)
+    {
+        <div class="barra" style="height:@(Math.Max(1, p.Valor / max * 100).ToString(System.Globalization.CultureInfo.InvariantCulture))%" title="@p.Etiqueta: @p.Valor"></div>
+    }
+</div>
+<div class="etiquetas-serie mt-1">
+    @for (var i = 0; i < Model.Puntos.Count; i++)
+    {
+        <span>@(muchos && i % (Model.Puntos.Count / 8 + 1) != 0 ? "" : Model.Puntos[i].Etiqueta)</span>
+    }
+</div>

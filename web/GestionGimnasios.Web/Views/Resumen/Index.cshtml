@@ -1,0 +1,82 @@
+@model ResumenPanel
+@{
+    ViewData["Title"] = "Resumen";
+    ViewData["Pretitulo"] = "Panel";
+    var periodo = (string)ViewBag.Periodo;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    (string Clave, string Texto)[] periodos = [("week", "7 días"), ("month", "30 días"), ("year", "12 meses")];
+}
+@section Acciones {
+    <div class="btn-group" role="group">
+        @foreach (var (clave, texto) in periodos)
+        {
+            <a class="btn @(clave == periodo ? "btn-primary" : "btn-outline-primary")" asp-route-periodo="@clave">@texto</a>
+        }
+    </div>
+}
+<div class="row row-deck row-cards mb-3">
+    @{
+        (string Titulo, int Valor, string Icono, string Color)[] kpis =
+        [
+            ("Usuarios activos", Model.UsuariosActivos, "ti-users", "primary"),
+            ("Socios con suscripción", Model.SociosConSuscripcion, "ti-credit-card", "green"),
+            ("Ingresos hoy", Model.IngresosHoy, "ti-door-enter", "azure"),
+            ("Reservas hoy", Model.ReservasHoy, "ti-calendar-event", "orange"),
+            ("Personas dentro ahora", Model.PersonasDentro, "ti-user-check", "purple"),
+        ];
+    }
+    @foreach (var k in kpis)
+    {
+        <div class="col-sm-6 col-lg">
+            <div class="card card-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto"><span class="bg-@k.Color text-white avatar"><i class="ti @k.Icono fs-2"></i></span></div>
+                        <div class="col">
+                            <div class="h2 m-0">@k.Valor</div>
+                            <div class="text-secondary">@k.Titulo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div class="row row-cards">
+    @foreach (var serie in new[] { Model.Ingresos, Model.Reservas, Model.Usuarios })
+    {
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">@serie.Titulo</h3><div class="card-actions text-secondary">Total: @serie.Puntos.Sum(p => p.Valor)</div></div>
+                <div class="card-body"><partial name="_Serie" model="serie" /></div>
+            </div>
+        </div>
+    }
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Sucursales</h3></div>
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead><tr><th>Sucursal</th><th>Cadena</th><th>Estado</th><th>Ocupación</th><th>Máquinas</th><th>Servicios</th></tr></thead>
+                    <tbody>
+                    @foreach (var s in sucursales)
+                    {
+                        var pct = s.CapacidadMaxima > 0 ? Math.Min(100, s.OcupacionActual * 100 / s.CapacidadMaxima) : 0;
+                        <tr>
+                            <td><a asp-controller="Sucursales" asp-action="Editar" asp-route-id="@s.Id">@s.Nombre</a></td>
+                            <td class="text-secondary">@s.Cadena</td>
+                            <td>@if (s.AbiertaAhora) { <span class="badge bg-green-lt">Abierta</span> } else { <span class="badge bg-secondary-lt">Cerrada</span> }</td>
+                            <td style="min-width:160px">
+                                <div class="d-flex align-items-center"><span class="me-2">@s.OcupacionActual/@s.CapacidadMaxima</span>
+                                    <div class="progress progress-sm flex-fill"><div class="progress-bar @(pct >= 80 ? "bg-red" : pct >= 50 ? "bg-yellow" : "bg-green")" style="width:@pct%"></div></div></div>
+                            </td>
+                            <td>@s.Maquinas.Disponibles/@s.Maquinas.Total <span class="text-secondary small">disponibles</span></td>
+                            <td class="text-secondary small">@string.Join(", ", s.Servicios)</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+@model AvisoForm
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@{
+    ViewData["Title"] = "Enviar aviso";
+    ViewData["Pretitulo"] = "Comunicación";
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    var plantillas = (List<PlantillaDto>)ViewBag.Plantillas;
+}
+<div class="row row-cards">
+    <div class="col-lg-7">
+        <form method="post" asp-action="Avisos" class="card">
+            <div class="card-body">
+                <div class="mb-3"><label class="form-label required">Título</label><input asp-for="Titulo" class="form-control" required maxlength="120" /></div>
+                <div class="mb-3"><label class="form-label required">Mensaje</label><textarea asp-for="Cuerpo" class="form-control" rows="4" required maxlength="1000"></textarea></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Sucursal</label>
+                        <select asp-for="SucursalId" class="form-select">
+                            <option value="">Todo mi alcance</option>
+                            @foreach (var s in sucursales)
+                            {
+                                <option value="@s.Id">@s.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Destinatarios</label>
+                        <select asp-for="Destino" class="form-select">
+                            <option value="TODOS">Todos</option>
+                            <option value="CLIENTES">Solo socios</option>
+                            <option value="PERSONAL">Solo personal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer"><button class="btn btn-primary"><i class="ti ti-send me-1"></i>Enviar aviso</button> <span class="text-secondary small ms-2">Llega como notificación en la app y en el panel.</span></div>
+        </form>
+    </div>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Plantillas</h3></div>
+            <div class="list-group list-group-flush">
+                @foreach (var p in plantillas)
+                {
+                    <div class="list-group-item"><div class="codigo small text-secondary">@p.Tipo</div><div class="fw-medium">@p.Titulo</div><div class="text-secondary small">@p.Cuerpo</div></div>
+                }
+            </div>
+            @if (Actual.EsSuperAdmin)
+            {
+                <div class="card-body border-top">
+                    <form method="post" asp-action="GuardarPlantilla">
+                        <input type="hidden" name="Id" value="0" />
+                        <div class="mb-2"><input name="Tipo" class="form-control" placeholder="TIPO_DE_AVISO" required /></div>
+                        <div class="mb-2"><input name="Titulo" class="form-control" placeholder="Título" required /></div>
+                        <div class="mb-2"><textarea name="Cuerpo" class="form-control" rows="2" placeholder="Texto con {variables}"></textarea></div>
+                        <button class="btn btn-outline-primary w-100">Guardar plantilla</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,108 @@
+@model Pagina<ReservaDto>
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@{
+    ViewData["Title"] = "Reservas";
+    ViewData["Pretitulo"] = "Operación";
+    var (desde, hasta, estado, sucursalId, buscar) = ((DateOnly?, DateOnly?, string?, int?, string?))ViewBag.Filtro;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    var puedeEscanear = Actual.Nivel is >= Niveles.Recepcionista and < Niveles.SuperAdmin;
+    var codigoFuturo = TempData["CodigoFuturo"] as string;
+    string Color(string e) => e switch { EstadosReserva.Confirmada => "blue", EstadosReserva.Asistida => "green", EstadosReserva.Cancelada => "red", EstadosReserva.NoAsistio => "orange", _ => "secondary" };
+}
+@section Acciones {
+    <a class="btn btn-primary" asp-action="Nueva"><i class="ti ti-plus me-1"></i>Reserva en mostrador</a>
+}
+@if (puedeEscanear)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="post" asp-action="Ingreso" class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label">Ingreso a clase con el código de la reserva</label>
+                    <input name="codigo" value="@codigoFuturo" class="form-control form-control-lg codigo text-uppercase" maxlength="8" placeholder="Código de 8 caracteres" required autofocus />
+                </div>
+                @if (codigoFuturo is not null)
+                {
+                    <input type="hidden" name="forzar" value="true" />
+                    <div class="col-md-3"><button class="btn btn-warning btn-lg w-100">Registrar de todas formas</button></div>
+                }
+                else
+                {
+                    <div class="col-md-3"><button class="btn btn-success btn-lg w-100"><i class="ti ti-qrcode me-1"></i>Registrar ingreso</button></div>
+                }
+                <div class="col-md-4 text-secondary small">El socio muestra el código de su reserva en la app. Lectura con cámara pendiente de aprobación del docente.</div>
+            </form>
+        </div>
+    </div>
+}
+<div class="card">
+    <div class="card-body border-bottom">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-2"><label class="form-label">Desde</label><input type="date" name="desde" value="@desde?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+            <div class="col-md-2"><label class="form-label">Hasta</label><input type="date" name="hasta" value="@hasta?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+            <div class="col-md-2">
+                <label class="form-label">Estado</label>
+                <select name="estado" class="form-select">
+                    <option value="">Todos</option>
+                    @foreach (var e in new[] { EstadosReserva.Confirmada, EstadosReserva.Asistida, EstadosReserva.Cancelada, EstadosReserva.NoAsistio })
+                    {
+                        <option selected="@(estado == e)">@e</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Sucursal</label>
+                <select name="sucursalId" class="form-select">
+                    <option value="">Todas</option>
+                    @foreach (var s in sucursales)
+                    {
+                        <option value="@s.Id" selected="@(sucursalId == s.Id)">@s.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"><label class="form-label">Socio o código</label><input name="buscar" value="@buscar" class="form-control" /></div>
+            <div class="col-md-1"><button class="btn btn-primary w-100"><i class="ti ti-filter"></i></button></div>
+        </form>
+    </div>
+    <form method="post" asp-action="EstadoEnBloque" id="bloque">
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table">
+                <thead><tr><th class="w-1"></th><th>Fecha</th><th>Horario</th><th>Actividad</th><th>Socio</th><th>Sucursal</th><th>Estado</th><th class="w-1"></th></tr></thead>
+                <tbody>
+                @foreach (var r in Model.Datos)
+                {
+                    <tr>
+                        <td><input type="checkbox" class="form-check-input" name="ids" value="@r.Id" /></td>
+                        <td>@r.Fecha.ToString("ddd dd/MM")</td>
+                        <td>@r.Inicio?.ToString("HH:mm")–@r.Fin?.ToString("HH:mm")</td>
+                        <td>@r.Actividad <div class="text-secondary small">@r.Instructor</div></td>
+                        <td>@r.Usuario <div class="text-secondary small">CI @r.Ci</div></td>
+                        <td class="text-secondary">@r.Sucursal</td>
+                        <td><span class="badge bg-@Color(r.Estado)-lt">@r.Estado</span> @if (r.Codigo is not null) { <div class="codigo small text-secondary">@r.Codigo</div> }</td>
+                        <td class="text-nowrap">
+                            @if (r.Estado == EstadosReserva.Confirmada)
+                            {
+                                @if (puedeEscanear)
+                                {
+                                    <button class="btn btn-sm btn-outline-success" formaction="@Url.Action("Confirmar", new { id = r.Id })" title="Registrar asistencia"><i class="ti ti-check"></i></button>
+                                }
+                                <button class="btn btn-sm btn-outline-danger" formaction="@Url.Action("Cancelar", new { id = r.Id })" onclick="return confirm('¿Cancelar la reserva de @r.Usuario?')" title="Cancelar"><i class="ti ti-x"></i></button>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (Model.Datos.Count == 0)
+                {
+                    <tr><td colspan="8" class="text-center text-secondary py-4">No hay reservas en ese rango.</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body border-top d-flex gap-2 align-items-center">
+            <span class="text-secondary">Seleccionadas:</span>
+            <button class="btn btn-sm btn-outline-success" name="estado" value="@EstadosReserva.Asistida">Marcar asistidas</button>
+            <button class="btn btn-sm btn-outline-warning" name="estado" value="@EstadosReserva.NoAsistio">Marcar no asistió</button>
+        </div>
+    </form>
+    <partial name="_Paginacion" model="(Model.Total, Model.Limite, Model.Desde)" view-data='new ViewDataDictionary(ViewData) { ["ParametroPagina"] = "desdeFila" }' />
+</div>

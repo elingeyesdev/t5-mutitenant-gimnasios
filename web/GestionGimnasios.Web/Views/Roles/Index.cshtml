@@ -1,0 +1,110 @@
+@model List<RolDto>
+@{
+    ViewData["Title"] = "Roles y parámetros";
+    ViewData["Pretitulo"] = "Sistema";
+    var permisos = (List<PermisoDto>)ViewBag.Permisos;
+    var parametros = (List<ParametroDto>)ViewBag.Parametros;
+}
+<div class="row row-cards">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Roles</h3><div class="card-actions text-secondary small">El nivel define qué puede hacer cada rol (RT-03)</div></div>
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead><tr><th>Rol</th><th>Nivel</th><th>Usuarios</th><th>Permisos</th><th class="w-1"></th></tr></thead>
+                    <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td><div class="fw-medium">@r.Nombre</div><div class="text-secondary small">@r.Descripcion @(r.EsDeSistema ? "· de sistema" : "")</div></td>
+                            <td><span class="badge bg-blue-lt">@r.Nivel</span></td>
+                            <td>@r.Usuarios</td>
+                            <td class="small">
+                                @foreach (var p in permisos)
+                                {
+                                    var tiene = r.Permisos.Any(x => x.Id == p.Id);
+                                    <form method="post" asp-action="AlternarPermiso" class="d-inline">
+                                        <input type="hidden" name="rolId" value="@r.Id" /><input type="hidden" name="permisoId" value="@p.Id" /><input type="hidden" name="asignar" value="@(!tiene)" />
+                                        <button class="badge border-0 mb-1 @(tiene ? "bg-green-lt" : "bg-secondary-lt")" title="@(tiene ? "Quitar" : "Asignar")">@p.Codigo</button>
+                                    </form>
+                                }
+                            </td>
+                            <td class="text-nowrap">
+                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#rol-@r.Id"><i class="ti ti-edit"></i></button>
+                                @if (!r.EsDeSistema)
+                                {
+                                    <form method="post" asp-action="EliminarRol" asp-route-id="@r.Id" class="d-inline" data-confirmar="¿Eliminar el rol @r.Nombre?"><button class="btn btn-sm btn-outline-danger"><i class="ti ti-trash"></i></button></form>
+                                }
+                            </td>
+                        </tr>
+                        <tr class="collapse" id="rol-@r.Id">
+                            <td colspan="5">
+                                <form method="post" asp-action="GuardarRol" asp-route-id="@r.Id" class="row g-2">
+                                    <div class="col-md-3"><input name="Nombre" value="@r.Nombre" class="form-control" readonly="@r.EsDeSistema" /></div>
+                                    <div class="col-md-4"><input name="Descripcion" value="@r.Descripcion" class="form-control" /></div>
+                                    <div class="col-md-2"><input name="Nivel" type="number" min="1" max="9" value="@r.Nivel" class="form-control" readonly="@r.EsDeSistema" /></div>
+                                    <input type="hidden" name="Activo" value="true" />
+                                    <div class="col-md-3"><button class="btn btn-primary w-100">Guardar</button></div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header"><h3 class="card-title">Parámetros del sistema</h3></div>
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead><tr><th>Clave</th><th>Valor</th><th>Descripción</th><th></th></tr></thead>
+                    <tbody>
+                    @foreach (var p in parametros)
+                    {
+                        <tr>
+                            <td class="codigo">@p.Clave</td>
+                            <td>@p.Valor</td>
+                            <td class="text-secondary">@p.Descripcion</td>
+                            <td class="w-1"><form method="post" asp-action="EliminarParametro" asp-route-id="@p.Id" data-confirmar="¿Eliminar @p.Clave?"><button class="btn btn-sm btn-outline-danger"><i class="ti ti-trash"></i></button></form></td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="4">
+                            <form method="post" asp-action="GuardarParametro" class="row g-2">
+                                <div class="col-md-3"><input name="Clave" class="form-control" placeholder="clave" required /></div>
+                                <div class="col-md-3"><input name="Valor" class="form-control" placeholder="valor" required /></div>
+                                <div class="col-md-4"><input name="Descripcion" class="form-control" placeholder="descripción" /></div>
+                                <div class="col-md-2"><button class="btn btn-outline-primary w-100">Guardar</button></div>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <form method="post" asp-action="GuardarRol" class="card">
+            <div class="card-header"><h3 class="card-title">Nuevo rol</h3></div>
+            <div class="card-body">
+                <div class="mb-2"><label class="form-label required">Nombre</label><input name="Nombre" class="form-control" required /></div>
+                <div class="mb-2"><label class="form-label">Descripción</label><input name="Descripcion" class="form-control" /></div>
+                <div class="mb-2"><label class="form-label">Nivel (1 a 9)</label><input name="Nivel" type="number" min="1" max="9" value="2" class="form-control" /></div>
+                <input type="hidden" name="Activo" value="true" />
+            </div>
+            <div class="card-footer"><button class="btn btn-primary w-100">Crear rol</button></div>
+        </form>
+        <form method="post" asp-action="CrearPermiso" class="card mt-3">
+            <div class="card-header"><h3 class="card-title">Nuevo permiso</h3></div>
+            <div class="card-body">
+                <div class="mb-2"><label class="form-label required">Código</label><input name="Codigo" class="form-control" placeholder="RESERVAS_CREAR" required /></div>
+                <div class="mb-2"><label class="form-label required">Nombre</label><input name="Nombre" class="form-control" required /></div>
+                <div class="row g-2">
+                    <div class="col-6"><label class="form-label">Recurso</label><input name="Recurso" class="form-control" placeholder="reservas" required /></div>
+                    <div class="col-6"><label class="form-label">Acción</label><input name="Accion" class="form-control" placeholder="crear" required /></div>
+                </div>
+            </div>
+            <div class="card-footer"><button class="btn btn-outline-primary w-100">Crear permiso</button></div>
+        </form>
+    </div>
+</div>

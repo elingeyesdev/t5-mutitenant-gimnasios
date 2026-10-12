@@ -1,0 +1,63 @@
+@model List<RutinaDto>
+@{
+    ViewData["Title"] = "Rutinas";
+    ViewData["Pretitulo"] = "Entrenamiento";
+    var plantillas = Context.Request.Query["plantillas"] == "true";
+}
+@section Acciones {
+    <div class="btn-group me-2">
+        <a class="btn @(plantillas ? "btn-outline-primary" : "btn-primary")" asp-action="Index">Rutinas</a>
+        <a class="btn @(plantillas ? "btn-primary" : "btn-outline-primary")" asp-action="Index" asp-route-plantillas="true">Plantillas</a>
+    </div>
+    <a class="btn btn-primary" asp-action="Crear"><i class="ti ti-plus me-1"></i>Nueva rutina</a>
+}
+<div class="row row-cards">
+    @foreach (var r in Model)
+    {
+        <div class="col-md-6 col-xl-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div>
+                            <h3 class="card-title mb-1">@r.Nombre</h3>
+                            <div class="text-secondary small">
+                                @if (r.AsignadaA is not null)
+                                {
+                                    <span><i class="ti ti-user me-1"></i>@r.AsignadaA</span>
+                                }
+                                else if (r.EsPlantilla)
+                                {
+                                    <span><i class="ti ti-template me-1"></i>Plantilla</span>
+                                }
+                            </div>
+                        </div>
+                        <span class="badge bg-blue-lt ms-auto">@r.Dificultad</span>
+                    </div>
+                    <div class="text-secondary small mt-2">Entrenador: @r.Entrenador @(r.Sucursal is null ? "" : $"· {r.Sucursal}")</div>
+                    <ol class="small mt-2 mb-0 ps-3">
+                        @foreach (var e in r.Ejercicios.Take(5))
+                        {
+                            <li>@e.Ejercicio <span class="text-secondary">@e.Series × @e.Repeticiones @(e.PesoKg is null ? "" : $"· {e.PesoKg} kg")</span></li>
+                        }
+                    </ol>
+                    @if (r.Ejercicios.Count > 5)
+                    {
+                        <div class="text-secondary small ms-3">y @(r.Ejercicios.Count - 5) más…</div>
+                    }
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@r.Id">Editar</a>
+                    @if (r.EsPlantilla)
+                    {
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Crear" asp-route-desdePlantilla="@r.Id">Usar plantilla</a>
+                    }
+                    <form method="post" asp-action="Eliminar" asp-route-id="@r.Id" class="ms-auto" data-confirmar="¿Eliminar la rutina @r.Nombre?"><button class="btn btn-sm btn-outline-danger"><i class="ti ti-trash"></i></button></form>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.Count == 0)
+    {
+        <div class="col-12"><div class="empty"><p class="empty-title">No hay rutinas</p><p class="empty-subtitle text-secondary">Crea una rutina y asígnala a un alumno.</p></div></div>
+    }
+</div>

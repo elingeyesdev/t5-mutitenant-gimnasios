@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · Gestión Gimnasios</title>
+    <link rel="stylesheet" href="~/lib/tabler/css/tabler.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/tabler-icons/tabler-icons.min.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column">
+<div class="page page-center">
+    <div class="container container-tight py-4">
+        <div class="text-center mb-4">
+            <span class="navbar-brand navbar-brand-autodark fs-2"><i class="ti ti-barbell me-2 text-primary"></i>Gestión Gimnasios</span>
+        </div>
+        <partial name="_Mensajes" />
+        @RenderBody()
+        <div class="text-center text-secondary mt-3 small">Proyecto de Sistemas III · Universidad del Valle</div>
+    </div>
+</div>
+<script src="~/lib/tabler/js/tabler.min.js" asp-append-version="true"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+@model Pagina<AccesoDto>
+@{
+    ViewData["Title"] = "Control de acceso";
+    ViewData["Pretitulo"] = "Operación";
+    var (estado, sucursalId, desde, hasta, buscar, tipo) = ((string?, int?, DateOnly?, DateOnly?, string?, string?))ViewBag.Filtro;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    var puedeEscanear = (bool)ViewBag.PuedeEscanear;
+    var vista = TempData["Vista"] is string json ? System.Text.Json.JsonSerializer.Deserialize<VistaPreviaAcceso>(json) : null;
+    var codigo = TempData["Codigo"] as string;
+}
+@if (puedeEscanear)
+{
+    <div class="row row-cards mb-3">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="ti ti-id-badge-2 me-2"></i>Registrar ingreso o salida</h3></div>
+                <div class="card-body">
+                    <form method="post" asp-action="VistaPrevia" class="input-group">
+                        <input name="codigo" class="form-control form-control-lg codigo" placeholder="Número del carnet virtual" inputmode="numeric" required autofocus />
+                        <button class="btn btn-primary">Buscar</button>
+                    </form>
+                    <small class="text-secondary">El código del carnet virtual de la app es el número de usuario. La lectura con cámara está pendiente de aprobación del docente.</small>
+                </div>
+            </div>
+        </div>
+        @if (vista is not null)
+        {
+            <div class="col-lg-6">
+                <div class="card border-primary">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="avatar avatar-lg me-3 bg-blue-lt" style="@(vista.AvatarUrl is null ? "" : $"background-image:url('{vista.AvatarUrl}')")">@(vista.AvatarUrl is null ? vista.NombreCompleto[..1] : "")</span>
+                        <div class="flex-fill">
+                            <div class="h3 mb-0">@vista.NombreCompleto</div>
+                            <div class="text-secondary">@vista.Rol · @vista.Sucursal</div>
+                            <div class="mt-1">@(vista.Dentro ? "Está dentro de la sucursal" : "Está fuera de la sucursal")</div>
+                        </div>
+                        <form method="post" asp-action="Registrar">
+                            <input type="hidden" name="codigo" value="@codigo" />
+                            <button class="btn btn-lg @(vista.Dentro ? "btn-warning" : "btn-success")">@(vista.Dentro ? "Registrar salida" : "Registrar ingreso")</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+<div class="card">
+    <div class="card-header"><h3 class="card-title">Auditoría de accesos</h3></div>
+    <div class="card-body border-bottom">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-2"><label class="form-label">Desde</label><input type="date" name="desde" value="@desde?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+            <div class="col-md-2"><label class="form-label">Hasta</label><input type="date" name="hasta" value="@hasta?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+            <div class="col-md-2">
+                <label class="form-label">Sucursal</label>
+                <select name="sucursalId" class="form-select">
+                    <option value="">Todas</option>
+                    @foreach (var s in sucursales)
+                    {
+                        <option value="@s.Id" selected="@(sucursalId == s.Id)">@s.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Estado</label>
+                <select name="estado" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="@EstadosAcceso.Activo" selected="@(estado == EstadosAcceso.Activo)">Dentro</option>
+                    <option value="@EstadosAcceso.Completado" selected="@(estado == EstadosAcceso.Completado)">Con salida</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Personas</label>
+                <select name="tipo" class="form-select">
+                    <option value="">Todas</option>
+                    <option value="PERSONAL" selected="@(tipo == "PERSONAL")">Personal</option>
+                    <option value="CLIENTES" selected="@(tipo == "CLIENTES")">Socios</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-1"><input name="buscar" value="@buscar" class="form-control" placeholder="Nombre" /><button class="btn btn-primary"><i class="ti ti-filter"></i></button></div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead><tr><th>Ingreso</th><th>Salida</th><th>Persona</th><th>Rol</th><th>Sucursal</th><th>Método</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var a in Model.Datos)
+            {
+                <tr>
+                    <td>@Reloj.ALocal(a.Ingreso).ToString("dd/MM HH:mm")</td>
+                    <td>@(a.Salida is null ? "—" : Reloj.ALocal(a.Salida.Value).ToString("HH:mm"))</td>
+                    <td>@a.Usuario <div class="text-secondary small">@a.Email</div></td>
+                    <td><span class="badge bg-azure-lt">@a.Rol</span></td>
+                    <td class="text-secondary">@a.Sucursal</td>
+                    <td>@a.Metodo</td>
+                    <td>
+                        @if (a.Estado == EstadosAcceso.Activo)
+                        {
+                            <span class="badge bg-green-lt">Dentro</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary-lt">@a.MinutosDentro min</span>
+                        }
+                    </td>
+                    <td>
+                        @if (a.Estado == EstadosAcceso.Activo && puedeEscanear)
+                        {
+                            <form method="post" asp-action="Salida" asp-route-id="@a.Id"><button class="btn btn-sm btn-outline-warning">Salida</button></form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (Model.Datos.Count == 0)
+            {
+                <tr><td colspan="8" class="text-center text-secondary py-4">Sin registros en ese rango.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Paginacion" model="(Model.Total, Model.Limite, Model.Desde)" view-data='new ViewDataDictionary(ViewData) { ["ParametroPagina"] = "desdeFila" }' />
+</div>

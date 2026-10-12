@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Usa la app móvil";
+    Layout = "_LayoutPublico";
+}
+<div class="empty">
+    <div class="empty-icon"><i class="ti ti-device-mobile fs-1"></i></div>
+    <p class="empty-title">Tu cuenta se usa desde la app móvil</p>
+    <p class="empty-subtitle text-secondary">El panel web es para el personal administrativo. Reservas, rutinas y seguimiento están en la app Gestión Gimnasios.</p>
+    <div class="empty-action">
+        <form method="post" asp-controller="Cuenta" asp-action="Salir"><button class="btn btn-outline-secondary">Cerrar sesión</button></form>
+    </div>
+</div>

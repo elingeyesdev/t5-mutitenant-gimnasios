@@ -1,0 +1,89 @@
+@{
+    ViewData["Title"] = "Reserva en mostrador";
+    ViewData["Pretitulo"] = "Reservas";
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    var sucursalId = (int?)ViewBag.SucursalId;
+    var fecha = (DateOnly)ViewBag.Fecha;
+    var socios = (List<ClienteResumenDto>)ViewBag.Socios;
+    var disponibilidad = (List<DisponibilidadDto>)ViewBag.Disponibilidad;
+    var hoy = Reloj.Hoy;
+}
+<div class="row row-cards">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">1. Socio</h3></div>
+            <div class="card-body">
+                <form method="get">
+                    <input type="hidden" name="sucursalId" value="@sucursalId" />
+                    <input type="hidden" name="fecha" value="@fecha.ToString("yyyy-MM-dd")" />
+                    <div class="input-group mb-2">
+                        <input name="buscar" value="@ViewBag.Buscar" class="form-control" placeholder="Nombre, correo o CI" />
+                        <button class="btn btn-primary"><i class="ti ti-search"></i></button>
+                    </div>
+                </form>
+                @foreach (var s in socios)
+                {
+                    <label class="form-selectgroup-item w-100 mb-1">
+                        <input type="radio" name="usuarioId" value="@s.Id" form="reservar" class="form-selectgroup-input" required />
+                        <span class="form-selectgroup-label d-flex"><span>@s.NombreCompleto</span><span class="ms-auto text-secondary small">CI @s.Ci</span></span>
+                    </label>
+                }
+                @if (socios.Count == 0 && ViewBag.Buscar is string b && b.Length > 0)
+                {
+                    <div class="text-secondary">Sin resultados en tu cadena.</div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">2. Horario</h3></div>
+            <div class="card-body border-bottom">
+                <form method="get" class="row g-2">
+                    <input type="hidden" name="buscar" value="@ViewBag.Buscar" />
+                    <div class="col-md-6">
+                        <select name="sucursalId" class="form-select" onchange="this.form.submit()">
+                            @foreach (var s in sucursales)
+                            {
+                                <option value="@s.Id" selected="@(s.Id == sucursalId)">@s.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6"><input type="date" name="fecha" value="@fecha.ToString("yyyy-MM-dd")" min="@hoy.ToString("yyyy-MM-dd")" class="form-control" onchange="this.form.submit()" /></div>
+                </form>
+            </div>
+            <form method="post" asp-action="Nueva" id="reservar">
+                <input type="hidden" name="fecha" value="@fecha.ToString("yyyy-MM-dd")" />
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead><tr><th></th><th>Clase</th><th>Hora</th><th>Instructor</th><th>Cupo</th></tr></thead>
+                        <tbody>
+                        @foreach (var d in disponibilidad)
+                        {
+                            <tr class="@(d.Disponibles == 0 ? "text-secondary" : "")">
+                                <td class="w-1"><input type="radio" name="horarioId" value="@d.HorarioId" class="form-check-input" disabled="@(d.Disponibles == 0)" required /></td>
+                                <td class="fw-medium">@d.Actividad</td>
+                                <td>@d.Inicio.ToString("HH:mm")–@d.Fin.ToString("HH:mm")</td>
+                                <td>@d.Instructor</td>
+                                <td>@if (d.Disponibles == 0) { <span class="badge bg-red-lt">Lleno</span> } else { <span>@d.Disponibles de @d.CupoMaximo</span> }</td>
+                            </tr>
+                        }
+                        @if (disponibilidad.Count == 0)
+                        {
+                            <tr><td colspan="5" class="text-center text-secondary py-3">No hay clases ese día en esta sucursal.</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex gap-2 align-items-center">
+                    <button class="btn btn-primary" name="presencial" value="false">Reservar</button>
+                    @if (fecha == hoy)
+                    {
+                        <button class="btn btn-outline-success" name="presencial" value="true">Registrar como asistida (presencial)</button>
+                    }
+                    <span class="text-secondary small ms-auto">El socio necesita una suscripción activa en la cadena.</span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

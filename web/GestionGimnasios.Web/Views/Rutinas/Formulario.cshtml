@@ -1,0 +1,95 @@
+@model RutinaForm
+@{
+    var rutina = ViewBag.Rutina as RutinaDto;
+    var editando = rutina is not null;
+    var ejercicios = (List<EjercicioDto>)ViewBag.Ejercicios;
+    var alumnos = (List<(int, string)>)ViewBag.Alumnos;
+    ViewData["Title"] = editando ? rutina!.Nombre : "Nueva rutina";
+    ViewData["Pretitulo"] = "Rutinas";
+    string[] dias = ["", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"];
+    var filas = Model.Ejercicios.Count + 3;
+}
+<form method="post" asp-action="@(editando ? "Editar" : "Crear")" asp-route-id="@rutina?.Id">
+    <div class="row row-cards">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Rutina</h3></div>
+                <div class="card-body">
+                    <div class="mb-3"><label class="form-label required">Nombre</label><input asp-for="Nombre" class="form-control" required /></div>
+                    <div class="mb-3"><label class="form-label">Descripción</label><textarea asp-for="Descripcion" class="form-control" rows="2"></textarea></div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-7">
+                            <label class="form-label">Dificultad</label>
+                            <select asp-for="Dificultad" class="form-select">
+                                @foreach (var d in EjerciciosService.Dificultades)
+                                {
+                                    <option>@d</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-5"><label class="form-label">Semanas</label><input asp-for="DuracionSemanas" type="number" min="1" class="form-control" /></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Alumno</label>
+                        <select asp-for="AsignadaAId" class="form-select">
+                            <option value="">Sin asignar</option>
+                            @foreach (var (id, nombre) in alumnos)
+                            {
+                                <option value="@id">@nombre</option>
+                            }
+                        </select>
+                        <small class="form-hint">El entrenador solo asigna a sus alumnos con asesoría activa. Al asignar, la rutina anterior del alumno se desactiva.</small>
+                    </div>
+                    <label class="form-check"><input asp-for="EsPlantilla" type="checkbox" class="form-check-input" /><span class="form-check-label">Guardar como plantilla</span></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Ejercicios</h3></div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead><tr><th style="min-width:220px">Ejercicio</th><th>Series</th><th>Reps</th><th>Peso kg</th><th>Descanso s</th><th>Día</th></tr></thead>
+                        <tbody>
+                        @for (var i = 0; i < filas; i++)
+                        {
+                            var e = i < Model.Ejercicios.Count ? Model.Ejercicios[i] : new RutinaEjercicioForm();
+                            <tr>
+                                <td>
+                                    <select name="Ejercicios[@i].EjercicioId" class="form-select form-select-sm">
+                                        <option value="0">—</option>
+                                        @foreach (var g in ejercicios.GroupBy(x => x.GrupoMuscular))
+                                        {
+                                            <optgroup label="@g.Key">
+                                                @foreach (var x in g)
+                                                {
+                                                    <option value="@x.Id" selected="@(x.Id == e.EjercicioId)">@x.Nombre</option>
+                                                }
+                                            </optgroup>
+                                        }
+                                    </select>
+                                    <input type="hidden" name="Ejercicios[@i].Orden" value="@i" />
+                                </td>
+                                <td><input name="Ejercicios[@i].Series" value="@e.Series" type="number" min="1" class="form-control form-control-sm" style="width:70px" /></td>
+                                <td><input name="Ejercicios[@i].Repeticiones" value="@e.Repeticiones" class="form-control form-control-sm" style="width:80px" placeholder="8-10" /></td>
+                                <td><input name="Ejercicios[@i].PesoKg" value="@e.PesoKg" type="number" step="0.5" min="0" class="form-control form-control-sm" style="width:80px" /></td>
+                                <td><input name="Ejercicios[@i].DescansoSeg" value="@e.DescansoSeg" type="number" min="0" class="form-control form-control-sm" style="width:80px" /></td>
+                                <td>
+                                    <select name="Ejercicios[@i].DiaSemana" class="form-select form-select-sm">
+                                        @foreach (var d in dias)
+                                        {
+                                            <option value="@d" selected="@(d == (e.DiaSemana ?? ""))">@(d == "" ? "—" : d[..3])</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-secondary small">Las filas sin ejercicio se ignoran. Guarda y vuelve a editar para agregar más filas.</div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-3 d-flex gap-2"><button class="btn btn-primary"><i class="ti ti-device-floppy me-1"></i>Guardar rutina</button><a class="btn btn-link" asp-action="Index">Volver</a></div>
+</form>

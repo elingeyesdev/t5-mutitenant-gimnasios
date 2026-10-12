@@ -1,0 +1,82 @@
+@model List<SuscripcionDto>
+@{
+    ViewData["Title"] = "Suscripciones";
+    ViewData["Pretitulo"] = "Operación";
+    var estado = (string?)ViewBag.Estado;
+    var sucursalId = (int?)ViewBag.SucursalId;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    string Color(string e) => e switch { EstadosSuscripcion.Activa => "green", EstadosSuscripcion.Vencida => "orange", _ => "red" };
+}
+@section Acciones {
+    <a class="btn btn-primary" asp-action="Nueva"><i class="ti ti-plus me-1"></i>Nueva suscripción</a>
+}
+<div class="card">
+    <div class="card-body border-bottom">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Estado</label>
+                <select name="estado" class="form-select" onchange="this.form.submit()">
+                    <option value="">Todos</option>
+                    @foreach (var e in new[] { EstadosSuscripcion.Activa, EstadosSuscripcion.Vencida, EstadosSuscripcion.Cancelada })
+                    {
+                        <option selected="@(estado == e)">@e</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Sucursal principal</label>
+                <select name="sucursalId" class="form-select" onchange="this.form.submit()">
+                    <option value="">Todas</option>
+                    @foreach (var s in sucursales)
+                    {
+                        <option value="@s.Id" selected="@(sucursalId == s.Id)">@s.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 text-secondary">@Model.Count suscripciones · @Model.Count(s => s.Estado == EstadosSuscripcion.Activa) activas</div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead><tr><th>Socio</th><th>Plan</th><th>Sucursal</th><th>Vigencia</th><th>Estado</th><th>Pagos</th><th class="w-1"></th></tr></thead>
+            <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td class="fw-medium">@s.Usuario</td>
+                    <td>@s.Plan <div class="text-secondary small">Bs @s.PrecioMensual.ToString("0.00")/mes</div></td>
+                    <td class="text-secondary">@s.SucursalPrincipal</td>
+                    <td>@s.Inicio.ToString("dd/MM/yy") – @s.Fin.ToString("dd/MM/yy") @if (s.Estado == EstadosSuscripcion.Activa) { <div class="small text-secondary">@s.DiasRestantes días restantes</div> }</td>
+                    <td><span class="badge bg-@Color(s.Estado)-lt">@s.Estado</span></td>
+                    <td>Bs @s.Pagos.Sum(p => p.Monto).ToString("0.00") <span class="text-secondary small">(@s.Pagos.Count)</span></td>
+                    <td class="text-nowrap">
+                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#pago-@s.Id" title="Registrar pago"><i class="ti ti-cash"></i></button>
+                        @if (s.Estado == EstadosSuscripcion.Activa)
+                        {
+                            <form method="post" asp-action="Estado" asp-route-id="@s.Id" class="d-inline" data-confirmar="¿Cancelar la suscripción de @s.Usuario?">
+                                <input type="hidden" name="estado" value="@EstadosSuscripcion.Cancelada" />
+                                <button class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="ti ti-ban"></i></button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+                <tr class="collapse" id="pago-@s.Id">
+                    <td colspan="7">
+                        <form method="post" asp-action="Pago" asp-route-id="@s.Id" class="row g-2">
+                            <div class="col-md-3"><input name="Monto" type="number" step="0.01" min="0.01" value="@s.PrecioMensual" class="form-control" required /></div>
+                            <div class="col-md-3">
+                                <select name="Metodo" class="form-select"><option>EFECTIVO</option><option>TRANSFERENCIA</option><option>QR</option><option>TARJETA</option></select>
+                            </div>
+                            <div class="col-md-3"><button class="btn btn-primary">Registrar pago</button></div>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="7" class="text-center text-secondary py-4">No hay suscripciones.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

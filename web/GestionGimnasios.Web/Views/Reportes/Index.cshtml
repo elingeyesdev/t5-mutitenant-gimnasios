@@ -1,0 +1,28 @@
+@model TipoReporte[]
+@{
+    ViewData["Title"] = "Reportes";
+    ViewData["Pretitulo"] = "Análisis";
+    var iconos = new Dictionary<string, string>
+    {
+        ["asistencia"] = "ti-chart-bar", ["aforo"] = "ti-users", ["auditoria"] = "ti-clipboard-list", ["actividades"] = "ti-calendar",
+        ["cancelaciones"] = "ti-circle-x", ["maquinas"] = "ti-barbell", ["frecuencia"] = "ti-trending-up", ["ranking"] = "ti-trophy",
+        ["churn"] = "ti-user-x", ["consolidado"] = "ti-file-text",
+    };
+}
+@foreach (var grupo in Model.GroupBy(t => t.Grupo))
+{
+    <h3 class="mt-3 mb-2">Reportes de @grupo.Key.ToLower()</h3>
+    <div class="row row-cards">
+        @foreach (var t in grupo)
+        {
+            <div class="col-md-6 col-xl-4">
+                <a class="card card-link" asp-action="Ver" asp-route-id="@t.Tipo">
+                    <div class="card-body d-flex">
+                        <span class="avatar bg-primary-lt me-3"><i class="ti @iconos[t.Tipo] fs-2"></i></span>
+                        <div><div class="fw-medium">@t.Titulo</div><div class="text-secondary small">@t.Descripcion</div></div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}

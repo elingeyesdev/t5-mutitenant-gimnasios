@@ -1,0 +1,40 @@
+@model List<SucursalDto>
+@{
+    ViewData["Title"] = "Mapa de sucursales";
+    ViewData["Pretitulo"] = "Gestión";
+    var inv = System.Globalization.CultureInfo.InvariantCulture;
+}
+<div class="alert alert-info">
+    El mapa interactivo del proyecto base usaba Leaflet, que no está en la guía del curso (pendiente de aprobación del docente).
+    Mientras tanto, cada sucursal se abre en OpenStreetMap con sus coordenadas.
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead><tr><th>Sucursal</th><th>Cadena</th><th>Dirección</th><th>Coordenadas</th><th>Estado</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var s in Model.Where(x => x.Ubicacion is not null))
+            {
+                var u = s.Ubicacion!;
+                <tr>
+                    <td class="fw-medium">@s.Nombre</td>
+                    <td class="text-secondary">@s.Cadena</td>
+                    <td>@u.Direccion, @u.Ciudad</td>
+                    <td class="text-secondary small">@u.Latitud.ToString("0.0000", inv), @u.Longitud.ToString("0.0000", inv)</td>
+                    <td>
+                        @if (s.AbiertaAhora)
+                        {
+                            <span class="badge bg-green-lt">Abierta</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary-lt">Cerrada</span>
+                        }
+                    </td>
+                    <td><a class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=@u.Latitud.ToString(inv)&mlon=@u.Longitud.ToString(inv)#map=16/@u.Latitud.ToString(inv)/@u.Longitud.ToString(inv)"><i class="ti ti-map-2 me-1"></i>Ver mapa</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

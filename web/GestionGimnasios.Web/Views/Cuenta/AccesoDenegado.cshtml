@@ -1,0 +1,10 @@
+@{
+    ViewData["Title"] = "Acceso denegado";
+    Layout = "_LayoutPublico";
+}
+<div class="empty">
+    <div class="empty-icon"><i class="ti ti-lock fs-1"></i></div>
+    <p class="empty-title">No tienes permisos para esta pantalla</p>
+    <p class="empty-subtitle text-secondary">Tu rol no tiene acceso a esta sección del panel.</p>
+    <div class="empty-action"><a class="btn btn-primary" asp-controller="Home" asp-action="Index">Volver al inicio</a></div>
+</div>

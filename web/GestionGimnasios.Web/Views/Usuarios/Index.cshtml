@@ -1,0 +1,101 @@
+@model Pagina<UsuarioDto>
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@{
+    ViewData["Title"] = "Usuarios";
+    ViewData["Pretitulo"] = "Gestión";
+    var f = (FiltroUsuarios)ViewBag.Filtro;
+    var roles = (List<RolDto>)ViewBag.Roles;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+}
+@section Acciones {
+    <a class="btn btn-outline-primary" asp-action="Crear" asp-route-rolId="@roles.FirstOrDefault(r => r.Nombre == Roles.Cliente)?.Id"><i class="ti ti-user-plus me-1"></i>Registrar socio</a>
+    <a class="btn btn-primary" asp-action="Crear"><i class="ti ti-plus me-1"></i>Nuevo usuario</a>
+}
+<div class="card">
+    <div class="card-body border-bottom">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3"><label class="form-label">Buscar</label><input name="buscar" value="@f.Buscar" class="form-control" placeholder="Nombre, correo o CI" /></div>
+            <div class="col-md-2">
+                <label class="form-label">Rol</label>
+                <select name="rolId" class="form-select">
+                    <option value="">Todos</option>
+                    @foreach (var r in roles)
+                    {
+                        <option value="@r.Id" selected="@(f.RolId == r.Id)">@r.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Sucursal</label>
+                <select name="sucursalId" class="form-select">
+                    <option value="">Todas</option>
+                    @foreach (var s in sucursales)
+                    {
+                        <option value="@s.Id" selected="@(f.SucursalId == s.Id)">@s.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Estado</label>
+                <select name="estado" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="activos" selected="@(f.Estado == "activos")">Activos</option>
+                    <option value="inactivos" selected="@(f.Estado == "inactivos")">Inactivos</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button class="btn btn-primary w-100"><i class="ti ti-filter me-1"></i>Filtrar</button>
+                <a class="btn btn-link" asp-action="Index">Limpiar</a>
+            </div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table table-striped">
+            <thead><tr><th>Usuario</th><th>Rol</th><th>Cadena · Sucursal</th><th>CI</th><th>Estado</th><th class="w-1"></th></tr></thead>
+            <tbody>
+            @foreach (var u in Model.Datos)
+            {
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <span class="avatar avatar-sm me-2 bg-blue-lt">@((u.Perfil?.Nombres ?? u.Email)[..1].ToUpper())</span>
+                            <div><div class="fw-medium">@u.NombreCompleto</div><div class="text-secondary small">@u.Email</div></div>
+                        </div>
+                    </td>
+                    <td><span class="badge bg-azure-lt">@u.Rol</span> <span class="text-secondary small">nivel @u.Nivel</span></td>
+                    <td class="text-secondary">@u.Cadena @(u.Sucursal is null ? "" : $"· {u.Sucursal}")</td>
+                    <td class="text-secondary">@u.Perfil?.Ci</td>
+                    <td>
+                        @if (u.Activo)
+                        {
+                            <span class="badge bg-green-lt">Activo</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-red-lt">Inactivo</span>
+                        }
+                    </td>
+                    <td class="text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@u.Id" title="Editar"><i class="ti ti-edit"></i></a>
+                        @if (u.Nivel is >= 2 and <= 4)
+                        {
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Turnos" asp-route-id="@u.Id" title="Turnos"><i class="ti ti-clock"></i></a>
+                        }
+                        @if (u.Id != Actual.Id && (Actual.EsSuperAdmin || u.Nivel < Actual.Nivel))
+                        {
+                            <form method="post" asp-action="Eliminar" asp-route-id="@u.Id" class="d-inline" data-confirmar="¿Eliminar a @u.NombreCompleto? Si tiene historial se pedirá desactivarlo.">
+                                <button class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="ti ti-trash"></i></button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (Model.Datos.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-secondary py-4">No hay usuarios con esos filtros.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Paginacion" model="(Model.Total, Model.Limite, Model.Desde)" />
+</div>

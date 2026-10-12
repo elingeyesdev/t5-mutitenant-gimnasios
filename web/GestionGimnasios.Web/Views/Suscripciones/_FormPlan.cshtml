@@ -1,0 +1,30 @@
+@model PlanDto?
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@{
+    var cadenas = (List<CadenaDto>)ViewData["Cadenas"]!;
+}
+<form method="post" asp-action="GuardarPlan" asp-route-id="@Model?.Id">
+    @if (Actual.EsSuperAdmin && Model is null)
+    {
+        <div class="mb-2">
+            <label class="form-label">Cadena</label>
+            <select name="CadenaId" class="form-select">
+                <option value="">Global (todas)</option>
+                @foreach (var c in cadenas)
+                {
+                    <option value="@c.Id">@c.Nombre</option>
+                }
+            </select>
+        </div>
+    }
+    <div class="mb-2"><label class="form-label required">Nombre</label><input name="Nombre" value="@Model?.Nombre" class="form-control" required /></div>
+    <div class="mb-2"><label class="form-label">Descripción</label><input name="Descripcion" value="@Model?.Descripcion" class="form-control" /></div>
+    <div class="row g-2 mb-2">
+        <div class="col-6"><label class="form-label required">Precio mensual (Bs)</label><input name="PrecioMensual" type="number" step="0.01" min="1" value="@Model?.PrecioMensual" class="form-control" required /></div>
+        <div class="col-6"><label class="form-label">Máx. sucursales</label><input name="MaxSucursales" type="number" min="1" value="@Model?.MaxSucursales" class="form-control" placeholder="Todas" /></div>
+    </div>
+    <div class="mb-2"><label class="form-label">Beneficios (uno por línea)</label><textarea name="beneficios" class="form-control" rows="3">@string.Join("\n", Model?.Beneficios ?? [])</textarea></div>
+    <input type="hidden" name="Activo" value="false" />
+    <label class="form-check mb-2"><input type="checkbox" name="Activo" value="true" class="form-check-input" checked="@(Model?.Activo ?? true)" /><span class="form-check-label">Activo</span></label>
+    <button class="btn btn-primary w-100">Guardar plan</button>
+</form>

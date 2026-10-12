@@ -1,0 +1,23 @@
+@if (TempData["Exito"] is string exito)
+{
+    <div class="alert alert-success alert-dismissible" role="alert">
+        <div class="d-flex"><i class="ti ti-circle-check me-2 fs-2"></i><div>@exito</div></div>
+        <a class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></a>
+    </div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <div class="d-flex"><i class="ti ti-alert-triangle me-2 fs-2"></i><div>@error</div></div>
+        <a class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></a>
+    </div>
+}
+@if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+{
+    <div class="alert alert-danger" role="alert">
+        @foreach (var e in ViewData.ModelState[string.Empty]!.Errors)
+        {
+            <div><i class="ti ti-alert-triangle me-1"></i>@e.ErrorMessage</div>
+        }
+    </div>
+}

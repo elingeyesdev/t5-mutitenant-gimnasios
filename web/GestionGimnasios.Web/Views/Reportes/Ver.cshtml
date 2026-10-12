@@ -1,0 +1,106 @@
+@model Reporte
+@{
+    ViewData["Title"] = Model.Titulo;
+    ViewData["Pretitulo"] = "Reportes";
+    var f = (FiltroReporte)ViewBag.Filtro;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+}
+@section Acciones {
+    <button class="btn btn-outline-primary" onclick="window.print()"><i class="ti ti-printer me-1"></i>Imprimir</button>
+}
+<div class="card mb-3 d-print-none">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3"><label class="form-label">Desde</label><input type="date" name="desde" value="@Model.Desde.ToString("yyyy-MM-dd")" class="form-control" /></div>
+            <div class="col-md-3"><label class="form-label">Hasta</label><input type="date" name="hasta" value="@Model.Hasta.ToString("yyyy-MM-dd")" class="form-control" /></div>
+            <div class="col-md-4">
+                <label class="form-label">Sucursal</label>
+                <select name="sucursalId" class="form-select">
+                    <option value="">Todas las de mi alcance</option>
+                    @foreach (var s in sucursales)
+                    {
+                        <option value="@s.Id" selected="@(f.SucursalId == s.Id)">@s.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"><button class="btn btn-primary w-100">Generar</button></div>
+        </form>
+    </div>
+</div>
+<div class="d-none d-print-block mb-3">
+    <h1>@Model.Titulo</h1>
+    <div>Gestión Gimnasios · @Model.Alcance · @Model.Desde.ToString("dd/MM/yyyy") – @Model.Hasta.ToString("dd/MM/yyyy")</div>
+</div>
+<p class="text-secondary">@Model.Descripcion <span class="d-print-none">· Alcance: <strong>@Model.Alcance</strong> · Período: @Model.Desde.ToString("dd/MM/yyyy") – @Model.Hasta.ToString("dd/MM/yyyy")</span></p>
+<div class="row row-cards mb-3">
+    @foreach (var i in Model.Indicadores)
+    {
+        <div class="col-sm-6 col-lg">
+            <div class="card card-sm"><div class="card-body">
+                <div class="text-secondary">@i.Etiqueta</div>
+                <div class="h2 mb-0">@i.Valor</div>
+                @if (i.Detalle is not null)
+                {
+                    <div class="text-secondary small">@i.Detalle</div>
+                }
+            </div></div>
+        </div>
+    }
+</div>
+<div class="row row-cards mb-3">
+    @foreach (var s in Model.Series)
+    {
+        <div class="col-lg-@(Model.Series.Count == 1 ? 12 : 6)">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">@s.Titulo</h3></div>
+                <div class="card-body">
+                    @if (s.Puntos.Count == 0 || s.Puntos.All(p => p.Valor == 0))
+                    {
+                        <div class="text-secondary text-center py-4">Sin datos en el período.</div>
+                    }
+                    else if (s.Puntos.Count <= 10)
+                    {
+                        var max = Math.Max(1, s.Puntos.Max(p => p.Valor));
+                        @foreach (var p in s.Puntos)
+                        {
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-truncate" style="width:35%">@p.Etiqueta</div>
+                                <div class="progress flex-fill mx-2"><div class="progress-bar" style="width:@((p.Valor / max * 100).ToString("0", System.Globalization.CultureInfo.InvariantCulture))%"></div></div>
+                                <div style="width:3rem" class="text-end">@p.Valor</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <partial name="_Serie" model="s" />
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@foreach (var t in Model.Tablas)
+{
+    <div class="card mb-3">
+        <div class="card-header"><h3 class="card-title">@t.Titulo</h3><div class="card-actions text-secondary">@t.Filas.Count filas</div></div>
+        <div class="table-responsive">
+            <table class="table table-vcenter card-table table-sm">
+                <thead><tr>@foreach (var c in t.Columnas) { <th>@c</th> }</tr></thead>
+                <tbody>
+                @foreach (var fila in t.Filas)
+                {
+                    <tr>@foreach (var c in fila) { <td>@c</td> }</tr>
+                }
+                @if (t.Filas.Count == 0)
+                {
+                    <tr><td colspan="@t.Columnas.Count" class="text-center text-secondary py-3">Sin datos en el período.</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+@foreach (var o in Model.Observaciones)
+{
+    <p class="text-secondary small"><i class="ti ti-info-circle me-1"></i>@o</p>
+}

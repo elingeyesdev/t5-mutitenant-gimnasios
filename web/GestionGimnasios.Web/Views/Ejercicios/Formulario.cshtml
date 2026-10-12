@@ -1,0 +1,77 @@
+@model EjercicioForm
+@{
+    var ejercicio = ViewBag.Ejercicio as EjercicioDto;
+    var editando = ejercicio is not null;
+    ViewData["Title"] = editando ? ejercicio!.Nombre : "Nuevo ejercicio";
+    ViewData["Pretitulo"] = "Biblioteca de ejercicios";
+    string[] grupos = ["Pecho", "Pierna", "Espalda", "Hombro", "Brazo", "Core", "Cardio", "HIIT"];
+}
+<div class="row row-cards">
+    <div class="col-lg-8">
+        <form method="post" asp-action="@(editando ? "Editar" : "Crear")" asp-route-id="@ejercicio?.Id" class="card">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-8"><label class="form-label required">Nombre</label><input asp-for="Nombre" class="form-control" required /></div>
+                    <div class="col-md-4">
+                        <label class="form-label required">Grupo muscular</label>
+                        <input asp-for="GrupoMuscular" class="form-control" list="grupos" required />
+                        <datalist id="grupos">
+                            @foreach (var g in grupos)
+                            {
+                                <option value="@g"></option>
+                            }
+                        </datalist>
+                    </div>
+                    <div class="col-12"><label class="form-label">Descripción</label><textarea asp-for="Descripcion" class="form-control" rows="2"></textarea></div>
+                    <div class="col-md-6"><label class="form-label">Grupos secundarios</label><input name="secundarios" value="@string.Join(", ", Model.GruposSecundarios)" class="form-control" placeholder="Separados por coma" /></div>
+                    <div class="col-md-6"><label class="form-label">Equipo requerido</label><input asp-for="Equipo" class="form-control" /></div>
+                    <div class="col-md-4">
+                        <label class="form-label">Dificultad</label>
+                        <select asp-for="Dificultad" class="form-select">
+                            @foreach (var d in EjerciciosService.Dificultades)
+                            {
+                                <option>@d</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4"><label class="form-label">Categoría</label><input asp-for="Categoria" class="form-control" placeholder="FUERZA, HIPERTROFIA…" /></div>
+                    <div class="col-md-4"><label class="form-label">Tipo</label><input asp-for="Tipo" class="form-control" placeholder="STRENGTH, CARDIO…" /></div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tipo de registro</label>
+                        <select asp-for="TipoRegistro" class="form-select">
+                            <option value="@TiposRegistroEjercicio.PesoRepeticiones">Peso y repeticiones</option>
+                            <option value="@TiposRegistroEjercicio.SoloRepeticiones">Solo repeticiones</option>
+                            <option value="@TiposRegistroEjercicio.TiempoDistancia">Tiempo y distancia</option>
+                            <option value="@TiposRegistroEjercicio.SoloTiempo">Solo tiempo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4"><label class="form-label">Video de YouTube (ID)</label><input asp-for="YoutubeVideoId" class="form-control" placeholder="RCxikBS5Qy8" /></div>
+                    <div class="col-md-2 pt-4"><label class="form-check"><input asp-for="Activo" type="checkbox" class="form-check-input" /><span class="form-check-label">Activo</span></label></div>
+                </div>
+            </div>
+            <div class="card-footer d-flex gap-2"><button class="btn btn-primary">Guardar</button><a class="btn btn-link" asp-action="Index">Volver</a></div>
+        </form>
+    </div>
+    @if (editando)
+    {
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Imagen</h3></div>
+                <div class="card-body text-center">
+                    @if (ejercicio!.ImagenUrl is not null)
+                    {
+                        <img src="@ejercicio.ImagenUrl" class="img-fluid rounded mb-3" alt="@ejercicio.Nombre" />
+                    }
+                    else if (ejercicio.YoutubeVideoId is not null)
+                    {
+                        <img src="https://img.youtube.com/vi/@ejercicio.YoutubeVideoId/mqdefault.jpg" class="img-fluid rounded mb-3" alt="@ejercicio.Nombre" />
+                    }
+                    <form method="post" asp-action="Imagen" asp-route-id="@ejercicio.Id" enctype="multipart/form-data">
+                        <input type="file" name="archivo" accept="image/png,image/jpeg,image/webp" class="form-control mb-2" required />
+                        <button class="btn btn-outline-primary w-100">Subir imagen</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

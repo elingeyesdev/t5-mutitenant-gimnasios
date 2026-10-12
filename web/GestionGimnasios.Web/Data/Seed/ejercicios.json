@@ -1,0 +1,852 @@
+[
+ {
+  "nombre": "Press de Banca Plano",
+  "grupoMuscular": "Pecho",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "RCxikBS5Qy8"
+ },
+ {
+  "nombre": "Press Inclinado con Barra",
+  "grupoMuscular": "Pecho",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "RCxikBS5Qy8"
+ },
+ {
+  "nombre": "Press Inclinado con Mancuernas",
+  "grupoMuscular": "Pecho",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "RCxikBS5Qy8"
+ },
+ {
+  "nombre": "Aperturas con Mancuernas",
+  "grupoMuscular": "Pecho",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UgmYbrytasw"
+ },
+ {
+  "nombre": "Aperturas en Máquina (Peck Deck)",
+  "grupoMuscular": "Pecho",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UgmYbrytasw"
+ },
+ {
+  "nombre": "Fondos en Paralelas (Pecho)",
+  "grupoMuscular": "Pecho",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "ZtONmh5a_fU"
+ },
+ {
+  "nombre": "Flexiones de Brazo (Push-ups)",
+  "grupoMuscular": "Pecho",
+  "categoria": "RESISTENCIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Ninguno",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "ZtONmh5a_fU"
+ },
+ {
+  "nombre": "Press Declinado con Barra",
+  "grupoMuscular": "Pecho",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "RCxikBS5Qy8"
+ },
+ {
+  "nombre": "Cruces en Polea Baja",
+  "grupoMuscular": "Pecho",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UgmYbrytasw"
+ },
+ {
+  "nombre": "Cruces en Polea Alta",
+  "grupoMuscular": "Pecho",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UgmYbrytasw"
+ },
+ {
+  "nombre": "Pullover con Mancuerna",
+  "grupoMuscular": "Pecho",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UgmYbrytasw"
+ },
+ {
+  "nombre": "Sentadilla Libre",
+  "grupoMuscular": "Pierna",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Sentadilla Frontal",
+  "grupoMuscular": "Pierna",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "AVANZADO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Sentadilla en Máquina Smith",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Prensa de Piernas 45°",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Sentadilla Hack",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Extensión de Cuádriceps",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Curl de Femoral Tumbado",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "34bf7rl-95o"
+ },
+ {
+  "nombre": "Curl de Femoral Sentado",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "34bf7rl-95o"
+ },
+ {
+  "nombre": "Peso Muerto Rumano con Barra",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "34bf7rl-95o"
+ },
+ {
+  "nombre": "Peso Muerto Rumano con Mancuernas",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "34bf7rl-95o"
+ },
+ {
+  "nombre": "Zancadas (Lunges) Estáticas",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Sentadilla Búlgara",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "AVANZADO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Hip Thrust con Barra",
+  "grupoMuscular": "Pierna",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "34bf7rl-95o"
+ },
+ {
+  "nombre": "Hip Thrust en Máquina",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "34bf7rl-95o"
+ },
+ {
+  "nombre": "Abducción de Cadera en Máquina",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Aducción de Cadera en Máquina",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Elevación de Talones de Pie",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Elevación de Talones Sentado",
+  "grupoMuscular": "Pierna",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "oe3q0FMu6v4"
+ },
+ {
+  "nombre": "Dominadas Libres (Pronas)",
+  "grupoMuscular": "Espalda",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "AVANZADO",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "_9rGBwreteE"
+ },
+ {
+  "nombre": "Dominadas Supinas (Chin-ups)",
+  "grupoMuscular": "Espalda",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "AVANZADO",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "_9rGBwreteE"
+ },
+ {
+  "nombre": "Dominadas Asistidas",
+  "grupoMuscular": "Espalda",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "_9rGBwreteE"
+ },
+ {
+  "nombre": "Jalón al Pecho Agarre Abierto",
+  "grupoMuscular": "Espalda",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "trZQjegcRx0"
+ },
+ {
+  "nombre": "Jalón al Pecho Agarre Cerrado",
+  "grupoMuscular": "Espalda",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "trZQjegcRx0"
+ },
+ {
+  "nombre": "Remo con Barra",
+  "grupoMuscular": "Espalda",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "2J61UenaFRw"
+ },
+ {
+  "nombre": "Remo en Punta (T-Bar)",
+  "grupoMuscular": "Espalda",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "2J61UenaFRw"
+ },
+ {
+  "nombre": "Peso Muerto Convencional",
+  "grupoMuscular": "Espalda",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "AVANZADO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "34bf7rl-95o"
+ },
+ {
+  "nombre": "Remo Gironda (Sentado en Polea)",
+  "grupoMuscular": "Espalda",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "2J61UenaFRw"
+ },
+ {
+  "nombre": "Remo con Mancuerna a 1 Mano",
+  "grupoMuscular": "Espalda",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "2J61UenaFRw"
+ },
+ {
+  "nombre": "Remo en Máquina (Chest Supported)",
+  "grupoMuscular": "Espalda",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "2J61UenaFRw"
+ },
+ {
+  "nombre": "Pulldown con Brazo Recto",
+  "grupoMuscular": "Espalda",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "trZQjegcRx0"
+ },
+ {
+  "nombre": "Press Militar con Barra",
+  "grupoMuscular": "Hombro",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "TtSxS9xKlO0"
+ },
+ {
+  "nombre": "Press Militar con Mancuernas",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "TtSxS9xKlO0"
+ },
+ {
+  "nombre": "Press Arnold",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "TtSxS9xKlO0"
+ },
+ {
+  "nombre": "Elevaciones Laterales con Mancuernas",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "iV4XoV8cFMI"
+ },
+ {
+  "nombre": "Elevaciones Laterales en Polea",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "iV4XoV8cFMI"
+ },
+ {
+  "nombre": "Face Pull",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "iV4XoV8cFMI"
+ },
+ {
+  "nombre": "Elevaciones Frontales",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "iV4XoV8cFMI"
+ },
+ {
+  "nombre": "Pájaros (Posteriores con Mancuerna)",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "iV4XoV8cFMI"
+ },
+ {
+  "nombre": "Pájaros en Máquina (Peck Deck Inverso)",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "iV4XoV8cFMI"
+ },
+ {
+  "nombre": "Encogimientos con Barra (Trapecios)",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "TtSxS9xKlO0"
+ },
+ {
+  "nombre": "Encogimientos con Mancuernas",
+  "grupoMuscular": "Hombro",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "TtSxS9xKlO0"
+ },
+ {
+  "nombre": "Curl de Bíceps con Barra Recta",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UDblkPDopgQ"
+ },
+ {
+  "nombre": "Curl de Bíceps con Barra EZ",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UDblkPDopgQ"
+ },
+ {
+  "nombre": "Curl de Bíceps Alterno",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UDblkPDopgQ"
+ },
+ {
+  "nombre": "Curl Martillo",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UDblkPDopgQ"
+ },
+ {
+  "nombre": "Curl Predicador en Máquina",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UDblkPDopgQ"
+ },
+ {
+  "nombre": "Curl Araña (Spider Curl)",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "UDblkPDopgQ"
+ },
+ {
+  "nombre": "Extensión de Tríceps en Polea Alta",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "3v4Zc7iujIk"
+ },
+ {
+  "nombre": "Extensión de Tríceps con Cuerda",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "3v4Zc7iujIk"
+ },
+ {
+  "nombre": "Press Francés con Barra EZ",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Barra",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "3v4Zc7iujIk"
+ },
+ {
+  "nombre": "Patada de Tríceps con Mancuerna",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "3v4Zc7iujIk"
+ },
+ {
+  "nombre": "Extensión Tras Nuca con Mancuerna",
+  "grupoMuscular": "Brazo",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Mancuernas",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "3v4Zc7iujIk"
+ },
+ {
+  "nombre": "Cinta / Trotadora",
+  "grupoMuscular": "Cardio",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina Cardio",
+  "tipoRegistro": "TIEMPO_DISTANCIA",
+  "youtubeVideoId": "nUM5Ix8v0W8"
+ },
+ {
+  "nombre": "Bicicleta Estática",
+  "grupoMuscular": "Cardio",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina Cardio",
+  "tipoRegistro": "TIEMPO_DISTANCIA",
+  "youtubeVideoId": "nUM5Ix8v0W8"
+ },
+ {
+  "nombre": "Bicicleta de Spinning",
+  "grupoMuscular": "Cardio",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Máquina Cardio",
+  "tipoRegistro": "TIEMPO_DISTANCIA",
+  "youtubeVideoId": "nUM5Ix8v0W8"
+ },
+ {
+  "nombre": "Remo Ergómetro",
+  "grupoMuscular": "Cardio",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina Cardio",
+  "tipoRegistro": "TIEMPO_DISTANCIA",
+  "youtubeVideoId": "nUM5Ix8v0W8"
+ },
+ {
+  "nombre": "Elíptica",
+  "grupoMuscular": "Cardio",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Máquina Cardio",
+  "tipoRegistro": "TIEMPO_DISTANCIA",
+  "youtubeVideoId": "nUM5Ix8v0W8"
+ },
+ {
+  "nombre": "Escaladora (Stairmaster)",
+  "grupoMuscular": "Cardio",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Máquina Cardio",
+  "tipoRegistro": "SOLO_TIEMPO",
+  "youtubeVideoId": "nUM5Ix8v0W8"
+ },
+ {
+  "nombre": "Salto a la Comba",
+  "grupoMuscular": "Cardio",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Comba",
+  "tipoRegistro": "SOLO_TIEMPO",
+  "youtubeVideoId": "nUM5Ix8v0W8"
+ },
+ {
+  "nombre": "Burpees",
+  "grupoMuscular": "HIIT",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "EdeBTHMFLKY"
+ },
+ {
+  "nombre": "Saltos al Cajón (Box Jumps)",
+  "grupoMuscular": "HIIT",
+  "categoria": "POTENCIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Cajón",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "H5VYU6t_w9o"
+ },
+ {
+  "nombre": "Kettlebell Swing",
+  "grupoMuscular": "HIIT",
+  "categoria": "POTENCIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Kettlebell",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "8tTKm-3wX5s"
+ },
+ {
+  "nombre": "Mountain Climbers",
+  "grupoMuscular": "HIIT",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_TIEMPO",
+  "youtubeVideoId": "EdeBTHMFLKY"
+ },
+ {
+  "nombre": "Jumping Jacks",
+  "grupoMuscular": "HIIT",
+  "categoria": "RESISTENCIA",
+  "tipo": "CARDIO",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_TIEMPO",
+  "youtubeVideoId": "EdeBTHMFLKY"
+ },
+ {
+  "nombre": "Battle Ropes",
+  "grupoMuscular": "HIIT",
+  "categoria": "POTENCIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Cuerdas",
+  "tipoRegistro": "SOLO_TIEMPO",
+  "youtubeVideoId": "EdeBTHMFLKY"
+ },
+ {
+  "nombre": "Plancha Abdominal (Plank)",
+  "grupoMuscular": "Core",
+  "categoria": "RESISTENCIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_TIEMPO",
+  "youtubeVideoId": "WXGBYjIOcN4"
+ },
+ {
+  "nombre": "Plancha Lateral",
+  "grupoMuscular": "Core",
+  "categoria": "RESISTENCIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_TIEMPO",
+  "youtubeVideoId": "WXGBYjIOcN4"
+ },
+ {
+  "nombre": "Crunches (Encogimientos)",
+  "grupoMuscular": "Core",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "EdeBTHMFLKY"
+ },
+ {
+  "nombre": "Crunches en Polea Alta",
+  "grupoMuscular": "Core",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "EdeBTHMFLKY"
+ },
+ {
+  "nombre": "Rueda Abdominal (Ab Wheel)",
+  "grupoMuscular": "Core",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "AVANZADO",
+  "equipo": "Rueda Abdominal",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "WXGBYjIOcN4"
+ },
+ {
+  "nombre": "Russian Twist (Giros Rusos)",
+  "grupoMuscular": "Core",
+  "categoria": "RESISTENCIA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Disco",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "u0-X63Fq7LU"
+ },
+ {
+  "nombre": "Elevación de Piernas Tumbado",
+  "grupoMuscular": "Core",
+  "categoria": "HIPERTROFIA",
+  "tipo": "STRENGTH",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Peso Corporal",
+  "tipoRegistro": "SOLO_REPETICIONES",
+  "youtubeVideoId": "u0-X63Fq7LU"
+ },
+ {
+  "nombre": "Woodchoppers en Polea",
+  "grupoMuscular": "Core",
+  "categoria": "FUERZA",
+  "tipo": "STRENGTH",
+  "dificultad": "INTERMEDIO",
+  "equipo": "Polea",
+  "tipoRegistro": "PESO_REPETICIONES",
+  "youtubeVideoId": "u0-X63Fq7LU"
+ },
+ {
+  "nombre": "Estiramiento Gato-Camello",
+  "grupoMuscular": "Core",
+  "categoria": "FLEXIBILIDAD",
+  "tipo": "FLEXIBILITY",
+  "dificultad": "PRINCIPIANTE",
+  "equipo": "Ninguno",
+  "tipoRegistro": "SOLO_TIEMPO",
+  "youtubeVideoId": "WXGBYjIOcN4"
+ }
+]

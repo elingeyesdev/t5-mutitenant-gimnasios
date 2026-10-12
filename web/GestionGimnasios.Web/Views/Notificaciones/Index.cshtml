@@ -1,0 +1,25 @@
+@model List<NotificacionDto>
+@{
+    ViewData["Title"] = "Notificaciones";
+}
+@section Acciones {
+    <form method="post" asp-action="MarcarTodas"><button class="btn btn-outline-primary"><i class="ti ti-checks me-1"></i>Marcar todas como leídas</button></form>
+}
+<div class="card">
+    <div class="list-group list-group-flush">
+        @foreach (var n in Model)
+        {
+            <div class="list-group-item @(n.Leida ? "" : "bg-blue-lt")">
+                <div class="d-flex">
+                    <div class="fw-medium">@n.Titulo</div>
+                    <div class="ms-auto text-secondary small">@Reloj.ALocal(n.EnviadaEn).ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+                <div class="text-secondary">@n.Cuerpo</div>
+            </div>
+        }
+        @if (Model.Count == 0)
+        {
+            <div class="list-group-item text-secondary text-center py-4">No tienes notificaciones.</div>
+        }
+    </div>
+</div>

@@ -1,0 +1,24 @@
+@model UsuarioForm
+@{
+    ViewData["Title"] = "Crear cuenta de cliente";
+    Layout = "_LayoutPublico";
+}
+<div class="card card-md">
+    <div class="card-body">
+        <h2 class="h2 text-center mb-4">Crear cuenta de cliente</h2>
+        <form method="post" asp-action="Registro">
+            <div class="row g-2">
+                <div class="col-6 mb-2"><label class="form-label required">Nombres</label><input asp-for="Nombres" class="form-control" required /></div>
+                <div class="col-6 mb-2"><label class="form-label required">Apellidos</label><input asp-for="Apellidos" class="form-control" required /></div>
+            </div>
+            <div class="mb-2"><label class="form-label required">Correo electrónico</label><input asp-for="Email" type="email" class="form-control" required /></div>
+            <div class="row g-2">
+                <div class="col-6 mb-2"><label class="form-label">Carnet de identidad</label><input asp-for="Ci" class="form-control" /></div>
+                <div class="col-6 mb-2"><label class="form-label">Teléfono</label><input asp-for="Telefono" class="form-control" /></div>
+            </div>
+            <div class="mb-2"><label class="form-label required">Contraseña</label><input asp-for="Password" type="password" class="form-control" minlength="6" required /></div>
+            <div class="form-footer"><button type="submit" class="btn btn-primary w-100">Crear cuenta</button></div>
+        </form>
+    </div>
+</div>
+<div class="text-center text-secondary mt-3"><a asp-action="Login">Volver a iniciar sesión</a></div>

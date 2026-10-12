@@ -1,0 +1,113 @@
+@model List<MaquinaDto>
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@{
+    ViewData["Title"] = "Inventario de máquinas";
+    ViewData["Pretitulo"] = "Gestión";
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    var sucursalId = (int?)ViewBag.SucursalId;
+    var estado = (string?)ViewBag.Estado;
+    var nueva = (MaquinaForm)ViewBag.Nueva;
+}
+<div class="row row-cards">
+    <div class="col-lg-9">
+        <div class="card">
+            <div class="card-body border-bottom">
+                <form method="get" class="row g-2 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label">Sucursal</label>
+                        <select name="sucursalId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Todas</option>
+                            @foreach (var s in sucursales)
+                            {
+                                <option value="@s.Id" selected="@(sucursalId == s.Id)">@s.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Estado</label>
+                        <select name="estado" class="form-select" onchange="this.form.submit()">
+                            <option value="">Todos</option>
+                            <option value="@EstadosMaquina.Disponible" selected="@(estado == EstadosMaquina.Disponible)">Disponible</option>
+                            <option value="@EstadosMaquina.Mantenimiento" selected="@(estado == EstadosMaquina.Mantenimiento)">Mantenimiento</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 text-secondary">@Model.Count máquinas · @Model.Count(m => m.Estado == EstadosMaquina.Mantenimiento) en mantenimiento</div>
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead><tr><th></th><th>Máquina</th><th>Categoría</th><th>Sucursal</th><th>Estado</th><th class="w-1"></th></tr></thead>
+                    <tbody>
+                    @foreach (var m in Model)
+                    {
+                        <tr>
+                            <td class="w-1">
+                                @if (m.ImagenUrl is not null)
+                                {
+                                    <span class="avatar" style="background-image:url('@m.ImagenUrl')"></span>
+                                }
+                                else
+                                {
+                                    <span class="avatar bg-secondary-lt"><i class="ti ti-barbell"></i></span>
+                                }
+                            </td>
+                            <td class="fw-medium">@m.Nombre</td>
+                            <td>@ReportesService.Etiqueta(m.Categoria)</td>
+                            <td class="text-secondary">@m.Sucursal</td>
+                            <td>
+                                <form method="post" asp-action="Editar" asp-route-id="@m.Id">
+                                    <input type="hidden" name="SucursalId" value="@m.SucursalId" />
+                                    <input type="hidden" name="Nombre" value="@m.Nombre" />
+                                    <input type="hidden" name="Categoria" value="@m.Categoria" />
+                                    <select name="Estado" class="form-select form-select-sm" onchange="this.form.submit()">
+                                        <option value="@EstadosMaquina.Disponible" selected="@(m.Estado == EstadosMaquina.Disponible)">Disponible</option>
+                                        <option value="@EstadosMaquina.Mantenimiento" selected="@(m.Estado == EstadosMaquina.Mantenimiento)">Mantenimiento</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td class="text-nowrap">
+                                <form method="post" asp-action="Imagen" asp-route-id="@m.Id" asp-route-sucursalId="@sucursalId" enctype="multipart/form-data" class="d-inline">
+                                    <label class="btn btn-sm btn-outline-secondary mb-0" title="Cambiar imagen"><i class="ti ti-photo"></i>
+                                        <input type="file" name="archivo" accept="image/png,image/jpeg,image/webp" hidden onchange="this.form.submit()" />
+                                    </label>
+                                </form>
+                                <form method="post" asp-action="Eliminar" asp-route-id="@m.Id" asp-route-sucursalId="@sucursalId" class="d-inline" data-confirmar="¿Eliminar @m.Nombre?">
+                                    <button class="btn btn-sm btn-outline-danger"><i class="ti ti-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <form method="post" asp-action="Crear" class="card">
+            <div class="card-header"><h3 class="card-title">Registrar máquina</h3></div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label required">Sucursal</label>
+                    <select name="SucursalId" class="form-select" required>
+                        @foreach (var s in sucursales)
+                        {
+                            <option value="@s.Id" selected="@(nueva.SucursalId == s.Id)">@s.Nombre</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3"><label class="form-label required">Nombre</label><input name="Nombre" class="form-control" required placeholder="Cinta de Correr Precor A" /></div>
+                <div class="mb-3">
+                    <label class="form-label">Categoría</label>
+                    <select name="Categoria" class="form-select">
+                        @foreach (var c in CategoriasMaquina.Todas)
+                        {
+                            <option value="@c">@ReportesService.Etiqueta(c)</option>
+                        }
+                    </select>
+                </div>
+                <input type="hidden" name="Estado" value="@EstadosMaquina.Disponible" />
+            </div>
+            <div class="card-footer"><button class="btn btn-primary w-100">Registrar</button></div>
+        </form>
+    </div>
+</div>

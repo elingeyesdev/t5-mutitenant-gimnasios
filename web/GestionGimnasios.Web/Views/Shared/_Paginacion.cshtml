@@ -1,0 +1,26 @@
+@model (int Total, int Limite, int Desde)
+@{
+    var parametro = ViewData["ParametroPagina"] as string ?? "desde";
+    var paginas = (int)Math.Ceiling(Model.Total / (double)Math.Max(1, Model.Limite));
+    var actual = Model.Desde / Math.Max(1, Model.Limite) + 1;
+    string Url(int pagina)
+    {
+        var q = Context.Request.Query.Where(kv => kv.Key != parametro).Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value.ToString())}").ToList();
+        q.Add($"{parametro}={(pagina - 1) * Model.Limite}");
+        return "?" + string.Join("&", q);
+    }
+}
+<div class="card-footer d-flex align-items-center">
+    <p class="m-0 text-secondary">Mostrando <strong>@(Model.Total == 0 ? 0 : Model.Desde + 1)–@Math.Min(Model.Desde + Model.Limite, Model.Total)</strong> de <strong>@Model.Total</strong></p>
+    @if (paginas > 1)
+    {
+        <ul class="pagination m-0 ms-auto">
+            <li class="page-item @(actual == 1 ? "disabled" : "")"><a class="page-link" href="@Url(actual - 1)"><i class="ti ti-chevron-left"></i> anterior</a></li>
+            @for (var p = Math.Max(1, actual - 2); p <= Math.Min(paginas, actual + 2); p++)
+            {
+                <li class="page-item @(p == actual ? "active" : "")"><a class="page-link" href="@Url(p)">@p</a></li>
+            }
+            <li class="page-item @(actual == paginas ? "disabled" : "")"><a class="page-link" href="@Url(actual + 1)">siguiente <i class="ti ti-chevron-right"></i></a></li>
+        </ul>
+    }
+</div>

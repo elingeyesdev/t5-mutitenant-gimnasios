@@ -1,0 +1,71 @@
+@model List<CadenaDto>
+@{
+    ViewData["Title"] = "Cadenas";
+    ViewData["Pretitulo"] = "Sistema";
+}
+<div class="row row-cards">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead><tr><th>Cadena</th><th>Descripción</th><th>Sucursales</th><th>Estado</th><th class="w-1"></th></tr></thead>
+                    <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td class="fw-medium">@c.Nombre</td>
+                            <td class="text-secondary">@c.Descripcion</td>
+                            <td><a asp-controller="Sucursales" asp-action="Index">@c.Sucursales</a></td>
+                            <td>
+                                @if (c.Activa)
+                                {
+                                    <span class="badge bg-green-lt">Activa</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-lt">Inactiva</span>
+                                }
+                            </td>
+                            <td class="text-nowrap">
+                                <a class="btn btn-sm btn-outline-primary" asp-controller="Sucursales" asp-action="Crear" asp-route-cadenaId="@c.Id" title="Agregar sucursal"><i class="ti ti-building-plus"></i></a>
+                                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#editar-@c.Id" title="Editar"><i class="ti ti-edit"></i></button>
+                                <form method="post" asp-action="Eliminar" asp-route-id="@c.Id" class="d-inline" data-confirmar="¿Eliminar la cadena @c.Nombre?">
+                                    <button class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="ti ti-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr class="collapse" id="editar-@c.Id">
+                            <td colspan="5">
+                                <form method="post" asp-action="Editar" asp-route-id="@c.Id" class="row g-2">
+                                    <div class="col-md-3"><input name="Nombre" value="@c.Nombre" class="form-control" required /></div>
+                                    <div class="col-md-5"><input name="Descripcion" value="@c.Descripcion" class="form-control" /></div>
+                                    <div class="col-md-2">
+                                        <label class="form-check mt-2">
+                                            <input type="hidden" name="Activa" value="false" />
+                                            <input type="checkbox" name="Activa" value="true" class="form-check-input" checked="@c.Activa" />
+                                            <span class="form-check-label">Activa</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-2"><button class="btn btn-primary w-100">Guardar</button></div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <form method="post" asp-action="Crear" class="card">
+            <div class="card-header"><h3 class="card-title">Nueva cadena</h3></div>
+            <div class="card-body">
+                <div class="mb-3"><label class="form-label required">Nombre</label><input name="Nombre" class="form-control" required /></div>
+                <div class="mb-3"><label class="form-label">Descripción</label><textarea name="Descripcion" class="form-control" rows="2"></textarea></div>
+                <input type="hidden" name="Activa" value="true" />
+                <small class="text-secondary">Cada cadena es un inquilino independiente: sus datos no los ve ninguna otra cadena.</small>
+            </div>
+            <div class="card-footer"><button class="btn btn-primary w-100">Crear cadena</button></div>
+        </form>
+    </div>
+</div>

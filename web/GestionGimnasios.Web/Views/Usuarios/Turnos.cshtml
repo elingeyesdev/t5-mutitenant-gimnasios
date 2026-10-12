@@ -1,0 +1,65 @@
+@model List<TurnoDto>
+@{
+    var u = (UsuarioDto)ViewBag.Usuario;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+    ViewData["Title"] = $"Turnos · {u.NombreCompleto}";
+    ViewData["Pretitulo"] = "Usuarios";
+    string[] dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    var sucursalId = Model.FirstOrDefault()?.SucursalId ?? u.SucursalId;
+}
+<div class="row row-cards">
+    <div class="col-lg-7">
+        <form method="post" class="card">
+            <div class="card-header"><h3 class="card-title">Horario semanal</h3></div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Sucursal</label>
+                    <select name="sucursalId" class="form-select">
+                        @foreach (var s in sucursales)
+                        {
+                            <option value="@s.Id" selected="@(s.Id == sucursalId)">@s.Nombre</option>
+                        }
+                    </select>
+                </div>
+                <table class="table table-vcenter">
+                    <thead><tr><th>Día</th><th>Trabaja</th><th>Entrada</th><th>Salida</th></tr></thead>
+                    <tbody>
+                    @for (var d = 0; d < 7; d++)
+                    {
+                        var t = Model.FirstOrDefault(x => x.DiaSemana == d && x.SucursalId == sucursalId);
+                        <tr>
+                            <td>@dias[d]</td>
+                            <td>
+                                <input type="hidden" name="trabaja[@d]" value="false" />
+                                <input class="form-check-input" type="checkbox" name="trabaja[@d]" value="true" checked="@(t is not null)" />
+                            </td>
+                            <td><input type="time" class="form-control" name="inicio[@d]" value="@(t?.Inicio.ToString("HH:mm") ?? "08:00")" /></td>
+                            <td><input type="time" class="form-control" name="fin[@d]" value="@(t?.Fin.ToString("HH:mm") ?? "16:00")" /></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                <small class="text-secondary">Los turnos deben quedar dentro del horario de atención de la sucursal.</small>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary">Guardar turnos</button>
+                <a class="btn btn-link" asp-action="Index">Volver</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Turnos actuales</h3></div>
+            <ul class="list-group list-group-flush">
+                @foreach (var t in Model)
+                {
+                    <li class="list-group-item d-flex justify-content-between"><span>@t.Dia · @t.Sucursal</span><span class="text-secondary">@t.Inicio.ToString("HH:mm")–@t.Fin.ToString("HH:mm")</span></li>
+                }
+                @if (Model.Count == 0)
+                {
+                    <li class="list-group-item text-secondary">Sin turnos asignados.</li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

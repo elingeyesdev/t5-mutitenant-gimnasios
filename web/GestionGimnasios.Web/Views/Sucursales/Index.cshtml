@@ -1,0 +1,58 @@
+@model List<SucursalDto>
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@{
+    ViewData["Title"] = "Sucursales";
+    ViewData["Pretitulo"] = "Gestión";
+}
+@section Acciones {
+    @if (Actual.EsSuperAdmin)
+    {
+        <a class="btn btn-primary" asp-action="Crear"><i class="ti ti-plus me-1"></i>Nueva sucursal</a>
+    }
+}
+<div class="row row-cards">
+    @foreach (var s in Model)
+    {
+        var pct = s.CapacidadMaxima > 0 ? Math.Min(100, s.OcupacionActual * 100 / s.CapacidadMaxima) : 0;
+        <div class="col-md-6 col-xl-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-2">
+                        <div>
+                            <div class="text-secondary small">@s.Cadena</div>
+                            <h3 class="card-title mb-1">@s.Nombre</h3>
+                            <div class="text-secondary small"><i class="ti ti-map-pin me-1"></i>@s.Ubicacion?.Direccion, @s.Ubicacion?.Ciudad</div>
+                        </div>
+                        <div class="ms-auto">
+                            @if (s.AbiertaAhora)
+                            {
+                                <span class="badge bg-green-lt">Abierta</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary-lt">Cerrada</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="d-flex mb-1"><span class="text-secondary">Ocupación</span><span class="ms-auto">@s.OcupacionActual / @s.CapacidadMaxima</span></div>
+                        <div class="progress progress-sm"><div class="progress-bar @(pct >= 80 ? "bg-red" : pct >= 50 ? "bg-yellow" : "bg-green")" style="width:@pct%"></div></div>
+                    </div>
+                    <div class="d-flex gap-3 text-secondary small">
+                        <span><i class="ti ti-barbell me-1"></i>@s.Maquinas.Disponibles/@s.Maquinas.Total máquinas</span>
+                        <span><i class="ti ti-calendar-time me-1"></i>@s.Servicios.Count servicios</span>
+                        @if (!s.Activa)
+                        {
+                            <span class="text-red">Inactiva</span>
+                        }
+                    </div>
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-id="@s.Id"><i class="ti ti-edit me-1"></i>Editar</a>
+                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Actividades" asp-action="Index" asp-route-sucursalId="@s.Id">Actividades</a>
+                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Maquinas" asp-action="Index" asp-route-sucursalId="@s.Id">Máquinas</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

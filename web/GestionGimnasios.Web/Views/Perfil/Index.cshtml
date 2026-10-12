@@ -1,0 +1,38 @@
+@model UsuarioDto
+@{
+    ViewData["Title"] = "Mi perfil";
+    var p = Model.Perfil;
+}
+<div class="row row-cards">
+    <div class="col-lg-7">
+        <form method="post" asp-action="Guardar" class="card">
+            <div class="card-header"><h3 class="card-title">Datos personales</h3></div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label">Nombres</label><input name="Nombres" value="@p?.Nombres" class="form-control" /></div>
+                    <div class="col-md-6"><label class="form-label">Apellidos</label><input name="Apellidos" value="@p?.Apellidos" class="form-control" /></div>
+                    <div class="col-md-6"><label class="form-label">Teléfono</label><input name="Telefono" value="@p?.Telefono" class="form-control" /></div>
+                    <div class="col-md-6"><label class="form-label">Fecha de nacimiento</label><input name="FechaNacimiento" type="date" value="@p?.FechaNacimiento?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+                </div>
+            </div>
+            <div class="card-footer"><button class="btn btn-primary">Guardar</button></div>
+        </form>
+    </div>
+    <div class="col-lg-5">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="text-secondary">Correo</div><div class="mb-2">@Model.Email</div>
+                <div class="text-secondary">Rol</div><div class="mb-2">@Model.Rol (nivel @Model.Nivel)</div>
+                <div class="text-secondary">Alcance</div><div>@(Model.Cadena ?? "Todas las cadenas") @(Model.Sucursal is null ? "" : $"· {Model.Sucursal}")</div>
+            </div>
+        </div>
+        <form method="post" asp-action="Password" class="card">
+            <div class="card-header"><h3 class="card-title">Cambiar contraseña</h3></div>
+            <div class="card-body">
+                <div class="mb-2"><label class="form-label">Contraseña actual</label><input name="Actual" type="password" class="form-control" required /></div>
+                <div class="mb-2"><label class="form-label">Nueva contraseña</label><input name="Nueva" type="password" minlength="6" class="form-control" required /></div>
+            </div>
+            <div class="card-footer"><button class="btn btn-outline-primary">Actualizar contraseña</button></div>
+        </form>
+    </div>
+</div>

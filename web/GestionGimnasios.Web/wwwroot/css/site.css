@@ -1,0 +1,12 @@
+/* Ajustes mínimos sobre Tabler: el resto del estilo es el de la plantilla. */
+.badge-notification { position: absolute; top: 2px; right: 0; font-size: .65rem; }
+.barra-serie { display: flex; align-items: flex-end; gap: 4px; height: 140px; }
+.barra-serie .barra { flex: 1; background: var(--tblr-primary); border-radius: 3px 3px 0 0; min-height: 2px; position: relative; }
+.barra-serie .barra:hover { background: var(--tblr-primary-darken, #1a5fb4); }
+.etiquetas-serie { display: flex; gap: 4px; }
+.etiquetas-serie span { flex: 1; text-align: center; font-size: .7rem; color: var(--tblr-secondary); overflow: hidden; white-space: nowrap; }
+.codigo { font-family: var(--tblr-font-monospace); letter-spacing: .15em; }
+@media print {
+  .page-wrapper { margin: 0 !important; }
+  .card { break-inside: avoid; border: 1px solid #ddd; box-shadow: none; }
+}
