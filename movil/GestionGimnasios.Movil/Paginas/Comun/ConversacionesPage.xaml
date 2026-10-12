@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              xmlns:m="clr-namespace:GestionGimnasios.Movil.Modelos"
+              x:Class="GestionGimnasios.Movil.Paginas.Comun.ConversacionesPage"
+              Title="Mensajes">
+    <RefreshView x:Name="Refresco" Refreshing="OnRefrescar">
+        <CollectionView x:Name="Lista" Margin="16,8" SelectionMode="Single" SelectionChanged="OnSeleccion">
+            <CollectionView.Header>
+                <Label Text="Conversa con tu entrenador, nutricionista o con tus alumnos. Las asesorías activas aparecen aquí al escribir el primer mensaje."
+                       Style="{StaticResource Detalle}" Margin="0,8,0,8" />
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="Aún no tienes conversaciones." Style="{StaticResource Vacio}" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:Conversacion">
+                    <Border Style="{StaticResource Tarjeta}">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="{Binding OtroUsuario}" Style="{StaticResource Nombre}" />
+                            <Label Grid.Column="1" Text="{Binding Fecha}" Style="{StaticResource Detalle}" />
+                            <Label Grid.Row="1" Text="{Binding UltimoMensaje}" Style="{StaticResource Detalle}" LineBreakMode="TailTruncation" />
+                            <Border Grid.Row="1" Grid.Column="1" IsVisible="{Binding TieneSinLeer}" BackgroundColor="{StaticResource Peligro}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="8,1">
+                                <Label Text="{Binding SinLeer}" TextColor="White" FontSize="12" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+</p:PaginaBase>

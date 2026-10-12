@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              xmlns:m="clr-namespace:GestionGimnasios.Movil.Modelos"
+              x:Class="GestionGimnasios.Movil.Paginas.Cliente.SucursalesPage"
+              Title="Gimnasios">
+    <Grid RowDefinitions="Auto,*">
+        <Grid ColumnDefinitions="*,Auto" Padding="16,12,16,4" ColumnSpacing="8">
+            <SearchBar x:Name="Buscar" Placeholder="Buscar por nombre, marca o zona" TextChanged="OnBuscar" />
+            <Button x:Name="BotonCerca" Grid.Column="1" Text="Cerca de mí" Style="{StaticResource Chico}" Clicked="OnCerca" VerticalOptions="Center" />
+        </Grid>
+        <RefreshView x:Name="Refresco" Grid.Row="1" Refreshing="OnRefrescar">
+            <CollectionView x:Name="Lista" Margin="16,4" SelectionMode="Single" SelectionChanged="OnSeleccion">
+                <CollectionView.EmptyView>
+                    <Label Text="No se encontraron gimnasios." Style="{StaticResource Vacio}" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:Sucursal">
+                        <Border Style="{StaticResource Tarjeta}">
+                            <VerticalStackLayout Spacing="3">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Nombre}" Style="{StaticResource Nombre}" />
+                                    <Label Grid.Column="1" Text="{Binding Estado}" TextColor="{Binding ColorEstado}" Style="{StaticResource Insignia}" />
+                                </Grid>
+                                <Label Text="{Binding Cadena}" TextColor="{StaticResource Primary}" FontSize="13" />
+                                <Label Text="{Binding Direccion}" Style="{StaticResource Detalle}" />
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                                    <Label Text="{Binding Ocupacion}" Style="{StaticResource Detalle}" />
+                                    <Label Grid.Column="1" Text="{Binding Distancia}" Style="{StaticResource Detalle}" />
+                                </Grid>
+                                <ProgressBar Progress="{Binding PorcentajeOcupacion}" ProgressColor="{StaticResource Primary}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</p:PaginaBase>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              x:Class="GestionGimnasios.Movil.Paginas.Comun.RegistroPage"
+              Title="Crear cuenta">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="8">
+            <Label Text="Regístrate como socio. Luego activa tu plan en la recepción de tu gimnasio para poder reservar clases." Style="{StaticResource Detalle}" />
+            <Label Text="Nombres *" Margin="0,8,0,0" />
+            <Entry x:Name="Nombres" />
+            <Label Text="Apellidos *" />
+            <Entry x:Name="Apellidos" />
+            <Label Text="Correo electrónico *" />
+            <Entry x:Name="Email" Keyboard="Email" />
+            <Label Text="Contraseña * (mínimo 6 caracteres)" />
+            <Entry x:Name="Password" IsPassword="True" />
+            <Label Text="Repite la contraseña *" />
+            <Entry x:Name="Password2" IsPassword="True" />
+            <Label Text="Teléfono" />
+            <Entry x:Name="Telefono" Keyboard="Telephone" />
+            <Label Text="Carnet de identidad" />
+            <Entry x:Name="Ci" />
+            <Label Text="Género" />
+            <Picker x:Name="Genero">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Masculino</x:String>
+                        <x:String>Femenino</x:String>
+                        <x:String>Otro</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+            <Button Text="Crear mi cuenta" Clicked="OnCrear" Margin="0,12,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</p:PaginaBase>

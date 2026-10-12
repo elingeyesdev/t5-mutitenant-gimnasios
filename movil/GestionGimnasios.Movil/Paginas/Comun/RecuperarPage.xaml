@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              x:Class="GestionGimnasios.Movil.Paginas.Comun.RecuperarPage"
+              Title="Recuperar contraseña">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="8">
+            <Label Text="1. Te enviaremos un código de 6 dígitos a tu correo." Style="{StaticResource Nombre}" />
+            <Label Text="Correo electrónico" />
+            <Entry x:Name="Email" Keyboard="Email" />
+            <Button Text="Enviar código" Clicked="OnEnviar" />
+
+            <VerticalStackLayout x:Name="Paso2" IsVisible="False" Spacing="8" Margin="0,16,0,0">
+                <Label Text="2. Escribe el código y tu nueva contraseña." Style="{StaticResource Nombre}" />
+                <Label Text="Código recibido" />
+                <Entry x:Name="Codigo" Keyboard="Numeric" MaxLength="6" />
+                <Label Text="Nueva contraseña" />
+                <Entry x:Name="Password" IsPassword="True" />
+                <Label Text="Repite la nueva contraseña" />
+                <Entry x:Name="Password2" IsPassword="True" />
+                <Button Text="Cambiar contraseña" Clicked="OnRestablecer" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</p:PaginaBase>

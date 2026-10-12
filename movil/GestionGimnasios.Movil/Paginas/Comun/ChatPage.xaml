@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              xmlns:m="clr-namespace:GestionGimnasios.Movil.Modelos"
+              x:Class="GestionGimnasios.Movil.Paginas.Comun.ChatPage">
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView x:Name="Lista" Margin="12,8" ItemsUpdatingScrollMode="KeepLastItemInView">
+            <CollectionView.EmptyView>
+                <Label Text="Escribe el primer mensaje." Style="{StaticResource Vacio}" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:Mensaje">
+                    <VerticalStackLayout Padding="0,4">
+                        <Border HorizontalOptions="{Binding Alineacion}" BackgroundColor="{Binding Fondo}" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 14" Padding="12,8" MaximumWidthRequest="300">
+                            <Label Text="{Binding Texto}" TextColor="{Binding ColorTexto}" FontSize="15" />
+                        </Border>
+                        <Label Text="{Binding Fecha}" HorizontalOptions="{Binding Alineacion}" Style="{StaticResource Detalle}" FontSize="11" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="12,8" ColumnSpacing="8" BackgroundColor="White">
+            <Entry x:Name="Entrada" Placeholder="Escribe un mensaje" ReturnType="Send" Completed="OnEnviar" />
+            <Button Grid.Column="1" Text="Enviar" Clicked="OnEnviar" />
+        </Grid>
+    </Grid>
+</p:PaginaBase>

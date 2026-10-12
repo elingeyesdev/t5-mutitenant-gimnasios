@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              xmlns:m="clr-namespace:GestionGimnasios.Movil.Modelos"
+              x:Class="GestionGimnasios.Movil.Paginas.Cliente.InicioClientePage"
+              Title="Inicio">
+    <RefreshView x:Name="Refresco" Refreshing="OnRefrescar">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="4">
+                <Label x:Name="Saludo" Style="{StaticResource Titulo}" />
+                <Label x:Name="Gimnasio" Style="{StaticResource Detalle}" />
+
+                <Border Style="{StaticResource TarjetaDestacada}" Margin="0,12,0,10">
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                        <Label x:Name="Plan" TextColor="White" FontSize="18" FontFamily="OpenSansSemibold" />
+                        <Label x:Name="Vigencia" Grid.Row="1" TextColor="White" FontSize="13" />
+                        <Label x:Name="Restante" Grid.Row="2" TextColor="White" FontSize="13" />
+                        <Button Grid.Column="1" Grid.RowSpan="3" Text="Mi carnet" BackgroundColor="White" TextColor="{StaticResource Primary}"
+                                VerticalOptions="Center" Clicked="OnCarnet" />
+                    </Grid>
+                </Border>
+
+                <Border x:Name="AvisoEspera" Style="{StaticResource Tarjeta}" BackgroundColor="#FFF4E5" Stroke="{StaticResource Alerta}" IsVisible="False">
+                    <Label x:Name="TextoEspera" TextColor="{StaticResource Alerta}" FontFamily="OpenSansSemibold" />
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Border Style="{StaticResource Tarjeta}">
+                        <VerticalStackLayout>
+                            <Label x:Name="Sesiones" Style="{StaticResource Numero}" />
+                            <Label Text="entrenamientos este mes" Style="{StaticResource Detalle}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource Tarjeta}">
+                        <VerticalStackLayout>
+                            <Label x:Name="Notificaciones" Style="{StaticResource Numero}" />
+                            <Label Text="notificaciones sin leer" Style="{StaticResource Detalle}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Próximas clases" Style="{StaticResource Seccion}" />
+                    <Button Grid.Column="1" Text="Reservar" Style="{StaticResource Chico}" Clicked="OnReservar" VerticalOptions="Center" />
+                </Grid>
+                <VerticalStackLayout x:Name="Proximas">
+                    <BindableLayout.EmptyViewTemplate>
+                        <DataTemplate>
+                            <Label Text="No tienes clases reservadas. Busca un gimnasio y reserva tu lugar." Style="{StaticResource Vacio}" />
+                        </DataTemplate>
+                    </BindableLayout.EmptyViewTemplate>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:Reserva">
+                            <Border Style="{StaticResource Tarjeta}">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Actividad}" Style="{StaticResource Nombre}" />
+                                        <Label Text="{Binding Cuando}" Style="{StaticResource Detalle}" />
+                                        <Label Text="{Binding Sucursal}" Style="{StaticResource Detalle}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1" Text="{Binding Codigo}" FontFamily="OpenSansSemibold" FontSize="16" VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="Tus gimnasios frecuentes" Style="{StaticResource Seccion}" />
+                <VerticalStackLayout x:Name="Frecuentes">
+                    <BindableLayout.EmptyViewTemplate>
+                        <DataTemplate>
+                            <Label Text="Aún no registras visitas." Style="{StaticResource Vacio}" />
+                        </DataTemplate>
+                    </BindableLayout.EmptyViewTemplate>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:GimnasioFrecuente">
+                            <Border Style="{StaticResource Tarjeta}">
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding Nombre}" Style="{StaticResource Nombre}" />
+                                    <Label Text="{Binding Texto}" Style="{StaticResource Detalle}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</p:PaginaBase>

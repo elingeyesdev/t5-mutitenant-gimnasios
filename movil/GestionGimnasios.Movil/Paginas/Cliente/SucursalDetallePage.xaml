@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              xmlns:m="clr-namespace:GestionGimnasios.Movil.Modelos"
+              x:Class="GestionGimnasios.Movil.Paginas.Cliente.SucursalDetallePage"
+              Title="Gimnasio">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="4">
+            <Label x:Name="Nombre" Style="{StaticResource Titulo}" />
+            <Label x:Name="Cadena" TextColor="{StaticResource Primary}" />
+            <Label x:Name="Direccion" Style="{StaticResource Detalle}" />
+            <Label x:Name="Descripcion" Margin="0,6,0,0" />
+            <Button Text="Ver en el mapa" Style="{StaticResource Secundario}" Clicked="OnMapa" Margin="0,8" />
+
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <Border Style="{StaticResource Tarjeta}">
+                    <VerticalStackLayout>
+                        <Label x:Name="Estado" FontFamily="OpenSansSemibold" FontSize="16" />
+                        <Label Text="ahora" Style="{StaticResource Detalle}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Tarjeta}">
+                    <VerticalStackLayout>
+                        <Label x:Name="Aforo" FontFamily="OpenSansSemibold" FontSize="16" />
+                        <Label Text="personas dentro" Style="{StaticResource Detalle}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Tarjeta}">
+                    <VerticalStackLayout>
+                        <Label x:Name="Maquinas" FontFamily="OpenSansSemibold" FontSize="16" />
+                        <Label Text="máquinas listas" Style="{StaticResource Detalle}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Label Text="Horario de atención" Style="{StaticResource Seccion}" />
+            <Border Style="{StaticResource Tarjeta}">
+                <VerticalStackLayout x:Name="Horarios" Spacing="2">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:HorarioSucursal">
+                            <Label Text="{Binding Texto}" FontSize="14" />
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+            <Label Text="Servicios" Style="{StaticResource Seccion}" />
+            <Label x:Name="Servicios" />
+
+            <Label Text="Clases y reservas" Style="{StaticResource Seccion}" />
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <Label Text="Fecha" VerticalOptions="Center" />
+                <DatePicker x:Name="Fecha" Grid.Column="1" Format="dddd dd/MM/yyyy" DateSelected="OnFecha" />
+            </Grid>
+            <VerticalStackLayout x:Name="Clases">
+                <BindableLayout.EmptyViewTemplate>
+                    <DataTemplate>
+                        <Label Text="No hay clases programadas para esta fecha." Style="{StaticResource Vacio}" />
+                    </DataTemplate>
+                </BindableLayout.EmptyViewTemplate>
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="m:Disponibilidad">
+                        <Border Style="{StaticResource Tarjeta}">
+                            <VerticalStackLayout Spacing="3">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Actividad}" Style="{StaticResource Nombre}" />
+                                    <Label Grid.Column="1" Text="{Binding Horario}" FontFamily="OpenSansSemibold" />
+                                </Grid>
+                                <Label Text="{Binding InstructorTexto}" Style="{StaticResource Detalle}" />
+                                <Label Text="{Binding Cupos}" TextColor="{Binding ColorCupos}" FontSize="13" />
+                                <Button Text="Reservar mi lugar" IsVisible="{Binding PuedeReservar}" Clicked="OnReservar" Margin="0,6,0,0" />
+                                <Button Text="Anotarme en la lista de espera" Style="{StaticResource Secundario}" IsVisible="{Binding PuedeEsperar}"
+                                        Clicked="OnEsperar" Margin="0,6,0,0" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</p:PaginaBase>

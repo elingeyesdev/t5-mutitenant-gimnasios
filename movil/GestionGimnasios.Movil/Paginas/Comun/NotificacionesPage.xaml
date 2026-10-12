@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              xmlns:m="clr-namespace:GestionGimnasios.Movil.Modelos"
+              x:Class="GestionGimnasios.Movil.Paginas.Comun.NotificacionesPage"
+              Title="Notificaciones">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Marcar leídas" Clicked="OnTodasLeidas" />
+    </ContentPage.ToolbarItems>
+    <Grid RowDefinitions="Auto,*">
+        <Border Style="{StaticResource Tarjeta}" Margin="16,16,16,0">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Qué avisos quiero recibir" Style="{StaticResource Nombre}" />
+                <Grid ColumnDefinitions="*,Auto"><Label Text="Confirmaciones de reserva" VerticalOptions="Center" /><Switch x:Name="Confirmaciones" Grid.Column="1" Toggled="OnPreferencia" /></Grid>
+                <Grid ColumnDefinitions="*,Auto"><Label Text="Recordatorios de clase (2 h antes)" VerticalOptions="Center" /><Switch x:Name="Recordatorios" Grid.Column="1" Toggled="OnPreferencia" /></Grid>
+                <Grid ColumnDefinitions="*,Auto"><Label Text="Cancelaciones y lista de espera" VerticalOptions="Center" /><Switch x:Name="Cancelaciones" Grid.Column="1" Toggled="OnPreferencia" /></Grid>
+                <Grid ColumnDefinitions="*,Auto"><Label Text="Promociones del gimnasio" VerticalOptions="Center" /><Switch x:Name="Promociones" Grid.Column="1" Toggled="OnPreferencia" /></Grid>
+            </VerticalStackLayout>
+        </Border>
+        <RefreshView x:Name="Refresco" Grid.Row="1" Refreshing="OnRefrescar">
+            <CollectionView x:Name="Lista" Margin="16,8" SelectionMode="Single" SelectionChanged="OnSeleccion">
+                <CollectionView.EmptyView>
+                    <Label Text="No tienes notificaciones." Style="{StaticResource Vacio}" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:Notificacion">
+                        <Border Style="{StaticResource Tarjeta}">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding Titulo}" FontAttributes="{Binding Peso}" FontSize="15" />
+                                <Label Text="{Binding Cuerpo}" FontSize="14" />
+                                <Label Text="{Binding Fecha}" Style="{StaticResource Detalle}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</p:PaginaBase>

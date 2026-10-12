@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              x:Class="GestionGimnasios.Movil.Paginas.Comun.LoginPage"
+              NavigationPage.HasNavigationBar="False">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,60,24,24" Spacing="14">
+            <Border BackgroundColor="{StaticResource Primary}" StrokeThickness="0" StrokeShape="RoundRectangle 20"
+                    WidthRequest="84" HeightRequest="84" HorizontalOptions="Center">
+                <Label Text="GG" FontSize="34" FontFamily="OpenSansSemibold" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Text="Gestión Gimnasios" Style="{StaticResource Titulo}" HorizontalOptions="Center" />
+            <Label Text="Ingresa con tu cuenta de socio o de personal" Style="{StaticResource Detalle}" HorizontalOptions="Center" />
+
+            <Border Style="{StaticResource Tarjeta}" Margin="0,16,0,0">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Correo electrónico" />
+                    <Entry x:Name="Email" Keyboard="Email" Placeholder="tu@correo.com" ReturnType="Next" />
+                    <Label Text="Contraseña" />
+                    <Entry x:Name="Password" IsPassword="True" Placeholder="Tu contraseña" ReturnType="Go" Completed="OnEntrar" />
+                    <Button x:Name="BotonEntrar" Text="Iniciar sesión" Clicked="OnEntrar" Margin="0,8,0,0" />
+                    <ActivityIndicator IsRunning="{Binding Ocupado, Source={RelativeSource AncestorType={x:Type p:PaginaBase}}, x:DataType=p:PaginaBase}" HeightRequest="24" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="¿Olvidaste tu contraseña?" Style="{StaticResource Secundario}" Clicked="OnRecuperar" />
+            <Button Text="Crear cuenta de socio" Style="{StaticResource Secundario}" Clicked="OnRegistro" />
+
+            <Label x:Name="Servidor" Style="{StaticResource Detalle}" HorizontalOptions="Center" Margin="0,20,0,0">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnServidor" />
+                </Label.GestureRecognizers>
+            </Label>
+        </VerticalStackLayout>
+    </ScrollView>
+</p:PaginaBase>

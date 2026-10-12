@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              xmlns:m="clr-namespace:GestionGimnasios.Movil.Modelos"
+              x:Class="GestionGimnasios.Movil.Paginas.Cliente.MiRutinaPage"
+              Title="Entrenar">
+    <RefreshView x:Name="Refresco" Refreshing="OnRefrescar">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="4">
+                <Border x:Name="SinRutina" Style="{StaticResource Tarjeta}" IsVisible="False">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Aún no tienes una rutina asignada" Style="{StaticResource Nombre}" />
+                        <Label Text="Solicita un entrenador en Más › Entrenadores y nutricionistas. Mientras tanto puedes registrar un entrenamiento libre."
+                               Style="{StaticResource Detalle}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border x:Name="TarjetaRutina" Style="{StaticResource TarjetaDestacada}" IsVisible="False">
+                    <VerticalStackLayout Spacing="2">
+                        <Label x:Name="Nombre" TextColor="White" FontSize="20" FontFamily="OpenSansSemibold" />
+                        <Label x:Name="Detalle" TextColor="White" FontSize="13" />
+                        <Label x:Name="Entrenador" TextColor="White" FontSize="13" />
+                        <Label x:Name="Descripcion" TextColor="White" FontSize="13" Margin="0,6,0,0" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,4,0,8">
+                    <Button x:Name="BotonRutina" Text="Entrenar mi rutina" Clicked="OnEntrenarRutina" />
+                    <Button Grid.Column="1" Text="Entrenamiento libre" Style="{StaticResource Secundario}" Clicked="OnLibre" />
+                </Grid>
+
+                <Label x:Name="TituloEjercicios" Text="Ejercicios" Style="{StaticResource Seccion}" />
+                <VerticalStackLayout x:Name="Ejercicios">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:RutinaEjercicio">
+                            <Border Style="{StaticResource Tarjeta}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Ejercicio}" Style="{StaticResource Nombre}" />
+                                        <Label Grid.Column="1" Text="{Binding DiaTexto}" Style="{StaticResource Detalle}" />
+                                    </Grid>
+                                    <Label Text="{Binding GrupoMuscular}" TextColor="{StaticResource Primary}" FontSize="13" />
+                                    <Label Text="{Binding Prescripcion}" Style="{StaticResource Detalle}" />
+                                    <Label Text="{Binding Notas}" FontSize="13" FontAttributes="Italic" />
+                                    <Button Text="Ver video del ejercicio" Style="{StaticResource Chico}" IsVisible="{Binding TieneVideo}"
+                                            HorizontalOptions="Start" Clicked="OnVideo" Margin="0,4,0,0" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="Últimos entrenamientos" Style="{StaticResource Seccion}" />
+                <VerticalStackLayout x:Name="Sesiones">
+                    <BindableLayout.EmptyViewTemplate>
+                        <DataTemplate>
+                            <Label Text="Todavía no registraste entrenamientos." Style="{StaticResource Vacio}" />
+                        </DataTemplate>
+                    </BindableLayout.EmptyViewTemplate>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:SesionEntrenamiento">
+                            <Border Style="{StaticResource Tarjeta}" Padding="12,8">
+                                <VerticalStackLayout>
+                                    <Label Text="{Binding Titulo}" FontSize="15" FontFamily="OpenSansSemibold" />
+                                    <Label Text="{Binding Detalle}" Style="{StaticResource Detalle}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</p:PaginaBase>

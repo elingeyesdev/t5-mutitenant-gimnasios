@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              xmlns:m="clr-namespace:GestionGimnasios.Movil.Modelos"
+              x:Class="GestionGimnasios.Movil.Paginas.Cliente.MisReservasPage"
+              Title="Mis reservas">
+    <RefreshView x:Name="Refresco" Refreshing="OnRefrescar">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="4">
+                <Label Text="Próximas" Style="{StaticResource Seccion}" />
+                <VerticalStackLayout x:Name="Proximas">
+                    <BindableLayout.EmptyViewTemplate>
+                        <DataTemplate>
+                            <Label Text="No tienes reservas pendientes." Style="{StaticResource Vacio}" />
+                        </DataTemplate>
+                    </BindableLayout.EmptyViewTemplate>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:Reserva">
+                            <Border Style="{StaticResource Tarjeta}">
+                                <VerticalStackLayout Spacing="3">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Actividad}" Style="{StaticResource Nombre}" />
+                                        <Label Grid.Column="1" Text="{Binding EstadoTexto}" TextColor="{Binding ColorEstado}" Style="{StaticResource Insignia}" />
+                                    </Grid>
+                                    <Label Text="{Binding Cuando}" />
+                                    <Label Text="{Binding Sucursal}" Style="{StaticResource Detalle}" />
+                                    <Label Text="{Binding Instructor, StringFormat='Instructor: {0}'}" Style="{StaticResource Detalle}" />
+                                    <Border BackgroundColor="{StaticResource Secondary}" StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="10" Margin="0,8,0,0">
+                                        <VerticalStackLayout>
+                                            <Label Text="Código de ingreso" Style="{StaticResource Detalle}" HorizontalOptions="Center" />
+                                            <Label Text="{Binding Codigo}" Style="{StaticResource Codigo}" FontSize="28" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                    <Button Text="Cancelar reserva" Style="{StaticResource Peligroso}" IsVisible="{Binding Cancelable}" Clicked="OnCancelar" Margin="0,6,0,0" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="Lista de espera" Style="{StaticResource Seccion}" />
+                <VerticalStackLayout x:Name="Espera">
+                    <BindableLayout.EmptyViewTemplate>
+                        <DataTemplate>
+                            <Label Text="No estás en ninguna lista de espera." Style="{StaticResource Vacio}" />
+                        </DataTemplate>
+                    </BindableLayout.EmptyViewTemplate>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:EntradaEspera">
+                            <Border Style="{StaticResource Tarjeta}">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Actividad}" Style="{StaticResource Nombre}" />
+                                        <Label Text="{Binding Cuando}" Style="{StaticResource Detalle}" />
+                                        <Label Text="{Binding PosicionTexto}" TextColor="{StaticResource Alerta}" FontSize="13" />
+                                    </VerticalStackLayout>
+                                    <Button Grid.Column="1" Text="Salir" Style="{StaticResource Chico}" Clicked="OnSalirEspera" VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="Historial" Style="{StaticResource Seccion}" />
+                <VerticalStackLayout x:Name="Historial">
+                    <BindableLayout.EmptyViewTemplate>
+                        <DataTemplate>
+                            <Label Text="Sin reservas anteriores." Style="{StaticResource Vacio}" />
+                        </DataTemplate>
+                    </BindableLayout.EmptyViewTemplate>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:Reserva">
+                            <Border Style="{StaticResource Tarjeta}" Padding="12,8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Actividad}" FontSize="15" />
+                                        <Label Text="{Binding Cuando}" Style="{StaticResource Detalle}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1" Text="{Binding EstadoTexto}" TextColor="{Binding ColorEstado}" Style="{StaticResource Insignia}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</p:PaginaBase>

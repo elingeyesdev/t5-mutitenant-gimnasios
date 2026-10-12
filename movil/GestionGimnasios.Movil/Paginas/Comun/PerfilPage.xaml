@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<p:PaginaBase xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:p="clr-namespace:GestionGimnasios.Movil.Paginas"
+              x:Class="GestionGimnasios.Movil.Paginas.Comun.PerfilPage"
+              Title="Mi perfil">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="8">
+            <Border Style="{StaticResource Tarjeta}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                    <Border WidthRequest="72" HeightRequest="72" StrokeShape="RoundRectangle 36" StrokeThickness="0" BackgroundColor="{StaticResource Secondary}">
+                        <Grid>
+                            <Label x:Name="Iniciales" FontSize="26" FontFamily="OpenSansSemibold" TextColor="{StaticResource Primary}"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Image x:Name="Avatar" Aspect="AspectFill" />
+                        </Grid>
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label x:Name="Nombre" Style="{StaticResource Nombre}" />
+                        <Label x:Name="Correo" Style="{StaticResource Detalle}" />
+                        <Button Text="Cambiar foto" Style="{StaticResource Chico}" HorizontalOptions="Start" Clicked="OnFoto" Margin="0,6,0,0" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Label Text="Datos personales" Style="{StaticResource Seccion}" />
+            <Border Style="{StaticResource Tarjeta}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Nombres" />
+                    <Entry x:Name="Nombres" />
+                    <Label Text="Apellidos" />
+                    <Entry x:Name="Apellidos" />
+                    <Label Text="Nombre de usuario" />
+                    <Entry x:Name="NombreUsuario" />
+                    <Label Text="Teléfono" />
+                    <Entry x:Name="Telefono" Keyboard="Telephone" />
+                    <Label Text="Carnet de identidad" />
+                    <Entry x:Name="Ci" />
+                    <Label Text="Género" />
+                    <Picker x:Name="Genero">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Masculino</x:String>
+                                <x:String>Femenino</x:String>
+                                <x:String>Otro</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                    <Label Text="Fecha de nacimiento" />
+                    <DatePicker x:Name="FechaNacimiento" Format="dd/MM/yyyy" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Datos de salud" Style="{StaticResource Seccion}" />
+            <Border Style="{StaticResource Tarjeta}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Altura (cm)" />
+                    <Entry x:Name="Altura" Keyboard="Numeric" />
+                    <Label Text="Nivel de experiencia" />
+                    <Picker x:Name="Nivel">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>PRINCIPIANTE</x:String>
+                                <x:String>INTERMEDIO</x:String>
+                                <x:String>AVANZADO</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                    <Label Text="Condiciones médicas" />
+                    <Editor x:Name="Condiciones" AutoSize="TextChanges" Placeholder="Alergias, lesiones, enfermedades…" />
+                </VerticalStackLayout>
+            </Border>
+            <Button Text="Guardar cambios" Clicked="OnGuardar" />
+        </VerticalStackLayout>
+    </ScrollView>
+</p:PaginaBase>
