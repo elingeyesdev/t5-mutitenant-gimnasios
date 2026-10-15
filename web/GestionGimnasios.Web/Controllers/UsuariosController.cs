@@ -7,7 +7,7 @@ namespace GestionGimnasios.Web.Controllers;
 
 /// <summary>Gestión de usuarios de su alcance y turnos del personal (HU-06, HU-07, HU-08).</summary>
 [Authorize(Politicas.Admin)]
-public class UsuariosController(UsuariosService usuarios, RolesService roles, SedesService sedes, PersonalService personal, UsuarioActual actual) : PanelController
+public class UsuariosController(UsuariosService usuarios, RolesService roles, SedesService sedes, PersonalService personal, UsuarioActual actual, SuscripcionesService suscripciones) : PanelController
 {
     public async Task<IActionResult> Index([FromQuery] FiltroUsuarios f)
     {
@@ -80,5 +80,6 @@ public class UsuariosController(UsuariosService usuarios, RolesService roles, Se
         ViewBag.Roles = await roles.RolesAsignablesAsync();
         ViewBag.Sucursales = await sedes.SucursalesAsync();
         ViewBag.Cadenas = await sedes.CadenasAsync();
+        ViewBag.Planes = await suscripciones.PlanesAsync();
     }
 }
