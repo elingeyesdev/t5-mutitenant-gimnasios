@@ -24,6 +24,7 @@ public partial class InicioClientePage : PaginaBase
         var hoy = Hora.Hoy;
         if (u.SucursalId is int sucursalId)
             clasesDeHoy = await Api.GetAsync<List<Disponibilidad>>($"/api/reservas/disponibilidad?sucursalId={sucursalId}&fecha={hoy:yyyy-MM-dd}");
+        BindableLayout.SetItemsSource(ClasesHoy, clasesDeHoy);
 
         var reservas = await Api.GetAsync<List<Reserva>>("/api/reservas/mias");
         BindableLayout.SetItemsSource(Proximas, reservas

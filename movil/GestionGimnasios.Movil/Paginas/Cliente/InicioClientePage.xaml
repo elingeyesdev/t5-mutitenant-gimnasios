@@ -40,6 +40,26 @@
                     </Border>
                 </Grid>
 
+                <Label Text="Clases de hoy en tu gimnasio" Style="{StaticResource Seccion}" />
+                <VerticalStackLayout x:Name="ClasesHoy">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:Disponibilidad">
+                            <Border Style="{StaticResource Tarjeta}">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                    <Label Text="{Binding Horario}" FontFamily="OpenSansSemibold" FontSize="16"
+                                           TextColor="{StaticResource Primary}" VerticalOptions="Start" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                        <Label Text="{Binding Actividad}" Style="{StaticResource Nombre}" />
+                                        <Label Text="{Binding InstructorTexto}" Style="{StaticResource Detalle}" />
+                                        <Label Text="{Binding Cupos}" FontFamily="OpenSansSemibold" FontSize="13"
+                                               TextColor="{Binding ColorCupos}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
                 <Grid ColumnDefinitions="*,Auto">
                     <Label Text="Próximas clases" Style="{StaticResource Seccion}" />
                     <Button Grid.Column="1" Text="Reservar" Style="{StaticResource Chico}" Clicked="OnReservar" VerticalOptions="Center" />
