@@ -24,6 +24,7 @@ public record UsuarioDto(
     IReadOnlyList<RolAsignadoDto> Roles, IReadOnlyList<MembresiaDto> Membresias)
 {
     public string NombreCompleto => Perfil is null ? Email : $"{Perfil.Nombres} {Perfil.Apellidos}".Trim();
+    public SuscripcionResumenDto? Suscripcion { get; init; }
 }
 
 public class UsuarioForm
@@ -115,7 +116,11 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
         var total = await q.CountAsync();
         var limite = Math.Clamp(f.Limite, 1, 500);
         var pagina = await Completo(q).Skip(f.Desde).Take(limite).ToListAsync();
-        return new Pagina<UsuarioDto>(pagina.Select(ADto).ToList(), total, limite, f.Desde);
+        var datos = pagina.Select(ADto).ToList();
+        var resumenes = await suscripciones.ResumenPorUsuariosAsync(
+            datos.Where(u => u.Rol == Roles.Cliente).Select(u => u.Id), f.SucursalId);
+        datos = datos.Select(u => u with { Suscripcion = resumenes.GetValueOrDefault(u.Id) }).ToList();
+        return new Pagina<UsuarioDto>(datos, total, limite, f.Desde);
     }
 
     public async Task<UsuarioDto> ObtenerAsync(int id)
