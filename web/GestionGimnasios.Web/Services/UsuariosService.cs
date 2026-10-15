@@ -165,6 +165,9 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
             ? await db.Roles.FirstAsync(r => r.Nombre == Roles.Cliente)
             : await db.Roles.FindAsync(f.RolId ?? 0) ?? throw ErrorNegocio.NoEncontrado($"Rol {f.RolId} no encontrado.");
 
+        if (!registroPublico && rol.Nombre == Roles.Cliente && string.IsNullOrWhiteSpace(f.Ci))
+            throw ErrorNegocio.Solicitud("El Carnet de Identidad (CI) es obligatorio para registrar un socio.");
+
         var u = new Usuario
         {
             Email = email,

@@ -7,6 +7,7 @@
     ViewData["Title"] = editando ? $"Editar · {usuario!.NombreCompleto}" : "Nuevo usuario";
     ViewData["Pretitulo"] = "Usuarios";
     var roles = (List<RolDto>)ViewBag.Roles;
+    var ciObligatorio = !editando && roles.Any(r => r.Id == Model.RolId && r.Nombre == Roles.Cliente);
     var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
     var cadenas = (List<CadenaDto>)ViewBag.Cadenas;
 }
@@ -24,7 +25,10 @@
                             <label class="form-label @(editando ? "" : "required")">Contraseña</label>
                             <input asp-for="Password" type="password" class="form-control" minlength="6" required="@(!editando)" placeholder="@(editando ? "Dejar vacío para no cambiarla" : "")" />
                         </div>
-                        <div class="col-md-4"><label class="form-label">Carnet de identidad</label><input asp-for="Ci" class="form-control" /></div>
+                        <div class="col-md-4">
+                            <label asp-for="Ci" id="ci-label" class="form-label @(ciObligatorio ? "required" : "")">Carnet de identidad</label>
+                            <input asp-for="Ci" class="form-control" required="@ciObligatorio" />
+                        </div>
                         <div class="col-md-4"><label class="form-label">Teléfono</label><input asp-for="Telefono" class="form-control" /></div>
                         <div class="col-md-4">
                             <label class="form-label">Género</label>
@@ -56,7 +60,7 @@
                             <option value="">Elegir…</option>
                             @foreach (var r in roles)
                             {
-                                <option value="@r.Id">@r.Nombre (nivel @r.Nivel)</option>
+                                <option value="@r.Id" data-socio="@(r.Nombre == Roles.Cliente ? "true" : "false")">@r.Nombre (nivel @r.Nivel)</option>
                             }
                         </select>
                         <small class="form-hint">Solo aparecen roles de nivel menor al tuyo (RT-03).</small>
@@ -114,3 +118,23 @@
         <a class="btn btn-link" asp-action="Index">Cancelar</a>
     </div>
 </form>
+
+@section Scripts {
+    @if (!editando)
+    {
+        <script>
+            const rol = document.getElementById('RolId');
+            const ci = document.getElementById('Ci');
+            const ciLabel = document.getElementById('ci-label');
+
+            function actualizarCiObligatorio() {
+                const obligatorio = rol.selectedOptions[0]?.dataset.socio === 'true';
+                ci.required = obligatorio;
+                ciLabel.classList.toggle('required', obligatorio);
+            }
+
+            rol.addEventListener('change', actualizarCiObligatorio);
+            actualizarCiObligatorio();
+        </script>
+    }
+}
