@@ -42,6 +42,12 @@
 
                 <Label Text="Clases de hoy en tu gimnasio" Style="{StaticResource Seccion}" />
                 <VerticalStackLayout x:Name="ClasesHoy">
+                    <BindableLayout.EmptyViewTemplate>
+                        <DataTemplate>
+                            <Label Text="{Binding Source={x:Reference ClasesHoy}, Path=(BindableLayout.EmptyView)}"
+                                   Style="{StaticResource Vacio}" />
+                        </DataTemplate>
+                    </BindableLayout.EmptyViewTemplate>
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="m:Disponibilidad">
                             <Border Style="{StaticResource Tarjeta}">

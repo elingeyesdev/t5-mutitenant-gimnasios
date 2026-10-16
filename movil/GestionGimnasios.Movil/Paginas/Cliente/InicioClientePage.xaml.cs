@@ -22,8 +22,12 @@ public partial class InicioClientePage : PaginaBase
         Restante.Text = activa?.Restante ?? "";
 
         var hoy = Hora.Hoy;
-        if (u.SucursalId is int sucursalId)
-            clasesDeHoy = await Api.GetAsync<List<Disponibilidad>>($"/api/reservas/disponibilidad?sucursalId={sucursalId}&fecha={hoy:yyyy-MM-dd}");
+        clasesDeHoy = u.SucursalId is int sucursalId
+            ? await Api.GetAsync<List<Disponibilidad>>($"/api/reservas/disponibilidad?sucursalId={sucursalId}&fecha={hoy:yyyy-MM-dd}")
+            : [];
+        BindableLayout.SetEmptyView(ClasesHoy, u.SucursalId is null
+            ? "No tienes un gimnasio asignado para consultar las clases de hoy."
+            : "No hay clases disponibles hoy en tu gimnasio.");
         BindableLayout.SetItemsSource(ClasesHoy, clasesDeHoy);
 
         var reservas = await Api.GetAsync<List<Reserva>>("/api/reservas/mias");
