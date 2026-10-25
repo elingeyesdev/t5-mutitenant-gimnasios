@@ -1,7 +1,10 @@
-# Casos de uso · Gestión Gimnasios (migración)
+# Casos de uso · Gestión Gimnasios
 
-Paquete EDT **2.2**. Describen lo que el sistema **ya hace** en el proyecto base (GymSync) y que la
-versión en Stack B debe reproducir. No incluyen mejoras (RF-01 a RF-06, fase 2).
+- **CU-01 a CU-34 (fase 1, migración):** describen lo que el proyecto base (GymSync) ya hacía y que
+  la versión en Stack B reproduce. Hoy sirven como pruebas de regresión. En el mapa, su columna EDT
+  usa la [EDT de la fase 1](../planificacion/fase-1-migracion/README.md).
+- **CU-35 a CU-40 (fase 2, mejoras RF-01 a RF-06):** sección 5. Su columna EDT usa la
+  [EDT vigente](../planificacion/README.md).
 
 Fuente de cada caso: endpoints del backend NestJS, pantallas del panel React y de la app Expo, y
 la ejecución del proyecto base ([../diagnostico-proyecto-base.md](../diagnostico-proyecto-base.md) §8).
@@ -63,9 +66,15 @@ nivel menor y solo dentro de su alcance (cadena o sucursal).
 | CU-32 | Generar reportes | Super administrador, Gerente | Web | 3.16 · 3.17 |
 | CU-33 | Consultar sucursales y sus clases | Cliente | App | 3.2 · 3.7 · 4.7 |
 | CU-34 | Consultar reportes del personal | Entrenador, Instructor | App | 3.15 · 4.6 · 4.10 |
+| CU-35 | Revisar la técnica mediante video (RF-01) | Cliente, Entrenador | App y web | 7.1 · 7.2 · 7.3 |
+| CU-36 | Autorizar la portabilidad del perfil (RF-02) | Cliente, Gerente | App y web | 3.1 · 3.2 |
+| CU-37 | Obtener y canjear recompensas (RF-03) | Cliente, Recepcionista, Gerente | App y web | 4.1 · 4.2 |
+| CU-38 | Gestionar alertas de inactividad (RF-04) | Entrenador, Gerente, Sistema | Web | 5.1 · 5.2 |
+| CU-39 | Renovar la membresía con QR (RF-05) | Cliente, Recepcionista | App y web | 6.1 · 6.2 |
+| CU-40 | Consultar simulaciones de ejercicios y nutrición (RF-06) | Cliente, Entrenador, Nutricionista | App y web | 8.1 · 8.2 · 8.3 |
 
 Funciones del proyecto base **pendientes de aprobación del docente** (dependen de tecnologías fuera
-del PDF, ver [../planificacion/README.md](../planificacion/README.md) §1): mensajería, mapa de
+del PDF, ver [../planificacion/fase-1-migracion/README.md](../planificacion/fase-1-migracion/README.md) §1): mensajería, mapa de
 sedes con geolocalización y registro de visitas, y modo sin conexión. Se agregan como casos de uso
 si el docente las aprueba.
 
@@ -511,3 +520,76 @@ Aplican a todos los casos de uso y se prueban en cada paquete.
 - **Postcondición:** ninguna (consulta).
 - **Origen:** `GET /staff/me/stats/attendance`, `/staff/me/advisee-activity`,
   `/staff/dashboard-stats`; TrainerDashboard, InstructorReport, TrainerReport, ReportPreview (app).
+
+---
+
+## 5. Casos de uso de las mejoras (fase 2)
+
+Los casos CU-01 a CU-34 describen el sistema migrado y sirven como **pruebas de regresión**. Los
+casos CU-35 a CU-40 son las mejoras de la fase 2 ([../planificacion/README.md](../planificacion/README.md)).
+Todos cumplen RT-01 a RT-05. Las excepciones comunes son las siguientes, y se informan sin exponer
+datos sensibles:
+- acceso fuera del alcance del usuario;
+- información incompleta;
+- servicio externo no disponible.
+
+### CU-35 Revisar la técnica mediante video (RF-01)
+- **Actores:** cliente, entrenador · **Canal:** app (envío y resultado) y web (revisión)
+- **Precondición:** el cliente tiene una asesoría activa con el entrenador.
+- **Flujo básico:**
+  1. El cliente graba o elige el video de un ejercicio y lo envía.
+  2. El sistema genera un análisis preliminar, que queda visible **solo para el entrenador**.
+  3. El entrenador revisa el video y el análisis, y valida o corrige la valoración con su observación.
+  4. El cliente recibe la devolución aprobada.
+- **Alternos:** 2a. Sin tecnología de análisis aprobada, el entrenador evalúa el video directamente
+  y el análisis preliminar se muestra como «no disponible».
+- **Postcondición:** queda registrada la revisión, con la fecha, el entrenador y la valoración final.
+- **Regla:** el análisis preliminar nunca reemplaza el criterio del entrenador.
+
+### CU-36 Autorizar la portabilidad del perfil (RF-02)
+- **Actores:** cliente, gerente de otra cadena · **Canal:** app (consentimiento) y web (consulta)
+- **Flujo básico:**
+  1. El cliente elige a qué cadena le permite consultar su perfil deportivo y qué datos comparte.
+  2. El sistema registra el consentimiento, con su alcance y su fecha.
+  3. El personal autorizado de esa cadena consulta solo los datos permitidos.
+  4. El cliente puede revocar el consentimiento en cualquier momento.
+- **Postcondición:** el consentimiento o la revocación quedan registrados y son verificables.
+- **Regla:** sin consentimiento vigente, otra cadena no accede al historial (RT-01).
+
+### CU-37 Obtener y canjear recompensas (RF-03)
+- **Actores:** cliente, recepcionista, gerente · **Canal:** app (consulta y canje) y web (gestión)
+- **Flujo básico:**
+  1. El gerente define beneficios y cupones, con su condición, vigencia y límite de uso.
+  2. El cliente ve los beneficios para los que es elegible.
+  3. Pide el canje, y el sistema verifica la elegibilidad, la vigencia y el uso.
+  4. Se registra el canje y se muestra el comprobante a recepción.
+- **Alternos:** 3a. El cupón está vencido, agotado o ya fue usado: se rechaza el canje con el motivo.
+- **Postcondición:** el canje queda registrado una sola vez, sin duplicados.
+
+### CU-38 Gestionar alertas de inactividad (RF-04)
+- **Actores:** entrenador, gerente, sistema · **Canal:** web
+- **Flujo básico:**
+  1. El gerente configura los umbrales de inactividad de su cadena.
+  2. El sistema detecta a diario a los socios que superan el umbral.
+  3. El entrenador o el gerente ven la alerta y registran el contacto o el seguimiento.
+- **Postcondición:** la intervención queda registrada en la alerta.
+- **Regla:** las alertas respetan el alcance de la cadena y de la sucursal (RT-01, RT-02).
+
+### CU-39 Renovar la membresía con QR (RF-05)
+- **Actores:** cliente, recepcionista · **Canal:** app (pago) y web (confirmación)
+- **Flujo básico:**
+  1. El cliente pide renovar su plan y el sistema genera una orden con su QR.
+  2. El cliente paga y adjunta o registra el comprobante.
+  3. Recepción confirma el pago y la membresía se renueva.
+  4. El cliente consulta el estado de la orden: pendiente o confirmado.
+- **Postcondición:** la orden, el comprobante y el estado quedan registrados.
+- **Regla:** sin confirmación, la membresía no se activa automáticamente.
+
+### CU-40 Consultar simulaciones de ejercicios y nutrición (RF-06)
+- **Actores:** cliente, entrenador, nutricionista · **Canal:** app (consulta) y web (contenido)
+- **Flujo básico:**
+  1. El cliente abre un ejercicio de su rutina y ve su simulación o animación.
+  2. Ve las pautas nutricionales asociadas a su plan asignado.
+- **Postcondición:** ninguna (consulta).
+- **Regla:** el contenido nutricional pertenece al plan que asignó el profesional; no son sugerencias
+  clínicas automáticas.

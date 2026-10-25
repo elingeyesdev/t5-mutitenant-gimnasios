@@ -1,9 +1,12 @@
-# Historias de usuario · Gestión Gimnasios (migración)
+# Historias de usuario · Gestión Gimnasios
 
-Paquete EDT **2.2**. Cada historia sale de un caso de uso de [casos-de-uso.md](casos-de-uso.md) y
-cabe en un paquete de la EDT ([../planificacion/README.md](../planificacion/README.md)). Las
-historias describen lo que el proyecto base ya hace; los criterios de aceptación son los que se
-usan para verificar que se migró bien.
+Cada historia sale de un caso de uso de [casos-de-uso.md](casos-de-uso.md) y cabe en un paquete de la EDT.
+
+- **HU-01 a HU-45 (fase 1, migración):** describen lo que el proyecto base ya hacía. Sus criterios
+  verificaron la migración y hoy son las **pruebas de regresión**. Los códigos EDT de estas historias
+  son los de la [EDT de la fase 1](../planificacion/fase-1-migracion/README.md).
+- **HU-46 a HU-52 (fase 2, mejoras):** sección [Mejoras · fase 2](#mejoras--fase-2). Usan la
+  [EDT vigente](../planificacion/README.md).
 
 ## Cómo leerlas
 
@@ -445,6 +448,77 @@ Como usuario quiero ver mis avisos en la app y elegir cuáles recibir para enter
 
 ---
 
+## Mejoras · fase 2
+
+Historias de las mejoras RF-01 a RF-06 y del rediseño visual. Cada una se trabaja con las
+actividades del PERT indicadas («Act.»), que son los issues #50 a #69 de GitHub
+([../planificacion/pert-cpm.md](../planificacion/pert-cpm.md)). Cuando una historia toca web y
+móvil, cada producto tiene su propia actividad.
+
+### HU-46 · Evaluación técnica de ejercicios asistida (RF-01)
+**Web y Móvil · 8 pts · Prioridad alta** — Viene de: CU-35 · EDT 7.1, 7.2, 7.3 · Act. M (#62), N (#63), O (#64)
+
+Como socio quiero enviar un video de un ejercicio para que mi entrenador revise mi técnica.
+
+- [ ] Dado un socio con asesoría activa, cuando envía el video de un ejercicio, entonces su entrenador lo recibe junto con el análisis preliminar.
+- [ ] Dado un video recibido, cuando el entrenador lo revisa, entonces puede validar o corregir la valoración y dejar su observación.
+- [ ] Dado una revisión pendiente, cuando el socio consulta, entonces no ve el análisis preliminar: solo recibe la devolución aprobada por el entrenador.
+
+### HU-47 · Perfil deportivo portable con consentimiento (RF-02)
+**Web y Móvil · 5 pts · Prioridad alta** — Viene de: CU-36 · EDT 3.1, 3.2 · Act. E (#54), F (#55)
+
+Como socio quiero decidir qué datos de mi perfil deportivo puede consultar otra cadena para cambiar de gimnasio sin perder mi historial.
+
+- [ ] Dado un socio, cuando autoriza a una cadena, entonces se registra el consentimiento con su alcance, la fecha y los datos que comparte.
+- [ ] Dado un consentimiento vigente, cuando el personal de esa cadena consulta el perfil, entonces ve solo los datos autorizados.
+- [ ] Dado que el socio revoca el consentimiento, o nunca lo dio, cuando otra cadena consulta, entonces no accede al historial.
+
+### HU-48 · Recompensas y cupones (RF-03)
+**Web y Móvil · 5 pts · Prioridad media** — Viene de: CU-37 · EDT 4.1, 4.2 · Act. G (#56), H (#57)
+
+Como socio quiero consultar mis beneficios y canjear los cupones para los que soy elegible.
+
+- [ ] Dado un beneficio, cuando el socio lo consulta, entonces ve su vigencia y sus condiciones.
+- [ ] Dado un cupón elegible y vigente, cuando lo canjea, entonces el canje queda registrado con su comprobante.
+- [ ] Dado un cupón ya usado, vencido o agotado, cuando intenta canjearlo, entonces se rechaza sin duplicar el canje.
+
+### HU-49 · Alertas de inactividad (RF-04)
+**Web · 3 pts · Prioridad media** — Viene de: CU-38 · EDT 5.1, 5.2 · Act. I (#58), J (#59)
+
+Como entrenador quiero identificar a los socios con señales de abandono para darles seguimiento.
+
+- [ ] Dado un umbral configurado por la cadena, cuando un socio lo supera sin entrenar, entonces aparece una alerta.
+- [ ] Dado un entrenador o gerente, cuando ve las alertas, entonces solo ve las de su alcance de cadena y sucursal.
+- [ ] Dado una alerta, cuando registra el contacto o el seguimiento, entonces la intervención queda guardada en la alerta.
+
+### HU-50 · Renovación mediante QR (RF-05)
+**Web y Móvil · 5 pts · Prioridad alta** — Viene de: CU-39 · EDT 6.1, 6.2 · Act. K (#60), L (#61)
+
+Como socio quiero renovar mi membresía con un código QR y consultar el estado del pago.
+
+- [ ] Dado una solicitud de renovación, cuando se genera la orden, entonces el socio ve su QR, el monto y el estado «pendiente».
+- [ ] Dado un pago registrado con comprobante, cuando recepción lo confirma, entonces la orden pasa a «confirmada» y la membresía se renueva.
+- [ ] Dado una orden sin confirmar, cuando pasa el tiempo, entonces la membresía no se activa automáticamente.
+
+### HU-51 · Simulaciones y nutrición integrada (RF-06)
+**Web y Móvil · 8 pts · Prioridad media** — Viene de: CU-40 · EDT 8.1, 8.2, 8.3 · Act. P (#65), Q (#66), R (#67)
+
+Como socio quiero ver una simulación de cada ejercicio de mi rutina, con las recomendaciones de mi plan.
+
+- [ ] Dado un ejercicio de la rutina, cuando el socio lo abre, entonces ve su simulación en el dispositivo aprobado.
+- [ ] Dado un plan nutricional asignado, cuando consulta las pautas, entonces ve las de su plan y no sugerencias clínicas automáticas.
+
+### HU-52 · Interfaz oscura y coherente
+**Web y Móvil · 5 pts · Prioridad alta** — Viene de: CU-01 a CU-34 · EDT 2.1, 2.2, 2.3 · Act. B (#51), C (#52), D (#53)
+
+Como usuario del panel y de la app quiero una interfaz consistente y legible para hacer mis tareas con claridad.
+
+- [ ] Dado dos pantallas representativas (inicio de sesión y resumen), cuando se presentan al docente, entonces se elige la plantilla oscura antes de aplicarla a todo.
+- [ ] Dado el panel y la app, cuando se navega por cualquier módulo, entonces se ve un tema oscuro con contraste suficiente y los mismos patrones, sin componentes visuales genéricos.
+- [ ] Dado el cambio visual, cuando se prueban las historias HU-01 a HU-45, entonces no hay regresiones de navegación ni cambios en la API.
+
+---
+
 ## Trazabilidad
 
 Del caso de uso al issue, como en el PDF: **CU › HU › issue › tarea de Planner › rama**. El número
@@ -497,6 +571,13 @@ de issue se asigna al crearlo en GitHub; la rama usa ese número (`feature/<issu
 | HU-43 | Ingresos desde la app | CU-24, CU-26 | 4.11 | M11 | Móvil | 3 | Media |
 | HU-44 | Resumen y auditoría (app) | CU-27, CU-31 | 4.11 | M11 | Móvil | 3 | Media |
 | HU-45 | Avisos en la app | CU-30 | 4.12 | M12 | Móvil | 2 | Baja |
+| HU-46 | Evaluación técnica asistida (RF-01) | CU-35 | 7.1–7.3 | M, N, O (#62–#64) | Web y Móvil | 8 | Alta |
+| HU-47 | Perfil portable con consentimiento (RF-02) | CU-36 | 3.1, 3.2 | E, F (#54, #55) | Web y Móvil | 5 | Alta |
+| HU-48 | Recompensas y cupones (RF-03) | CU-37 | 4.1, 4.2 | G, H (#56, #57) | Web y Móvil | 5 | Media |
+| HU-49 | Alertas de inactividad (RF-04) | CU-38 | 5.1, 5.2 | I, J (#58, #59) | Web | 3 | Media |
+| HU-50 | Renovación mediante QR (RF-05) | CU-39 | 6.1, 6.2 | K, L (#60, #61) | Web y Móvil | 5 | Alta |
+| HU-51 | Simulaciones y nutrición (RF-06) | CU-40 | 8.1–8.3 | P, Q, R (#65–#67) | Web y Móvil | 8 | Media |
+| HU-52 | Interfaz oscura y coherente | CU-01 a CU-34 | 2.1–2.3 | B, C, D (#51–#53) | Web y Móvil | 5 | Alta |
 
 **Paquetes sin historia propia.** Los paquetes de gestión, diseño, pruebas y despliegue (A a L)
 se registran como issues de tipo `docs`, `chore` o `ci`. Los paquetes web 3.6 (entrenamiento y
@@ -504,4 +585,6 @@ métricas) y 3.13 (plan nutricional y citas) no tienen pantallas en el panel: so
 historias HU-27 a HU-30, HU-39, HU-40 y HU-42, y se registran como un issue `web` por paquete que
 enlaza esas historias.
 
-**Cobertura.** Los 34 casos de uso tienen al menos una historia.
+**Cobertura.** Los 40 casos de uso tienen al menos una historia. En la fase 2, los issues son las
+actividades A a T del PERT (#50 a #69); las historias HU-01 a HU-45 quedaron cerradas en la
+Iteración 0 y se usan como pruebas de regresión.
