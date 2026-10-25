@@ -18,6 +18,8 @@
 }
 [data-bs-theme="dark"] .navbar-vertical { background: #0b1016; border-right: 1px solid var(--tblr-border-color); }
 [data-bs-theme="dark"] .navbar-vertical .nav-item.active > .nav-link { background: rgba(var(--tblr-primary-rgb), .16); color: #fff; }
+/* El botón de tema muestra el sol en oscuro (pasar a claro) y la luna en claro. */
+[data-bs-theme="dark"] .icono-tema-claro, :root:not([data-bs-theme="dark"]) .icono-tema-oscuro { display: none; }
 
 .badge-notification { position: absolute; top: 2px; right: 0; font-size: .65rem; }
 .barra-serie { display: flex; align-items: flex-end; gap: 4px; height: 140px; }

@@ -60,6 +60,10 @@
         <header class="navbar navbar-expand-md d-print-none">
             <div class="container-xl">
                 <div class="navbar-nav flex-row order-md-last ms-auto">
+                    <button type="button" class="nav-link px-2 btn btn-link" data-cambiar-tema title="Cambiar tema claro u oscuro" aria-label="Cambiar tema claro u oscuro">
+                        <i class="ti ti-sun fs-2 icono-tema-oscuro"></i>
+                        <i class="ti ti-moon fs-2 icono-tema-claro"></i>
+                    </button>
                     <a class="nav-link px-2 position-relative" asp-controller="Notificaciones" asp-action="Index" title="Notificaciones">
                         <i class="ti ti-bell fs-2"></i>
                         @if (sinLeer > 0)
