@@ -12,3 +12,13 @@ document.addEventListener('click', (e) => {
   raiz.setAttribute('data-bs-theme', tema);
   try { localStorage.setItem('tema', tema); } catch { }
 });
+
+// Los reportes se imprimen siempre en tema claro, aunque el panel esté en oscuro.
+let temaAntesDeImprimir = null;
+window.addEventListener('beforeprint', () => {
+  temaAntesDeImprimir = document.documentElement.getAttribute('data-bs-theme');
+  document.documentElement.setAttribute('data-bs-theme', 'light');
+});
+window.addEventListener('afterprint', () => {
+  if (temaAntesDeImprimir) document.documentElement.setAttribute('data-bs-theme', temaAntesDeImprimir);
+});
