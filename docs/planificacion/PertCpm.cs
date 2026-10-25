@@ -2,7 +2,8 @@
 // Uso (desde docs/planificacion):  dotnet run PertCpm.cs
 //
 // Columnas del CSV (separador ;):
-//   Id;EDT;Paquete;Responsable;Predecesoras;PorRecurso;O;M;P
+//   Id;EDT;Paquete;Responsable;Predecesoras;PorRecurso;O;M;P;Issue
+// - Issue: número del issue de GitHub de la actividad (opcional).
 // - Predecesoras: dependencias técnicas (el trabajo necesita el resultado de otra actividad).
 // - PorRecurso: la misma persona no puede hacer dos paquetes a la vez, así que el paquete
 //   espera al anterior de su responsable aunque no dependa técnicamente de él.
@@ -11,6 +12,8 @@ using System.Globalization;
 using System.Text;
 
 const double DiasPorIteracion = 7;
+// Día 1 = jueves 15/10/2026, inicio de la iteración 1 (iteraciones de jueves a miércoles).
+var dia1 = new DateOnly(2026, 10, 15);
 const double MaxDiasPorPaquete = 5;
 var es = CultureInfo.GetCultureInfo("es-ES");
 
@@ -30,7 +33,8 @@ foreach (var line in File.ReadAllLines(csvPath, Encoding.UTF8).Skip(1))
         Lista(c[4]), Lista(c[5]),
         double.Parse(c[6], CultureInfo.InvariantCulture),
         double.Parse(c[7], CultureInfo.InvariantCulture),
-        double.Parse(c[8], CultureInfo.InvariantCulture)));
+        double.Parse(c[8], CultureInfo.InvariantCulture),
+        c.Length > 9 ? c[9].Trim() : ""));
 }
 
 static string[] Lista(string s) =>
@@ -95,7 +99,7 @@ sb.AppendLine("# Resultado PERT / CPM");
 sb.AppendLine();
 sb.AppendLine("> Archivo generado por `PertCpm.cs` a partir de `actividades.csv`. No editar a mano: cambiar el CSV y volver a ejecutar `dotnet run PertCpm.cs`.");
 sb.AppendLine();
-sb.AppendLine("Unidad: días de trabajo del responsable (se trabaja de lunes a domingo). TE = (O + 4M + P) ÷ 6 · σ = (P − O) ÷ 6.");
+sb.AppendLine("Unidad: días de trabajo de la pareja (se trabaja de jueves a miércoles). TE = (O + 4M + P) ÷ 6 · σ = (P − O) ÷ 6.");
 sb.AppendLine();
 
 sb.AppendLine("## 1. Estimación PERT");
@@ -139,11 +143,11 @@ foreach (var g in acts.GroupBy(a => a.Resp).OrderBy(g => g.Key))
     sb.AppendLine($"| {g.Key} | {g.Count()} | {F(g.Sum(a => a.TE))} |");
 sb.AppendLine();
 
-sb.AppendLine("## 5. Fechas para Planner e iteraciones");
+sb.AppendLine("## 5. Fechas, iteraciones e issues de GitHub");
 sb.AppendLine();
-sb.AppendLine("Día 1 = lunes en que empieza la iteración 1 (iteraciones de lunes a domingo). Inicio = día siguiente a IT; vencimiento = FT redondeado hacia arriba.");
+sb.AppendLine($"Día 1 = jueves {dia1:dd/MM/yyyy}, inicio de la iteración 1 (iteraciones de jueves a miércoles). Inicio = día siguiente a IT; vencimiento = FT redondeado hacia arriba.");
 sb.AppendLine();
-sb.AppendLine("| Tarea en Planner | Responsable | Inicio | Vencimiento | Iteración | Etiquetas |");
+sb.AppendLine("| Issue (formato del PDF) | Responsable | Inicio | Vencimiento | Iteración | Etiquetas |");
 sb.AppendLine("|---|---|---|---|---|---|");
 foreach (var a in orden.OrderBy(a => a.IT).ThenBy(a => a.Edt))
 {
@@ -151,13 +155,15 @@ foreach (var a in orden.OrderBy(a => a.IT).ThenBy(a => a.Edt))
     var fin = Math.Max(inicio, (int)Math.Ceiling(a.FT - 1e-9));
     var (ii, ifin) = (Iter(inicio), Iter(fin));
     var iter = ii == ifin ? $"{ii}" : $"{ii}–{ifin}";
-    var fase = "Fase " + a.Edt.Split('.')[0];
-    var producto = a.Id.StartsWith('W') ? " · Web" : a.Id.StartsWith('M') ? " · Móvil" : "";
+    var fase = "Paquete " + a.Edt.Split('.')[0] + ".0";
+    var producto = a.Resp switch { "Jean" => " · Web", "Melanie" => " · Móvil", _ => " · Web y Móvil" };
     var critica = a.Critica ? " · Ruta crítica" : "";
-    sb.AppendLine($"| [{a.Edt}] #— {a.Nombre} | {a.Resp} | Día {inicio} | Día {fin} | {iter} | {fase}{producto}{critica} |");
+    var issue = a.Issue == "" ? "#—" : "#" + a.Issue;
+    string Fecha(int dia) => dia1.AddDays(dia - 1).ToString("ddd dd/MM", es);
+    sb.AppendLine($"| [{a.Edt}] {issue} {a.Nombre} | {a.Resp} | {Fecha(inicio)} | {Fecha(fin)} | {iter} | {fase}{producto}{critica} |");
 }
 sb.AppendLine();
-sb.AppendLine("El `#—` se reemplaza por el número del issue cuando se cree en GitHub (formato del PDF: `[EDT] #issue Título`).");
+sb.AppendLine("Formato del PDF del curso: `[EDT] #issue Título`. La rama de cada actividad es `feature/<issue>-<descripcion>`.");
 sb.AppendLine();
 
 var largos = acts.Where(a => a.TE > MaxDiasPorPaquete).ToList();
@@ -174,8 +180,9 @@ Console.WriteLine($"Paquetes > {MaxDiasPorPaquete} días: {(largos.Count == 0 ? 
 Console.WriteLine($"Escrito: {outPath}");
 return 0;
 
-class Act(string id, string edt, string nombre, string resp, string[] pred, string[] recurso, double o, double m, double p)
+class Act(string id, string edt, string nombre, string resp, string[] pred, string[] recurso, double o, double m, double p, string issue)
 {
+    public string Issue { get; } = issue;
     public string Id { get; } = id;
     public string Edt { get; } = edt;
     public string Nombre { get; } = nombre;

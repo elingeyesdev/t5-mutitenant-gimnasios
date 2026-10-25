@@ -1,153 +1,128 @@
-# Planificación del proyecto · Fase 1: migración al Stack B
+# Planificación del proyecto · Fase 2: mejoras y entrega
 
-Flujo del curso: **EDT › PERT › CPM › Planner › GitHub**. Este documento cubre la EDT y las
-reglas; el cálculo PERT/CPM está en [pert-cpm.md](pert-cpm.md), generado desde
-[actividades.csv](actividades.csv) con `dotnet run PertCpm.cs`.
+Plan de las iteraciones 1 a 6, tomado del documento de cimientos de la pareja (EDT, PERT, CPM,
+casos de uso e historias). La fase 1, la migración del proyecto base al Stack B, quedó cerrada en la
+**Iteración 0** con el release `v0.1.0`. Su plan se conserva en
+[fase-1-migracion/](fase-1-migracion/README.md) y su resultado en [../migracion.md](../migracion.md).
 
-## 1. Alcance de la fase
+- Inicio: jueves 15/10/2026 · Último release: miércoles 25/11/2026 · Presentación final: **jueves 26/11/2026**.
+- Resultado PERT/CPM, generado: [pert-cpm.md](pert-cpm.md).
+- Casos de uso y reglas: [../diseno/casos-de-uso.md](../diseno/casos-de-uso.md).
+- Historias de usuario: [../diseno/historias-de-usuario.md](../diseno/historias-de-usuario.md).
 
-Migrar **todo** el proyecto base GymSync (NestJS + React + Expo) a ASP.NET Core + .NET MAUI +
-SQL Server, sin agregar funciones, con el diseño multi-tenant descrito en
-[../contexto-proyecto.md](../contexto-proyecto.md), y dejarlo funcionando en producción. Al
-terminar, se prueba el proyecto migrado completo para verificar que se migró bien (paquete 5.1).
+## 1. Alcance
 
-Para tener contra qué comparar, el proyecto base se ejecutó antes tal cual (paquete 2.1,
-resultados en [../diagnostico-proyecto-base.md](../diagnostico-proyecto-base.md) §8): lo que
-hace hoy es el comportamiento que la versión migrada debe reproducir. Las mejoras RF-01 a RF-06
-son la fase 2 (paquete 7 de la EDT).
+| RF | Mejora | Historia | Caso de uso |
+|---|---|---|---|
+| RF-01 | Análisis de técnica a partir de un video, con revisión y valoración final del entrenador | HU-46 | CU-35 |
+| RF-02 | Portabilidad del perfil deportivo con consentimiento explícito del socio | HU-47 | CU-36 |
+| RF-03 | Recompensas mediante vales, cupones y reglas verificables de canje | HU-48 | CU-37 |
+| RF-04 | Alertas tempranas de inactividad o abandono para el seguimiento del personal | HU-49 | CU-38 |
+| RF-05 | Pago y renovación con QR, con verificación del estado de la operación | HU-50 | CU-39 |
+| RF-06 | Simulaciones visuales de ejercicios e integración con el plan nutricional | HU-51 | CU-40 |
+| — | Revisión del diseño visual pedida por el docente: interfaz oscura y coherente | HU-52 | CU-01 a CU-34 |
 
-**Pendientes de aprobación del docente** (funciones del proyecto base que dependen de
-tecnologías no nombradas en el PDF; según su respuesta se agregan como paquetes de la EDT o se
-reemplazan por la alternativa indicada):
+Además entran las pruebas integrales, la seguridad de acceso por cadena, la documentación y la
+presentación final.
 
-| Función del proyecto base | Motivo |
-|---|---|
-| Mensajería entre socio y personal (chat) | Tiempo real con Socket.io; equivalente .NET no está en el PDF |
-| Mapa y geolocalización de sedes, registro de visitas | Leaflet / ubicación del celular |
-| Modo sin conexión (cola offline) | SQLite en el celular |
-| Notificaciones push y por correo | Expo Push, Nodemailer |
-| Escaneo de QR con la cámara | Librería de cámara; se migra con ingreso manual del código |
-| Exportación de reportes a PDF | Librería de PDF; los reportes se muestran en pantalla y se imprimen desde el navegador |
+**Integraciones sujetas a aprobación.** El análisis de video, las simulaciones 3D, el cobro QR real
+y los servicios de notificación usan tecnologías que no están en la guía del curso. Sin aprobación o
+sin credenciales externas, la iteración entrega un **flujo demostrable con evidencias**, sin afirmar
+un procesamiento real que no existe.
 
 ## 2. EDT
 
-Regla del 100 %: incluye todo el trabajo de la fase y nada más. Nombres en sustantivo
-(entregables). Cada paquete cabe en una iteración (TE ≤ 5 días, ver validación en pert-cpm.md).
+| EDT | Entregable | Actividades | Responsable | Historia |
+|---|---|---|---|---|
+| 1.0 | Plan de alcance y criterios de aceptación | A | Pareja | HU-46 a HU-52 |
+| 2.0 | Diseño visual web y móvil | B, C, D | Jean (B, D) · Melanie (C) | HU-52 |
+| 3.0 | Perfil deportivo portable (RF-02) | E, F | Jean (E) · Melanie (F) | HU-47 |
+| 4.0 | Recompensas y cupones (RF-03) | G, H | Jean (G) · Melanie (H) | HU-48 |
+| 5.0 | Alertas de abandono (RF-04) | I, J | Jean | HU-49 |
+| 6.0 | Pago y renovación QR (RF-05) | K, L | Jean (K) · Melanie (L) | HU-50 |
+| 7.0 | Revisión de técnica asistida (RF-01) | M, N, O | Jean (M, N) · Melanie (O) | HU-46 |
+| 8.0 | Simulaciones y nutrición (RF-06) | P, Q, R | Melanie (P, Q) · Jean (R) | HU-51 |
+| 9.0 | Pruebas, documentación y release | S, T | Pareja | HU-01 a HU-52 |
 
-```
-1.0  Gestión Gimnasios · Migración al Stack B
-├── 1  Gestión
-│   ├── 1.1  Plan del proyecto (EDT, PERT, CPM) ........................ B
-│   └── 1.2  Repositorio y tablero Planner .............................. C
-├── 2  Análisis y diseño
-│   ├── 2.1  Diagnóstico del proyecto base (ejecutado tal cual) ......... A
-│   ├── 2.2  Requisitos: casos de uso e historias ....................... D
-│   ├── 2.3  Modelo de datos multi-tenant ............................... E
-│   ├── 2.4  Mockups de la web .......................................... F
-│   ├── 2.5  Mockups de la app .......................................... G
-│   └── 2.6  Contrato de la API ......................................... H
-├── 3  Aplicación web  (web/ · Jean)
-│   ├── 3.1  Base del panel, autenticación y roles ...................... W01
-│   ├── 3.2  Cadenas y sucursales ....................................... W02
-│   ├── 3.3  Usuarios y membresías ...................................... W03
-│   ├── 3.4  Personal y asignaciones .................................... W04
-│   ├── 3.5  Ejercicios y rutinas ....................................... W05
-│   ├── 3.6  Entrenamiento y métricas ................................... W06
-│   ├── 3.7  Actividades y horarios ..................................... W07
-│   ├── 3.8  Inventario de máquinas ..................................... W08
-│   ├── 3.9  Planes de suscripción y pagos .............................. W09
-│   ├── 3.10 Reservas ................................................... W10
-│   ├── 3.11 Lista de espera ............................................ W11
-│   ├── 3.12 Control de acceso y auditoría .............................. W12
-│   ├── 3.13 Plan nutricional y citas ................................... W13
-│   ├── 3.14 Notificaciones (web y API) ................................. W14
-│   ├── 3.15 Panel de resumen ........................................... W15
-│   ├── 3.16 Reportes de operación ...................................... W16
-│   └── 3.17 Reportes de gestión ........................................ W17
-├── 4  App móvil  (movil/ · Melani)
-│   ├── 4.1  Base de la app ............................................. M01
-│   ├── 4.2  Autenticación y perfil ..................................... M02
-│   ├── 4.3  Rutinas y modo entrenamiento ............................... M03
-│   ├── 4.4  Historial de entrenamiento ................................. M04
-│   ├── 4.5  Seguimiento y objetivos .................................... M05
-│   ├── 4.6  Vistas del entrenador ...................................... M06
-│   ├── 4.7  Inicio y sedes ............................................. M07
-│   ├── 4.8  Reservas y carnet QR ....................................... M08
-│   ├── 4.9  Mi plan y plan nutricional ................................. M09
-│   ├── 4.10 Vistas del instructor y nutricionista ...................... M10
-│   ├── 4.11 Vistas de recepción y gerencia ............................. M11
-│   └── 4.12 Notificaciones (app) ....................................... M12
-├── 5  Pruebas y documentación
-│   ├── 5.1  Verificación de la migración (pruebas integrales) ......... J
-│   └── 5.2  Manual de usuario .......................................... K
-├── 6  Despliegue
-│   ├── 6.1  Infraestructura de producción (hosting, BD, CI/CD) ......... I
-│   └── 6.2  Release de la migración .................................... L
-└── 7  Mejoras (fase 2, se detallan al terminar la migración)
-    ├── 7.1  Revisión de técnica con IA validada por el entrenador (RF-01)
-    ├── 7.2  Perfil deportivo portable (RF-02)
-    ├── 7.3  Recompensas con vales y cupones (RF-03)
-    ├── 7.4  Alertas tempranas de abandono (RF-04)
-    ├── 7.5  Pago y renovación con QR (RF-05)
-    └── 7.6  Simulaciones 3D y nutrición integrada (RF-06)
-```
-
-El paquete 7 se mantiene en la EDT para cumplir la regla del 100 % del proyecto completo, pero
-se planifica de forma gradual: se estima y entra al CPM cuando la migración esté estable,
-como pidió el docente («antes de aumentar cosas, primero migrarlo y que funcione»).
-
-### Qué entrega cada paquete de producto (definición de «Hecho»)
-
-Cada paquete W y M se entrega completo, con:
-
-- Entidades y **migración de EF Core** (W) o pantallas con su llamada a la API (M).
-- Reglas del proyecto base migradas, con **pruebas automatizadas** de esas reglas.
-- Filtro de tenant aplicado y probado (W): una cadena no ve datos de otra.
-- Datos de prueba (seed) del módulo.
-- Pull Request hacia `develop` con «Cómo probar», probado y aprobado por la compañera o el compañero.
+**Definición de «Hecho» de una actividad:**
+- se cumplen sus criterios de aceptación;
+- el PR hacia `develop` está aprobado por la compañera, con el CI en verde;
+- el issue se cerró con `Closes #N`;
+- las pruebas de regresión de HU-01 a HU-45 siguen pasando.
 
 ## 3. Cómo se estimó
 
-- **Unidad:** días de trabajo del responsable; se trabaja de lunes a domingo.
-- **Base de la estimación:** tamaño real del módulo en el proyecto base (líneas de código,
-  endpoints y pantallas). Ejemplo: Reservas es el servicio más grande del backend (2077 líneas,
-  14 endpoints), por eso tiene la estimación pesimista más alta (P = 8).
-- **Dependencias técnicas:** el paquete necesita el resultado de otro (la app no puede consumir
-  una API que no existe; una reserva exige un plan de suscripción).
-- **Dependencias por recurso** (marcadas con `*`): la misma persona no hace dos paquetes a la
-  vez. Sin ellas, el CPM supondría trabajo en paralelo que nadie puede hacer.
-- **Orden:** la web construye primero las APIs que la app necesita (usuarios, rutinas,
-  entrenamiento) y deja al final lo que es solo del panel (máquinas, resumen, reportes). Este orden
-  acorta la duración en unos 6 días respecto de seguir el orden de los módulos del proyecto base.
+- **PERT de tres puntos** por actividad: TE = (O + 4M + P) ÷ 6 y σ = (P − O) ÷ 6, en días de
+  trabajo. Ninguna actividad supera 3 días esperados, para poder seguirlas semana a semana.
+- **Precedencias:**
+  - técnicas: la app consume una API ya validada;
+  - por recurso: las tareas de Jean van en la secuencia B-D-E-G-I-J-K-M-N-R y las de Melanie en
+    C-F-H-L-O-P-Q;
+  - A, S y T se hacen en pareja.
+- **CPM:** duración de **37 días**, con ruta crítica **A-B-D-E-G-I-J-K-M-N-O-P-Q-S-T**. Las seis
+  iteraciones suman 42 días, así que quedan **5 días de reserva** para correcciones, aprobaciones
+  externas o ajustes. No es tiempo libre asegurado.
+- Los datos están en [actividades.csv](actividades.csv). Para regenerar el resultado:
+  ```
+  cd docs/planificacion
+  dotnet run PertCpm.cs
+  ```
 
-Las estimaciones O, M y P son de la pareja: si se ajustan, se cambia `actividades.csv` y se
-vuelve a ejecutar el cálculo.
+## 4. Iteraciones
 
-## 4. Iteraciones y Planner
+Semana de **jueves a miércoles**:
+- **Jueves:** revisión con el docente y planning: se mueven a *Ready* las actividades de la semana.
+- **Viernes a martes:** desarrollo, pruebas y PR con revisión cruzada.
+- **Miércoles:** estabilización, release (`develop` → `main`, tag `v0.N.0`, APK) y retrospectiva.
 
-- Iteración = 1 semana de lunes a domingo (7 días de trabajo). Revisión con el docente los
-  **lunes** y **jueves**.
+| Iteración | Inicio | Release | Objetivo | Actividades | Versión |
+|---|---|---|---|---|---|
+| 0 · Migración | 08/10 | 12/10 | Migración al Stack B (cerrada) | HU-01 a HU-45 | v0.1.0 |
+| 1 | 15/10 | 21/10 | Criterios, arquitectura visual y prototipo oscuro | A, B, C, D | v0.2.0 |
+| 2 | 22/10 | 28/10 | Cierre visual, RF-02 y RF-03; inicio de alertas | E, F, G, H, I | v0.3.0 |
+| 3 | 29/10 | 04/11 | RF-04 alertas, RF-05 pagos QR; inicio de RF-01 | J, K, L, M | v0.4.0 |
+| 4 | 05/11 | 11/11 | RF-01 validación humana y app; inicio de RF-06 | N, O, R | v0.5.0 |
+| 5 | 12/11 | 18/11 | RF-06 simulaciones y nutrición; pruebas integrales | P, Q, S | v0.6.0 |
+| 6 | 19/11 | 25/11 | Correcciones finales, manual, release y margen técnico | T | v1.0.0 |
 
-| Día | Qué pasa |
+**Seguimiento: plan frente a ejecución.** La revisión de la Iteración 1 pasó al **lunes 26/10** y la
+de la Iteración 2 al **jueves 29/10**; los milestones de GitHub tienen esas fechas. Las actividades
+A a D, planificadas del 15 al 20/10, se ejecutan del 25 al 26/10. El atraso se absorbe con la reserva
+de 5 días, y cualquier desvío mayor se revisa con el docente con un ajuste explícito de alcance.
+
+## 5. GitHub
+
+| Concepto del plan | En GitHub |
 |---|---|
-| Lunes | Revisión con el docente de la versión publicada el domingo · planning game: tareas de Planner a la iteración, issues y milestone, ruta crítica primero |
-| Martes y miércoles | Desarrollo en pareja: una rama por historia, TDD, commits pequeños, PR diarios a `develop` con revisión cruzada |
-| Jueves | Revisión con el docente del avance en `develop` · corregir lo observado con `fix/*` |
-| Viernes a sábado | Desarrollo y estabilización: pruebas, congelar funciones de la iteración |
-| Domingo | Release: PR `develop` › `main`, tag `v0.N.0`, despliegue, APK en `movil/releases/`, retrospectiva |
+| Iteración | **Milestone**: *Iteración 0 · Migración* (cerrado) e *Iteración 1* a *6* |
+| Actividad A–T de la EDT | **Issue** #50 a #69, con título `[EDT] Nombre`; en el cuerpo, la historia, los criterios, el PERT, las predecesoras y las fechas del CPM |
+| Historias HU-01 a HU-45 (migración) | Issues cerrados en la Iteración 0 |
+| Producto | **Etiquetas** `Web` y `Movil` (más `bug` para errores) |
+| Responsable | **Assignee**: AchoMendez (web) y meldiazo (móvil) |
+| Tablero | **Project #12**: Backlog → Ready (iteración) → In progress → In review (PR) → Done |
 
-- El release pasa del viernes del PDF al domingo para que el lunes el docente revise una
-  versión en producción, que es la regla «sin producción no hay iteración».
-- Lo crítico primero: cada lunes se planifican antes las tareas con etiqueta «Ruta crítica».
-- Desde la iteración en que termina I (infraestructura), cada domingo hay versión en producción.
+**Flujo de cada actividad:**
+1. issue en *Ready*;
+2. rama `feature/<issue>-<descripcion>` desde `develop`;
+3. commits `feat(web): …` o `feat(movil): …`;
+4. PR hacia `develop` con `Closes #<issue>`;
+5. revisión y aprobación de la compañera, con el CI en verde;
+6. *Squash and merge*.
 
-**Tablero de Planner** (un plan para la pareja):
+**Definición de «Listo»**, antes de programar:
+- caso de uso validado;
+- criterios de aceptación escritos;
+- diseño de la pantalla cuando corresponda;
+- estimación PERT;
+- issue asignado en el Project.
 
-| Elemento | Valor |
-|---|---|
-| Depósitos | Backlog · Iteración · En progreso · En revisión (PR) · Hecho |
-| Etiquetas | Fase 1 a Fase 6 · Ruta crítica · Web · Móvil · Bug |
-| Nombre de tarea | `[EDT] #issue Título` (ejemplo: `[3.10] #24 Reservas`) |
-| Fechas | Inicio y vencimiento de la sección 5 de pert-cpm.md |
-| Lista de comprobación | Criterios de aceptación del issue |
-| Asignación | Siempre a los dos integrantes |
+## 6. Decisiones por validar con el docente
+
+1. Aprobación del diseño visual oscuro y de la plantilla de administración definitiva.
+2. Tecnología admisible para procesar videos y forma de revisión del entrenador (RF-01).
+3. Alcance del consentimiento y datos que se pueden compartir del perfil portable (RF-02).
+4. Reglas concretas de acumulación y canje de recompensas (RF-03).
+5. Umbrales de inactividad y responsables del seguimiento (RF-04).
+6. Proveedor o forma de demostración del pago QR y su verificación (RF-05).
+7. Tecnología y profundidad de las simulaciones 3D (RF-06).
+8. Prioridad explícita de las seis mejoras, si una dependencia o aprobación externa amenaza el plazo.
