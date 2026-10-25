@@ -8,13 +8,17 @@
     var alcance = Usuario.EsSuperAdmin ? "Todas las cadenas" : User.FindFirst("alcance")?.Value;
 }
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] · Gestión Gimnasios</title>
     <link rel="stylesheet" href="~/lib/tabler/css/tabler.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/tabler-icons/tabler-icons.min.css" asp-append-version="true" />
+    <script>
+        // Tema guardado por el usuario (claro u oscuro); se aplica antes de pintar para evitar el parpadeo.
+        try { var tema = localStorage.getItem('tema'); if (tema) document.documentElement.setAttribute('data-bs-theme', tema); } catch (e) { }
+    </script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Estilos", required: false)
 </head>
