@@ -24,9 +24,9 @@ public class EntrenarPage : PaginaBase
     private readonly Rutina? rutina;
     private readonly Stopwatch reloj = Stopwatch.StartNew();
     private readonly List<object> series = [];
-    private readonly Label tiempo = new() { FontSize = 30, FontFamily = "OpenSansSemibold", TextColor = Colors.White };
-    private readonly Label descanso = new() { FontSize = 15, TextColor = Colors.White };
-    private readonly Label resumen = new() { FontSize = 13, TextColor = Colors.White };
+    private readonly Label tiempo = new() { FontSize = 30, FontFamily = "OpenSansSemibold", TextColor = Colores.TextoSobrePrimario };
+    private readonly Label descanso = new() { FontSize = 15, TextColor = Colores.TextoSobrePrimario };
+    private readonly Label resumen = new() { FontSize = 13, TextColor = Colores.TextoSobrePrimario };
     private readonly VerticalStackLayout bloques = new() { Spacing = 0 };
     private readonly Picker selector = new() { Title = "Elige un ejercicio para agregar" };
     private readonly Entry deporte = new() { Placeholder = "Ej.: cardio en cinta, fútbol, natación" };
@@ -44,7 +44,7 @@ public class EntrenarPage : PaginaBase
         var cabecera = new Border
         {
             Style = Estilo("TarjetaDestacada"),
-            Content = new VerticalStackLayout { Children = { new Label { Text = "Tiempo de entrenamiento", TextColor = Colors.White, FontSize = 13 }, tiempo, descanso, resumen } },
+            Content = new VerticalStackLayout { Children = { new Label { Text = "Tiempo de entrenamiento", TextColor = Colores.TextoSobrePrimario, FontSize = 13 }, tiempo, descanso, resumen } },
         };
         var terminar = new Button { Text = "Terminar y guardar", Margin = new Thickness(0, 12, 0, 0) };
         terminar.Clicked += OnTerminar;

@@ -13,9 +13,9 @@
 
                 <Border Style="{StaticResource TarjetaDestacada}" Margin="0,12,0,10">
                     <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
-                        <Label x:Name="Plan" TextColor="White" FontSize="18" FontFamily="OpenSansSemibold" />
-                        <Label x:Name="Vigencia" Grid.Row="1" TextColor="White" FontSize="13" />
-                        <Label x:Name="Restante" Grid.Row="2" TextColor="White" FontSize="13" />
+                        <Label x:Name="Plan" TextColor="{StaticResource PrimaryDarkText}" FontSize="18" FontFamily="OpenSansSemibold" />
+                        <Label x:Name="Vigencia" Grid.Row="1" TextColor="{StaticResource PrimaryDarkText}" FontSize="13" />
+                        <Label x:Name="Restante" Grid.Row="2" TextColor="{StaticResource PrimaryDarkText}" FontSize="13" />
                         <Button Grid.Column="1" Grid.RowSpan="3" Text="Mi carnet" BackgroundColor="White" TextColor="{StaticResource Primary}"
                                 VerticalOptions="Center" Clicked="OnCarnet" />
                     </Grid>

@@ -313,7 +313,7 @@ public record Mensaje(int Id, int ConversacionId, int RemitenteId, bool EsMio, s
 {
     [JsonIgnore] public LayoutOptions Alineacion => EsMio ? LayoutOptions.End : LayoutOptions.Start;
     [JsonIgnore] public Color Fondo => EsMio ? Colores.Primario : Colores.Gris;
-    [JsonIgnore] public Color ColorTexto => EsMio ? Colors.White : Colors.Black;
+    [JsonIgnore] public Color ColorTexto => EsMio ? Colors.White : Colores.TextoClaro;
     [JsonIgnore] public string Texto => Eliminado ? "Mensaje eliminado" : Contenido;
     [JsonIgnore] public string Fecha => Hora.Local(CreadoEn).ToString("dd/MM HH:mm") + (EsMio && LeidoEn is not null ? " · visto" : "");
 }

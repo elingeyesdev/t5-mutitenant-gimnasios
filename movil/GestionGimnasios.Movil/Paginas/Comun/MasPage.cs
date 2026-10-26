@@ -1,3 +1,4 @@
+using GestionGimnasios.Movil.Modelos;
 using GestionGimnasios.Movil.Paginas.Cliente;
 using GestionGimnasios.Movil.Paginas.Personal;
 using GestionGimnasios.Movil.Servicios;
@@ -23,9 +24,9 @@ public class MasPage : PaginaBase
                 Spacing = 2,
                 Children =
                 {
-                    new Label { Text = u.NombreCompleto, FontSize = 18, FontFamily = "OpenSansSemibold", TextColor = Colors.White },
-                    new Label { Text = u.Email, TextColor = Colors.White, FontSize = 13 },
-                    new Label { Text = $"{u.RolLegible} · {u.Lugar}", TextColor = Colors.White, FontSize = 13 },
+                    new Label { Text = u.NombreCompleto, FontSize = 18, FontFamily = "OpenSansSemibold", TextColor = Colores.TextoSobrePrimario },
+                    new Label { Text = u.Email, TextColor = Colores.TextoSobrePrimario, FontSize = 13 },
+                    new Label { Text = $"{u.RolLegible} · {u.Lugar}", TextColor = Colores.TextoSobrePrimario, FontSize = 13 },
                 },
             },
         });

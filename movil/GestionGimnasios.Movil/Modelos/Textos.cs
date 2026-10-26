@@ -3,12 +3,14 @@ namespace GestionGimnasios.Movil.Modelos;
 /// <summary>Colores de la marca (los mismos de Resources/Styles/Colors.xaml) para usarlos desde C#.</summary>
 public static class Colores
 {
-    public static readonly Color Primario = Color.FromArgb("#1F5FA8");
+    public static readonly Color Primario = Color.FromArgb("#4C8FD6");
+    public static readonly Color TextoSobrePrimario = Color.FromArgb("#0F1419");
+    public static readonly Color TextoClaro = Color.FromArgb("#F5F7FA");
     public static readonly Color Exito = Color.FromArgb("#2F9E44");
     public static readonly Color Alerta = Color.FromArgb("#E67700");
     public static readonly Color Peligro = Color.FromArgb("#C92A2A");
-    public static readonly Color Gris = Color.FromArgb("#E1E1E1");
-    public static readonly Color GrisTexto = Color.FromArgb("#6E6E6E");
+    public static readonly Color Gris = Color.FromArgb("#161D26");
+    public static readonly Color GrisTexto = Color.FromArgb("#9AA7B5");
 }
 
 /// <summary>Traduce los códigos de la API (roles, estados, días) a textos para el usuario.</summary>
