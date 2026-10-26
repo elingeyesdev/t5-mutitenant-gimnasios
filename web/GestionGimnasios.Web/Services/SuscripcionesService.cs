@@ -7,6 +7,7 @@ namespace GestionGimnasios.Web.Services;
 
 public record PlanDto(int Id, int? CadenaId, string? Cadena, string Nombre, string? Descripcion, decimal PrecioMensual, int? MaxSucursales, IReadOnlyList<string> Beneficios, bool Activo);
 public record PagoDto(int Id, decimal Monto, DateTime Fecha, string? Metodo, string Estado);
+public record SuscripcionResumenDto(string Plan, DateOnly Fin);
 public record SuscripcionDto(
     int Id, int UsuarioId, string Usuario, int PlanId, string Plan, decimal PrecioMensual, int? SucursalPrincipalId, string? SucursalPrincipal,
     string Estado, DateOnly Inicio, DateOnly Fin, bool RenovacionAutomatica, int DiasRestantes, IReadOnlyList<PagoDto> Pagos);
@@ -90,6 +91,26 @@ public class SuscripcionesService(AppDbContext db, UsuarioActual actual, Alcance
     }
 
     // ── Suscripciones ────────────────────────────────────────────────────
+
+    /// <summary>Plan y vencimiento de los socios de una página, dentro del alcance del personal.</summary>
+    public async Task<Dictionary<int, SuscripcionResumenDto>> ResumenPorUsuariosAsync(IEnumerable<int> usuarioIds, int? sucursalId = null)
+    {
+        var ids = usuarioIds.Distinct().ToArray();
+        if (ids.Length == 0) return [];
+
+        var hoy = Reloj.Hoy;
+        var q = SuscripcionesVisibles().Where(s => ids.Contains(s.UsuarioId)
+            && s.Inicio <= hoy && s.Estado != EstadosSuscripcion.Cancelada);
+        if (sucursalId is not null) q = q.Where(s => s.SucursalPrincipalId == sucursalId);
+
+        var resumenes = await q.AsNoTracking()
+            .OrderByDescending(s => s.Estado == EstadosSuscripcion.Activa && s.Fin >= hoy)
+            .ThenByDescending(s => s.Fin).ThenByDescending(s => s.Id)
+            .Select(s => new { s.UsuarioId, Plan = s.Plan!.Nombre, s.Fin })
+            .ToListAsync();
+        return resumenes.GroupBy(s => s.UsuarioId)
+            .ToDictionary(g => g.Key, g => new SuscripcionResumenDto(g.First().Plan, g.First().Fin));
+    }
 
     public async Task<List<SuscripcionDto>> ListarAsync(string? estado = null, int? sucursalId = null)
     {

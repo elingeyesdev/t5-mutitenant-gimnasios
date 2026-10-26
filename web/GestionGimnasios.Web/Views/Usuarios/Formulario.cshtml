@@ -7,8 +7,10 @@
     ViewData["Title"] = editando ? $"Editar · {usuario!.NombreCompleto}" : "Nuevo usuario";
     ViewData["Pretitulo"] = "Usuarios";
     var roles = (List<RolDto>)ViewBag.Roles;
+    var ciObligatorio = !editando && roles.Any(r => r.Id == Model.RolId && r.Nombre == Roles.Cliente);
     var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
     var cadenas = (List<CadenaDto>)ViewBag.Cadenas;
+    var planes = (List<PlanDto>)ViewBag.Planes;
 }
 <form method="post" asp-action="@(editando ? "Editar" : "Crear")" asp-route-id="@usuario?.Id">
     <div class="row row-cards">
@@ -24,7 +26,10 @@
                             <label class="form-label @(editando ? "" : "required")">Contraseña</label>
                             <input asp-for="Password" type="password" class="form-control" minlength="6" required="@(!editando)" placeholder="@(editando ? "Dejar vacío para no cambiarla" : "")" />
                         </div>
-                        <div class="col-md-4"><label class="form-label">Carnet de identidad</label><input asp-for="Ci" class="form-control" /></div>
+                        <div class="col-md-4">
+                            <label asp-for="Ci" id="ci-label" class="form-label @(ciObligatorio ? "required" : "")">Carnet de identidad</label>
+                            <input asp-for="Ci" class="form-control" required="@ciObligatorio" />
+                        </div>
                         <div class="col-md-4"><label class="form-label">Teléfono</label><input asp-for="Telefono" class="form-control" /></div>
                         <div class="col-md-4">
                             <label class="form-label">Género</label>
@@ -56,11 +61,25 @@
                             <option value="">Elegir…</option>
                             @foreach (var r in roles)
                             {
-                                <option value="@r.Id">@r.Nombre (nivel @r.Nivel)</option>
+                                <option value="@r.Id" data-socio="@(r.Nombre == Roles.Cliente ? "true" : "false")">@r.Nombre (nivel @r.Nivel)</option>
                             }
                         </select>
                         <small class="form-hint">Solo aparecen roles de nivel menor al tuyo.</small>
                     </div>
+                    @if (!editando)
+                    {
+                        <div id="plan-socio" class="mb-3" hidden="@(!ciObligatorio)">
+                            <label asp-for="PlanId" class="form-label required">Plan del socio</label>
+                            <select asp-for="PlanId" class="form-select" required="@ciObligatorio" disabled="@(!ciObligatorio)">
+                                <option value="">Elegir plan…</option>
+                                @foreach (var p in planes)
+                                {
+                                    <option value="@p.Id">@p.Nombre — Bs @p.PrecioMensual.ToString("0.00") / mes</option>
+                                }
+                            </select>
+                            <small class="form-hint">La suscripción comienza hoy y vence un mes después, menos un día.</small>
+                        </div>
+                    }
                     @if (Actual.EsSuperAdmin)
                     {
                         <div class="mb-3">
@@ -114,3 +133,28 @@
         <a class="btn btn-link" asp-action="Index">Cancelar</a>
     </div>
 </form>
+
+@section Scripts {
+    @if (!editando)
+    {
+        <script>
+            const rol = document.getElementById('RolId');
+            const ci = document.getElementById('Ci');
+            const ciLabel = document.getElementById('ci-label');
+            const planSocio = document.getElementById('plan-socio');
+            const plan = document.getElementById('PlanId');
+
+            function actualizarCiObligatorio() {
+                const obligatorio = rol.selectedOptions[0]?.dataset.socio === 'true';
+                ci.required = obligatorio;
+                ciLabel.classList.toggle('required', obligatorio);
+                planSocio.hidden = !obligatorio;
+                plan.required = obligatorio;
+                plan.disabled = !obligatorio;
+            }
+
+            rol.addEventListener('change', actualizarCiObligatorio);
+            actualizarCiObligatorio();
+        </script>
+    }
+}
