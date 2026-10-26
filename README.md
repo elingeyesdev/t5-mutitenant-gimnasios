@@ -5,8 +5,9 @@ Plataforma multi-tenant para administrar los gimnasios de Santa Cruz de la Sierr
 sedes, socios, entrenadores, rutinas, planes de alimentación y seguimiento.
 
 Estado: **migración del proyecto base (GymSync) al Stack B completa** (web, API y app Android
-probadas con los datos del proyecto base; ver [docs/migracion.md](docs/migracion.md)). Las mejoras
-propuestas en el análisis de soluciones (RF-01 a RF-06) se trabajan sobre esta base.
+probadas con los datos del proyecto base; ver [docs/migracion.md](docs/migracion.md)).
+Las mejoras RF-01 a RF-06 y el rediseño visual se trabajan en la **fase 2**, en las iteraciones 1 a 6, hasta la
+presentación final del 26/11/2026 (ver [docs/planificacion/](docs/planificacion/README.md)).
 
 ## Stack (Stack B · C# de punta a punta)
 
@@ -59,13 +60,16 @@ Luego seguir el README de cada producto: [web/README.md](web/README.md) y
 - Commits con Conventional Commits y alcance por producto: `feat(web): ...`, `fix(movil): ...`.
 - Todo cambio entra por Pull Request hacia `develop` con `Closes #N`, aprobado por el
   compañero y con CI en verde.
-- Cada viernes: PR `develop` → `main`, tag `v0.N.0` y GitHub Release.
+- Iteraciones de jueves a miércoles: el miércoles se hace el release (PR `develop` → `main`, tag
+  `v0.N.0`, GitHub Release y APK) y el jueves se presenta al docente.
+- Planificación en GitHub: cada iteración es un milestone, cada actividad del PERT es un issue
+  (`[EDT] Nombre`) y el avance se sigue en el Project de la materia.
 
 ## Documentación
 
 - [docs/migracion.md](docs/migracion.md): qué se migró, cuentas de prueba, tecnologías pendientes de aprobación y pruebas.
 - [docs/contexto-proyecto.md](docs/contexto-proyecto.md): qué pidió el docente, requerimientos y decisiones.
 - [docs/diagnostico-proyecto-base.md](docs/diagnostico-proyecto-base.md): análisis y ejecución del proyecto base a migrar.
-- [docs/planificacion/](docs/planificacion/README.md): EDT, PERT, CPM, iteraciones y Planner.
+- [docs/planificacion/](docs/planificacion/README.md): EDT, PERT, CPM e iteraciones de la fase 2 (la fase 1 está archivada en `fase-1-migracion/`).
 - [docs/diseno/casos-de-uso.md](docs/diseno/casos-de-uso.md) y
   [docs/diseno/historias-de-usuario.md](docs/diseno/historias-de-usuario.md): requisitos de la migración.
