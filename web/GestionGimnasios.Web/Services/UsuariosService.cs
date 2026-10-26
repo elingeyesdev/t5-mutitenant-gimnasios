@@ -24,6 +24,7 @@ public record UsuarioDto(
     IReadOnlyList<RolAsignadoDto> Roles, IReadOnlyList<MembresiaDto> Membresias)
 {
     public string NombreCompleto => Perfil is null ? Email : $"{Perfil.Nombres} {Perfil.Apellidos}".Trim();
+    public SuscripcionResumenDto? Suscripcion { get; init; }
 }
 
 public class UsuarioForm
@@ -42,6 +43,8 @@ public class UsuarioForm
     public int? CadenaId { get; set; }
     /// <summary>Sucursal del personal, o sucursal habitual del cliente.</summary>
     public int? SucursalId { get; set; }
+    /// <summary>Plan mensual inicial al registrar un socio desde el panel.</summary>
+    public int? PlanId { get; set; }
 }
 
 public class FiltroUsuarios
@@ -72,7 +75,7 @@ public class PerfilForm
     public string? NombreUsuario { get; set; }
 }
 
-public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alcances, Almacenamiento archivos)
+public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alcances, Almacenamiento archivos, SuscripcionesService suscripciones)
 {
     // ── Consultas ────────────────────────────────────────────────────────
 
@@ -113,7 +116,11 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
         var total = await q.CountAsync();
         var limite = Math.Clamp(f.Limite, 1, 500);
         var pagina = await Completo(q).Skip(f.Desde).Take(limite).ToListAsync();
-        return new Pagina<UsuarioDto>(pagina.Select(ADto).ToList(), total, limite, f.Desde);
+        var datos = pagina.Select(ADto).ToList();
+        var resumenes = await suscripciones.ResumenPorUsuariosAsync(
+            datos.Where(u => u.Rol == Roles.Cliente).Select(u => u.Id), f.SucursalId);
+        datos = datos.Select(u => u with { Suscripcion = resumenes.GetValueOrDefault(u.Id) }).ToList();
+        return new Pagina<UsuarioDto>(datos, total, limite, f.Desde);
     }
 
     public async Task<UsuarioDto> ObtenerAsync(int id)
@@ -165,6 +172,22 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
             ? await db.Roles.FirstAsync(r => r.Nombre == Roles.Cliente)
             : await db.Roles.FindAsync(f.RolId ?? 0) ?? throw ErrorNegocio.NoEncontrado($"Rol {f.RolId} no encontrado.");
 
+        if (!registroPublico && rol.Nombre == Roles.Cliente && string.IsNullOrWhiteSpace(f.Ci))
+            throw ErrorNegocio.Solicitud("El Carnet de Identidad (CI) es obligatorio para registrar un socio.");
+
+        var registrarSocio = !registroPublico && rol.Nombre == Roles.Cliente;
+        if (registrarSocio)
+        {
+            if (f.PlanId is null)
+                throw ErrorNegocio.Solicitud("Selecciona un plan para registrar al socio.");
+            if (!(await suscripciones.PlanesAsync()).Any(p => p.Id == f.PlanId))
+                throw ErrorNegocio.Solicitud("El plan seleccionado no está activo o no está disponible para tu cadena.");
+            if ((actual.SucursalFiltro ?? f.SucursalId) is null)
+                throw ErrorNegocio.Solicitud("Selecciona la sucursal habitual del socio.");
+            if (!f.Activo)
+                throw ErrorNegocio.Solicitud("El socio debe estar activo para registrar su suscripción inicial.");
+        }
+
         var u = new Usuario
         {
             Email = email,
@@ -183,9 +206,24 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
         if (!registroPublico) await AsignarRolAsync(u, rol, f);
         else u.Roles.Add(new UsuarioRol { RolId = rol.Id });
 
+        // El alta del socio y su suscripción se confirman juntas.
+        await using var transaccion = registrarSocio ? await db.Database.BeginTransactionAsync() : null;
         db.Usuarios.Add(u);
         await db.SaveChangesAsync();
-        return await ObtenerAsync(u.Id);
+        if (registrarSocio)
+        {
+            await suscripciones.CrearAsync(new SuscripcionForm
+            {
+                UsuarioId = u.Id,
+                PlanId = f.PlanId!.Value,
+                SucursalPrincipalId = actual.SucursalFiltro ?? f.SucursalId,
+                Inicio = Reloj.Hoy,
+                Meses = 1,
+            });
+        }
+        var creado = await ObtenerAsync(u.Id);
+        if (transaccion is not null) await transaccion.CommitAsync();
+        return creado;
     }
 
     public async Task<UsuarioDto> ActualizarAsync(int id, UsuarioForm f)
