@@ -97,7 +97,7 @@ public class EntrenarPage : PaginaBase
         if (descansoRestante > 0)
         {
             descansoRestante--;
-            descanso.Text = descansoRestante > 0 ? $"Descanso: {descansoRestante} s" : "¡A la siguiente serie!";
+            descanso.Text = descansoRestante > 0 ? $"Descanso: {descansoRestante} s" : "Descanso terminado";
             if (descansoRestante == 0)
             {
                 try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); }
@@ -195,7 +195,7 @@ public class EntrenarPage : PaginaBase
         {
             guardado = true;
             timer?.Stop();
-            await AvisarAsync("¡Buen trabajo!", "Tu entrenamiento quedó guardado. Lo verás en tu progreso y tu entrenador también.");
+            await AvisarAsync("Entrenamiento guardado", "Tu entrenamiento quedó guardado. Lo verás en tu progreso y tu entrenador también.");
             await Navigation.PopAsync();
         }
     }

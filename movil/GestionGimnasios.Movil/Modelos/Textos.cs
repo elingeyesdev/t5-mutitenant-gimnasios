@@ -39,7 +39,7 @@ public static class Textos
         "CANCELADA" => "Cancelada",
         "NO_ASISTIO" => "No asistió",
         "EN_ESPERA" => "En espera",
-        "NOTIFICADA" => "Cupo liberado: ¡reserva ya!",
+        "NOTIFICADA" => "Cupo liberado: reserva disponible.",
         "ASIGNADA" => "Cupo asignado",
         "ACTIVO" => "Dentro",
         "COMPLETADO" => "Completado",

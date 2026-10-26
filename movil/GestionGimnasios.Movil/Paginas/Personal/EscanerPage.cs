@@ -125,6 +125,6 @@ public class EscanerPage : PaginaBase
         Style = Estilo("Tarjeta"),
         BackgroundColor = Color.FromArgb("#EBF7EE"),
         Stroke = Colores.Exito,
-        Content = new Label { Text = "✓ " + texto, TextColor = Colores.Exito, FontFamily = "OpenSansSemibold", FontSize = 16 },
+        Content = new Label { Text = "Correcto: " + texto, TextColor = Colores.Exito, FontFamily = "OpenSansSemibold", FontSize = 16 },
     };
 }

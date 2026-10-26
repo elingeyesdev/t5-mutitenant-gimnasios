@@ -38,7 +38,7 @@ public partial class InicioClientePage : PaginaBase
         var espera = await Api.GetAsync<List<EntradaEspera>>("/api/lista-espera/mias");
         var notificada = espera.FirstOrDefault(e => e.Estado == "NOTIFICADA");
         AvisoEspera.IsVisible = notificada is not null;
-        if (notificada is not null) TextoEspera.Text = $"¡Se liberó un cupo en {notificada.Actividad} ({notificada.Cuando})! Resérvalo antes que otro socio.";
+        if (notificada is not null) TextoEspera.Text = $"Se liberó un cupo en {notificada.Actividad} ({notificada.Cuando}). Puedes reservarlo.";
 
         var sesiones = await Api.GetAsync<List<SesionEntrenamiento>>("/api/entrenamiento/sesiones?limite=100");
         Sesiones.Text = sesiones.Count(s => Hora.Local(s.Inicio).Month == DateTime.Now.Month && Hora.Local(s.Inicio).Year == DateTime.Now.Year).ToString();
