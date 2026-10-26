@@ -1,4 +1,26 @@
 /* Ajustes mínimos sobre Tabler: el resto del estilo es el de la plantilla. */
+
+/* ── Tema (HU-52): oscuro por defecto, con el azul de la marca. Tabler aplica sus componentes
+      según data-bs-theme en <html>; aquí solo se fijan los colores propios. ── */
+:root {
+  --tblr-primary: #1f5fa8;
+  --tblr-primary-rgb: 31, 95, 168;
+}
+[data-bs-theme="dark"] {
+  --tblr-primary: #4c8fd6;
+  --tblr-primary-rgb: 76, 143, 214;
+  --tblr-body-bg: #0f1419;
+  --tblr-bg-surface: #161d26;
+  --tblr-bg-surface-secondary: #1b2430;
+  --tblr-bg-surface-tertiary: #212b38;
+  --tblr-border-color: #263142;
+  --tblr-border-color-translucent: rgba(255, 255, 255, .08);
+}
+[data-bs-theme="dark"] .navbar-vertical { background: #0b1016; border-right: 1px solid var(--tblr-border-color); }
+[data-bs-theme="dark"] .navbar-vertical .nav-item.active > .nav-link { background: rgba(var(--tblr-primary-rgb), .16); color: #fff; }
+/* El botón de tema muestra el sol en oscuro (pasar a claro) y la luna en claro. */
+[data-bs-theme="dark"] .icono-tema-claro, :root:not([data-bs-theme="dark"]) .icono-tema-oscuro { display: none; }
+
 .badge-notification { position: absolute; top: 2px; right: 0; font-size: .65rem; }
 .barra-serie { display: flex; align-items: flex-end; gap: 4px; height: 140px; }
 .barra-serie .barra { flex: 1; background: var(--tblr-primary); border-radius: 3px 3px 0 0; min-height: 2px; position: relative; }
