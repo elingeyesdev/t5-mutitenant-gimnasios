@@ -8,8 +8,7 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        // La app usa la paleta clara de la marca, igual que el panel web.
-        UserAppTheme = AppTheme.Light;
+        UserAppTheme = AppTheme.Dark;
         Sesion.Api.SesionVencida += () => MainThread.BeginInvokeOnMainThread(CerrarSesion);
     }
 
