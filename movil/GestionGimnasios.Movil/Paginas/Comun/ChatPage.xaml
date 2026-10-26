@@ -12,7 +12,7 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="m:Mensaje">
                     <VerticalStackLayout Padding="0,4">
-                        <Border HorizontalOptions="{Binding Alineacion}" BackgroundColor="{Binding Fondo}" StrokeThickness="0"
+                        <Border HorizontalOptions="{Binding Alineacion}" BackgroundColor="{Binding Fondo}" Stroke="{StaticResource Tertiary}" StrokeThickness="1"
                                 StrokeShape="RoundRectangle 14" Padding="12,8" MaximumWidthRequest="300">
                             <Label Text="{Binding Texto}" TextColor="{Binding ColorTexto}" FontSize="15" />
                         </Border>
@@ -21,7 +21,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="12,8" ColumnSpacing="8" BackgroundColor="White">
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="12,8" ColumnSpacing="8" BackgroundColor="{StaticResource FondoOscuro}">
             <Entry x:Name="Entrada" Placeholder="Escribe un mensaje" ReturnType="Send" Completed="OnEnviar" />
             <Button Grid.Column="1" Text="Enviar" Clicked="OnEnviar" />
         </Grid>

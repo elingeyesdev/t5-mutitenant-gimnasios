@@ -37,7 +37,7 @@ public class FichaClientePage(Asesoria asesoria) : PaginaTarjetas(asesoria.Clien
 
         if (ficha.Restriccion is { Activa: true } r)
         {
-            var t = Tarjeta($"⚠ Restricción: {r.Tipo}", r.Descripcion,
+            var t = Tarjeta($"Restricción: {r.Tipo}", r.Descripcion,
                 r.AreasAfectadas.Count == 0 ? null : "Zonas: " + string.Join(", ", r.AreasAfectadas),
                 r.MovimientosEvitar.Count == 0 ? null : "Evitar: " + string.Join(", ", r.MovimientosEvitar));
             t.Stroke = Colores.Alerta;

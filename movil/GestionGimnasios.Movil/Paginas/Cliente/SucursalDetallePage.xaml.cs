@@ -52,7 +52,7 @@ public partial class SucursalDetallePage : PaginaBase
         Reserva? r = null;
         if (await IntentarAsync(async () => r = await Api.PostAsync<Reserva>("/api/reservas", new { horarioActividadId = d.HorarioId, fecha = d.Fecha })))
         {
-            await AvisarAsync("¡Reserva confirmada!", $"Tu código de ingreso es {r!.Codigo}. Muéstralo en recepción al llegar.");
+            await AvisarAsync("Reserva confirmada", $"Tu código de ingreso es {r!.Codigo}. Muéstralo en recepción al llegar.");
             await IntentarAsync(CargarClasesAsync);
         }
     }

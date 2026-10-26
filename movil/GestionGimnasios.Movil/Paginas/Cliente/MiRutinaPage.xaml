@@ -18,10 +18,10 @@
 
                 <Border x:Name="TarjetaRutina" Style="{StaticResource TarjetaDestacada}" IsVisible="False">
                     <VerticalStackLayout Spacing="2">
-                        <Label x:Name="Nombre" TextColor="White" FontSize="20" FontFamily="OpenSansSemibold" />
-                        <Label x:Name="Detalle" TextColor="White" FontSize="13" />
-                        <Label x:Name="Entrenador" TextColor="White" FontSize="13" />
-                        <Label x:Name="Descripcion" TextColor="White" FontSize="13" Margin="0,6,0,0" />
+                        <Label x:Name="Nombre" TextColor="{StaticResource PrimaryDarkText}" FontSize="20" FontFamily="OpenSansSemibold" />
+                        <Label x:Name="Detalle" TextColor="{StaticResource PrimaryDarkText}" FontSize="13" />
+                        <Label x:Name="Entrenador" TextColor="{StaticResource PrimaryDarkText}" FontSize="13" />
+                        <Label x:Name="Descripcion" TextColor="{StaticResource PrimaryDarkText}" FontSize="13" Margin="0,6,0,0" />
                     </VerticalStackLayout>
                 </Border>
 
