@@ -1,0 +1,68 @@
+@model List<BeneficioDto>
+@{
+    ViewData["Title"] = "Beneficios";
+    ViewData["Pretitulo"] = "Gestión";
+    var cadenas = (List<CadenaDto>)ViewBag.Cadenas;
+    var hoy = Reloj.Hoy;
+}
+@section Acciones {
+    <a class="btn btn-outline-primary" asp-action="Canjes"><i class="ti ti-ticket me-1"></i>Validar canjes</a>
+}
+<div class="row row-cards">
+    <div class="col-lg-8">
+        <div class="row row-cards">
+            @foreach (var b in Model)
+            {
+                var vencido = b.VigenteHasta < hoy;
+                <div class="col-md-6">
+                    <div class="card @(b.Activo && !vencido ? "" : "opacity-50")">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start">
+                                <div>
+                                    <div class="text-secondary small">@TiposBeneficio.Etiqueta(b.Tipo) · @b.Cadena</div>
+                                    <h3 class="card-title mb-1">@b.Nombre</h3>
+                                </div>
+                                <span class="badge ms-auto @(b.Activo ? (vencido ? "bg-secondary-lt" : "bg-green-lt") : "bg-secondary-lt")">@(b.Activo ? (vencido ? "Vencido" : "Activo") : "Inactivo")</span>
+                            </div>
+                            <div class="text-secondary">@b.Descripcion</div>
+                            @if (!string.IsNullOrWhiteSpace(b.Condiciones))
+                            {
+                                <div class="small mt-1">Condiciones: @b.Condiciones</div>
+                            }
+                            <ul class="list-unstyled small text-secondary mt-2 mb-0">
+                                <li><i class="ti ti-calendar me-1"></i>Del @b.VigenteDesde.ToString("dd/MM/yyyy") al @b.VigenteHasta.ToString("dd/MM/yyyy")</li>
+                                <li><i class="ti ti-user-check me-1"></i>@(b.LimitePorSocio == 1 ? "Un canje por socio" : $"Hasta {b.LimitePorSocio} canjes por socio")@(b.RequierePlanActivo ? " · requiere plan activo" : "")</li>
+                                @if (b.AsistenciasMinimas > 0)
+                                {
+                                    <li><i class="ti ti-door-enter me-1"></i>Mínimo @b.AsistenciasMinimas ingresos en 30 días</li>
+                                }
+                                <li><i class="ti ti-ticket me-1"></i>@b.Canjes canjes@(b.CuposTotales is int c ? $" de {c}" : "")</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#beneficio-@b.Id">Editar</button>
+                            <form method="post" asp-action="Activo" asp-route-id="@b.Id">
+                                <input type="hidden" name="activo" value="@(!b.Activo ? "true" : "false")" />
+                                <button class="btn btn-sm @(b.Activo ? "btn-outline-danger" : "btn-outline-success")">@(b.Activo ? "Desactivar" : "Activar")</button>
+                            </form>
+                        </div>
+                        <div class="collapse" id="beneficio-@b.Id">
+                            <div class="card-body border-top"><partial name="_FormBeneficio" model="b" view-data='new ViewDataDictionary(ViewData) { ["Cadenas"] = cadenas }' /></div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Count == 0)
+            {
+                <div class="col-12"><div class="card"><div class="card-body text-center text-secondary py-4">Todavía no hay beneficios. Crea el primero con el formulario.</div></div></div>
+            }
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Nuevo beneficio</h3></div>
+            <div class="card-body"><partial name="_FormBeneficio" model="(BeneficioDto?)null" view-data='new ViewDataDictionary(ViewData) { ["Cadenas"] = cadenas }' /></div>
+        </div>
+        <div class="text-secondary small mt-2">Los socios ven los beneficios de su cadena en la app. Un beneficio con canjes no se elimina: se desactiva.</div>
+    </div>
+</div>
