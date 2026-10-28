@@ -48,6 +48,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
     public DbSet<Asesoria> Asesorias => Set<Asesoria>();
     public DbSet<CitaNutricional> Citas => Set<CitaNutricional>();
     public DbSet<PlanNutricional> PlanesNutricionales => Set<PlanNutricional>();
+    public DbSet<ReglaInactividad> ReglasInactividad => Set<ReglaInactividad>();
+    public DbSet<AlertaInactividad> Alertas => Set<AlertaInactividad>();
+    public DbSet<IntervencionAlerta> Intervenciones => Set<IntervencionAlerta>();
     public DbSet<PlantillaNotificacion> Plantillas => Set<PlantillaNotificacion>();
     public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
     public DbSet<PreferenciaNotificacion> PreferenciasNotificacion => Set<PreferenciaNotificacion>();
@@ -197,6 +200,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
             e.Property(x => x.ProteinaG).HasPrecision(6, 1);
             e.Property(x => x.CarbohidratosG).HasPrecision(6, 1);
             e.Property(x => x.GrasaG).HasPrecision(6, 1);
+        });
+        b.Entity<ReglaInactividad>(e => e.HasIndex(x => x.CadenaId).IsUnique());
+        b.Entity<AlertaInactividad>(e =>
+        {
+            // Una sola alerta abierta por socio y cadena: la detección diaria la actualiza en lugar de duplicarla.
+            e.HasIndex(x => new { x.CadenaId, x.UsuarioId }).IsUnique().HasFilter("[Estado] <> 'CERRADA'");
+            e.HasIndex(x => new { x.CadenaId, x.Estado, x.Nivel });
+            e.Property(x => x.Nivel).HasMaxLength(10);
+            e.Property(x => x.Estado).HasMaxLength(20);
+            e.HasMany(x => x.Intervenciones).WithOne().HasForeignKey(x => x.AlertaId);
+        });
+        b.Entity<IntervencionAlerta>(e =>
+        {
+            e.Property(x => x.Tipo).HasMaxLength(20);
+            e.Property(x => x.Nota).HasMaxLength(500);
         });
 
         b.Entity<PlantillaNotificacion>(e => e.HasIndex(x => x.Tipo).IsUnique());

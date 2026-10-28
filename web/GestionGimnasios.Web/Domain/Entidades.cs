@@ -578,6 +578,60 @@ public class PlanNutricional
     public DateTime ActualizadoEn { get; set; } = DateTime.UtcNow;
 }
 
+// ── Alertas de inactividad (RF-04) ──────────────────────────────────────
+
+/// <summary>Umbrales de inactividad que el gerente configura para su cadena (CU-38).</summary>
+public class ReglaInactividad : IDeCadena
+{
+    public int Id { get; set; }
+    public int CadenaId { get; set; }
+    /// <summary>Días sin asistir desde los que se abre una alerta de nivel medio.</summary>
+    public int DiasAviso { get; set; } = 7;
+    /// <summary>Días sin asistir desde los que la alerta pasa a riesgo alto.</summary>
+    public int DiasRiesgo { get; set; } = 14;
+    /// <summary>Revisar solo a los socios con un plan activo en la cadena.</summary>
+    public bool SoloConPlanActivo { get; set; } = true;
+    public bool Activa { get; set; } = true;
+    public DateTime ActualizadaEn { get; set; } = DateTime.UtcNow;
+    public int? ActualizadaPorId { get; set; }
+}
+
+/// <summary>Socio que superó el umbral de su cadena. Hay como máximo una alerta abierta por socio y cadena.</summary>
+public class AlertaInactividad : IDeCadena
+{
+    public int Id { get; set; }
+    public int CadenaId { get; set; }
+    /// <summary>Sucursal habitual del socio: limita qué personal de sucursal ve la alerta (RT-02).</summary>
+    public int? SucursalId { get; set; }
+    public int UsuarioId { get; set; }
+    public string Nivel { get; set; } = NivelesAlerta.Medio;
+    public int DiasInactivo { get; set; }
+    /// <summary>Último ingreso o entrenamiento en la cadena; sin valor si nunca asistió.</summary>
+    public DateTime? UltimaActividad { get; set; }
+    public string Estado { get; set; } = EstadosAlerta.Abierta;
+    public DateTime DetectadaEn { get; set; } = DateTime.UtcNow;
+    public DateTime ActualizadaEn { get; set; } = DateTime.UtcNow;
+    public DateTime? CerradaEn { get; set; }
+    public string? MotivoCierre { get; set; }
+
+    public Usuario? Usuario { get; set; }
+    public Sucursal? Sucursal { get; set; }
+    public List<IntervencionAlerta> Intervenciones { get; set; } = [];
+}
+
+/// <summary>Contacto o seguimiento que el personal registra en una alerta.</summary>
+public class IntervencionAlerta
+{
+    public int Id { get; set; }
+    public int AlertaId { get; set; }
+    public int RegistradaPorId { get; set; }
+    public string Tipo { get; set; } = TiposIntervencion.Llamada;
+    public string Nota { get; set; } = "";
+    public DateTime RegistradaEn { get; set; } = DateTime.UtcNow;
+
+    public Usuario? RegistradaPor { get; set; }
+}
+
 // ── Notificaciones, mensajería y sistema ────────────────────────────────
 
 public class PlantillaNotificacion

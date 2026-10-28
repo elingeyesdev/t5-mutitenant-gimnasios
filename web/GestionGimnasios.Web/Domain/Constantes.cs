@@ -97,6 +97,39 @@ public static class TiposRegistroEjercicio
     public const string SoloTiempo = "SOLO_TIEMPO";
 }
 
+/// <summary>Nivel de una alerta de inactividad según los umbrales de la cadena (RF-04).</summary>
+public static class NivelesAlerta
+{
+    public const string Medio = "MEDIO";
+    public const string Alto = "ALTO";
+}
+
+public static class EstadosAlerta
+{
+    public const string Abierta = "ABIERTA";
+    /// <summary>El personal ya registró al menos un contacto.</summary>
+    public const string EnSeguimiento = "EN_SEGUIMIENTO";
+    public const string Cerrada = "CERRADA";
+}
+
+public static class TiposIntervencion
+{
+    public const string Llamada = "LLAMADA";
+    public const string Mensaje = "MENSAJE";
+    public const string Presencial = "PRESENCIAL";
+    public const string Otro = "OTRO";
+
+    public static readonly string[] Todos = [Llamada, Mensaje, Presencial, Otro];
+
+    public static string Etiqueta(string tipo) => tipo switch
+    {
+        Llamada => "Llamada",
+        Mensaje => "Mensaje",
+        Presencial => "En persona",
+        _ => "Otro",
+    };
+}
+
 /// <summary>Días de la semana como los guarda el proyecto base.</summary>
 public static class Dias
 {

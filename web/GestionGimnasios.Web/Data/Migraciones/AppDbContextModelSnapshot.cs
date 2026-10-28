@@ -102,6 +102,66 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.ToTable("Actividades");
                 });
 
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.AlertaInactividad", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ActualizadaEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CadenaId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CerradaEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DetectadaEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DiasInactivo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("MotivoCierre")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nivel")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int?>("SucursalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UltimaActividad")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SucursalId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.HasIndex("CadenaId", "UsuarioId")
+                        .IsUnique()
+                        .HasFilter("[Estado] <> 'CERRADA'");
+
+                    b.HasIndex("CadenaId", "Estado", "Nivel");
+
+                    b.ToTable("Alertas");
+                });
+
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Asesoria", b =>
                 {
                     b.Property<int>("Id")
@@ -528,6 +588,42 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.HasIndex("SucursalId");
 
                     b.ToTable("HorariosSucursal");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.IntervencionAlerta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AlertaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nota")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("RegistradaEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RegistradaPorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlertaId");
+
+                    b.HasIndex("RegistradaPorId");
+
+                    b.ToTable("Intervenciones");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Maquina", b =>
@@ -1113,6 +1209,43 @@ namespace GestionGimnasios.Web.Data.Migraciones
                         .IsUnique();
 
                     b.ToTable("PreferenciasNotificacion");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.ReglaInactividad", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activa")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ActualizadaEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ActualizadaPorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CadenaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiasAviso")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiasRiesgo")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("SoloConPlanActivo")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CadenaId")
+                        .IsUnique();
+
+                    b.ToTable("ReglasInactividad");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Reserva", b =>
@@ -1779,6 +1912,24 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.Navigation("Sucursal");
                 });
 
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.AlertaInactividad", b =>
+                {
+                    b.HasOne("GestionGimnasios.Web.Domain.Sucursal", "Sucursal")
+                        .WithMany()
+                        .HasForeignKey("SucursalId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Sucursal");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Asesoria", b =>
                 {
                     b.HasOne("GestionGimnasios.Web.Domain.Usuario", "Asesor")
@@ -1927,6 +2078,23 @@ namespace GestionGimnasios.Web.Data.Migraciones
                         .HasForeignKey("SucursalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.IntervencionAlerta", b =>
+                {
+                    b.HasOne("GestionGimnasios.Web.Domain.AlertaInactividad", null)
+                        .WithMany("Intervenciones")
+                        .HasForeignKey("AlertaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "RegistradaPor")
+                        .WithMany()
+                        .HasForeignKey("RegistradaPorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("RegistradaPor");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Maquina", b =>
@@ -2229,6 +2397,11 @@ namespace GestionGimnasios.Web.Data.Migraciones
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Actividad", b =>
                 {
                     b.Navigation("Horarios");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.AlertaInactividad", b =>
+                {
+                    b.Navigation("Intervenciones");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Cadena", b =>
