@@ -440,6 +440,50 @@ public class PagoSuscripcion
     public string Estado { get; set; } = "PAGADO";
 }
 
+// ── Beneficios y canjes (RF-03) ─────────────────────────────────────────
+
+/// <summary>Beneficio, vale o cupón que la cadena ofrece a sus socios, con sus reglas de canje (CU-37).</summary>
+public class Beneficio : IDeCadena
+{
+    public int Id { get; set; }
+    public int CadenaId { get; set; }
+    public string Nombre { get; set; } = "";
+    public string? Descripcion { get; set; }
+    public string Tipo { get; set; } = TiposBeneficio.Descuento;
+    /// <summary>Condiciones de uso que ve el socio (por ejemplo, "válido en bebidas").</summary>
+    public string? Condiciones { get; set; }
+    public DateOnly VigenteDesde { get; set; }
+    public DateOnly VigenteHasta { get; set; }
+    /// <summary>Canjes disponibles en total; sin valor, no se agota.</summary>
+    public int? CuposTotales { get; set; }
+    public int LimitePorSocio { get; set; } = 1;
+    /// <summary>Ingresos a la cadena en los últimos 30 días que el socio necesita para canjearlo.</summary>
+    public int AsistenciasMinimas { get; set; }
+    public bool RequierePlanActivo { get; set; } = true;
+    public bool Activo { get; set; } = true;
+    public DateTime CreadoEn { get; set; } = DateTime.UtcNow;
+
+    public Cadena? Cadena { get; set; }
+    public List<CanjeBeneficio> Canjes { get; set; } = [];
+}
+
+/// <summary>Canje de un beneficio, con el código del comprobante que el socio muestra en recepción.</summary>
+public class CanjeBeneficio : IDeCadena
+{
+    public int Id { get; set; }
+    public int CadenaId { get; set; }
+    public int BeneficioId { get; set; }
+    public int UsuarioId { get; set; }
+    public string Codigo { get; set; } = "";
+    public DateTime CanjeadoEn { get; set; } = DateTime.UtcNow;
+    public string Estado { get; set; } = EstadosCanje.Emitido;
+    public DateTime? EntregadoEn { get; set; }
+    public int? EntregadoPorId { get; set; }
+
+    public Beneficio? Beneficio { get; set; }
+    public Usuario? Usuario { get; set; }
+}
+
 // ── Reservas, lista de espera y accesos ─────────────────────────────────
 
 public class Reserva : IDeCadena

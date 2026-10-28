@@ -58,6 +58,32 @@ public static class EstadosSuscripcion
     public const string Cancelada = "CANCELADA";
 }
 
+/// <summary>Tipos de beneficio que la cadena ofrece a sus socios (RF-03).</summary>
+public static class TiposBeneficio
+{
+    public const string Descuento = "DESCUENTO";
+    /// <summary>Producto o servicio sin costo (bebida, clase, evaluación).</summary>
+    public const string Vale = "VALE";
+    public const string Cupon = "CUPON";
+
+    public static readonly string[] Todos = [Descuento, Vale, Cupon];
+
+    public static string Etiqueta(string tipo) => tipo switch
+    {
+        Descuento => "Descuento",
+        Vale => "Vale",
+        Cupon => "Cupón",
+        _ => tipo,
+    };
+}
+
+public static class EstadosCanje
+{
+    /// <summary>Canje registrado; el socio muestra el comprobante en recepción.</summary>
+    public const string Emitido = "EMITIDO";
+    public const string Entregado = "ENTREGADO";
+}
+
 public static class EstadosAsesoria
 {
     public const string Pendiente = "PENDIENTE";

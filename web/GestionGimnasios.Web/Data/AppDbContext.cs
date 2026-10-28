@@ -40,6 +40,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
     public DbSet<PlanSuscripcion> Planes => Set<PlanSuscripcion>();
     public DbSet<Suscripcion> Suscripciones => Set<Suscripcion>();
     public DbSet<PagoSuscripcion> Pagos => Set<PagoSuscripcion>();
+    public DbSet<Beneficio> Beneficios => Set<Beneficio>();
+    public DbSet<CanjeBeneficio> Canjes => Set<CanjeBeneficio>();
     public DbSet<Reserva> Reservas => Set<Reserva>();
     public DbSet<EntradaListaEspera> ListaEspera => Set<EntradaListaEspera>();
     public DbSet<Acceso> Accesos => Set<Acceso>();
@@ -163,6 +165,20 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
             e.HasMany(x => x.Pagos).WithOne().HasForeignKey(x => x.SuscripcionId).OnDelete(DeleteBehavior.Cascade);
         });
         b.Entity<PagoSuscripcion>(e => e.Property(x => x.Monto).HasPrecision(10, 2));
+        b.Entity<Beneficio>(e =>
+        {
+            e.HasIndex(x => new { x.CadenaId, x.Activo, x.VigenteHasta });
+            e.Property(x => x.Nombre).HasMaxLength(150);
+            e.Property(x => x.Tipo).HasMaxLength(20);
+            e.HasMany(x => x.Canjes).WithOne(x => x.Beneficio).HasForeignKey(x => x.BeneficioId);
+        });
+        b.Entity<CanjeBeneficio>(e =>
+        {
+            e.HasIndex(x => x.Codigo).IsUnique();
+            e.HasIndex(x => new { x.BeneficioId, x.UsuarioId });
+            e.Property(x => x.Codigo).HasMaxLength(12);
+            e.Property(x => x.Estado).HasMaxLength(20);
+        });
 
         b.Entity<Reserva>(e =>
         {
