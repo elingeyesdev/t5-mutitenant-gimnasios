@@ -36,7 +36,7 @@
                                 {
                                     <li><i class="ti ti-door-enter me-1"></i>Mínimo @b.AsistenciasMinimas ingresos en 30 días</li>
                                 }
-                                <li><i class="ti ti-ticket me-1"></i>@b.Canjes canjes@(b.CuposTotales is int c ? $" de {c}" : "")</li>
+                                <li><i class="ti ti-ticket me-1"></i>@(b.Canjes == 1 ? "1 canje" : $"{b.Canjes} canjes")@(b.CuposTotales is int c ? $" de {c}" : "")</li>
                             </ul>
                         </div>
                         <div class="card-footer d-flex gap-2">
