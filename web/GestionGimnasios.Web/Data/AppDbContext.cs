@@ -34,6 +34,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
     public DbSet<PerfilEntrenamiento> PerfilesEntrenamiento => Set<PerfilEntrenamiento>();
     public DbSet<RestriccionEntrenamiento> Restricciones => Set<RestriccionEntrenamiento>();
     public DbSet<ContactoEmergencia> ContactosEmergencia => Set<ContactoEmergencia>();
+    public DbSet<ConsentimientoPerfil> Consentimientos => Set<ConsentimientoPerfil>();
+    public DbSet<ConsultaPerfilPortable> ConsultasPerfil => Set<ConsultaPerfilPortable>();
     public DbSet<SesionEntrenamiento> Sesiones => Set<SesionEntrenamiento>();
     public DbSet<SerieEntrenamiento> Series => Set<SerieEntrenamiento>();
     public DbSet<MetricaFisica> Metricas => Set<MetricaFisica>();
@@ -137,6 +139,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
 
         b.Entity<PerfilEntrenamiento>(e => e.HasIndex(x => x.UsuarioId).IsUnique());
         b.Entity<RestriccionEntrenamiento>(e => e.HasIndex(x => x.UsuarioId).IsUnique());
+        b.Entity<ConsentimientoPerfil>(e =>
+        {
+            e.HasIndex(x => new { x.UsuarioId, x.CadenaId, x.RevocadoEn });
+            e.HasMany(x => x.Consultas).WithOne().HasForeignKey(x => x.ConsentimientoId);
+        });
         b.Entity<SesionEntrenamiento>(e =>
         {
             e.HasIndex(x => new { x.UsuarioId, x.Inicio });
