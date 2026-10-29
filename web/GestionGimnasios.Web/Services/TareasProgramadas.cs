@@ -6,8 +6,8 @@ namespace GestionGimnasios.Web.Services;
 
 /// <summary>
 /// Tareas programadas del proyecto base (@nestjs/schedule) como servicio en segundo plano:
-/// salida automática (cada 30 min), recordatorios de reserva (cada 15 min) y alertas de
-/// inactividad de alumnos (diaria a las 9:00).
+/// salida automática (cada 30 min), recordatorios de reserva (cada 15 min), alertas de
+/// inactividad de alumnos y detección de abandono por cadena (RF-04), ambas a diario a las 9:00.
 /// </summary>
 public class TareasProgramadas(IServiceScopeFactory scopes, ILogger<TareasProgramadas> logger) : BackgroundService
 {
@@ -34,6 +34,11 @@ public class TareasProgramadas(IServiceScopeFactory scopes, ILogger<TareasProgra
                 if (ahora.Hour >= 9 && ultimaAlerta != Reloj.Hoy)
                 {
                     await EjecutarAsync(AlertasInactividadAsync, "alertas de inactividad");
+                    await EjecutarAsync(async db =>
+                    {
+                        var r = await AlertasService.DetectarAsync(db);
+                        logger.LogInformation("Detección de abandono: {Revisados} socios revisados, {Nuevas} alertas nuevas, {Cerradas} cerradas.", r.Revisados, r.Nuevas, r.Cerradas);
+                    }, "detección de abandono");
                     ultimaAlerta = Reloj.Hoy;
                 }
             }

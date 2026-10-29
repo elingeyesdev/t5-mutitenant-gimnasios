@@ -69,6 +69,7 @@ public static class Menu
         new("Avisos", "ti-speakerphone", "Notificaciones", "Avisos", 4, Grupo: "Gestión"),
         new("Beneficios", "ti-gift", "Beneficios", "Index", 5, Grupo: "Gestión"),
         new("Reportes", "ti-report-analytics", "Reportes", "Index", 5, Grupo: "Análisis"),
+        new("Umbrales de inactividad", "ti-adjustments-alt", "Alertas", "Configuracion", 5, Grupo: "Análisis"),
         new("Cadenas", "ti-building-skyscraper", "Cadenas", "Index", 10, true, "Sistema"),
         new("Ejercicios", "ti-stretching", "Ejercicios", "Index", 10, true, "Sistema"),
         new("Roles y parámetros", "ti-shield-lock", "Roles", "Index", 10, true, "Sistema"),

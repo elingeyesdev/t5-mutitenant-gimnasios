@@ -27,6 +27,7 @@ public static class Registro
         services.AddScoped<BeneficiosService>();
         services.AddScoped<PersonalService>();
         services.AddScoped<ReportesService>();
+        services.AddScoped<AlertasService>();
         services.AddScoped<MensajesService>();
         services.AddScoped<VisitasService>();
         if (configuration.GetValue("TareasProgramadas:Habilitadas", true))
