@@ -107,6 +107,25 @@ public record Reserva(
 
 public record ResultadoIngreso(Reserva Reserva, string Mensaje);
 
+// ── Portabilidad del perfil deportivo ────────────────────────────────────
+
+public record CadenaDisponible(int Id, string Nombre, string? Descripcion);
+
+public record Consentimiento(
+    int Id, int UsuarioId, string Socio, int CadenaId, string Cadena, List<string> Datos,
+    DateTime OtorgadoEn, DateTime? RevocadoEn, int Consultas, DateTime? UltimaConsulta)
+{
+    [JsonIgnore] public bool Vigente => RevocadoEn is null;
+    [JsonIgnore] public string Estado => Vigente ? "Vigente" : "Revocada";
+    [JsonIgnore] public string FechaOtorgado => Hora.FechaHora(OtorgadoEn);
+    [JsonIgnore] public string FechaRevocado => RevocadoEn is null ? "" : Hora.FechaHora(RevocadoEn.Value);
+}
+
+public record ConsultaPerfil(DateTime ConsultadoEn, string ConsultadoPor)
+{
+    [JsonIgnore] public string Fecha => Hora.FechaHora(ConsultadoEn);
+}
+
 public record EntradaEspera(
     int Id, int UsuarioId, string Usuario, int HorarioActividadId, string Actividad, string Sucursal, string DiaSemana,
     TimeOnly Inicio, DateOnly? Fecha, int Posicion, string Estado, DateTime CreadaEn, DateTime? AsignadaEn, int? ReservaId)
