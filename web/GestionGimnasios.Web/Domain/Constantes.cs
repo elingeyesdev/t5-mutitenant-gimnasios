@@ -66,6 +66,30 @@ public static class EstadosAsesoria
     public const string Cancelada = "CANCELADA";
 }
 
+/// <summary>Datos del perfil deportivo que el socio puede compartir con otra cadena (RF-02).</summary>
+public static class DatosPortables
+{
+    /// <summary>Objetivo, nivel de experiencia y preferencias de entrenamiento.</summary>
+    public const string Perfil = "PERFIL";
+    /// <summary>Lesiones y movimientos a evitar.</summary>
+    public const string Restricciones = "RESTRICCIONES";
+    /// <summary>Sesiones de entrenamiento registradas.</summary>
+    public const string Historial = "HISTORIAL";
+    /// <summary>Medidas físicas (peso, grasa, circunferencias).</summary>
+    public const string Metricas = "METRICAS";
+
+    public static readonly string[] Todos = [Perfil, Restricciones, Historial, Metricas];
+
+    public static string Etiqueta(string dato) => dato switch
+    {
+        Perfil => "Perfil de entrenamiento",
+        Restricciones => "Restricciones",
+        Historial => "Historial de sesiones",
+        Metricas => "Métricas físicas",
+        _ => dato,
+    };
+}
+
 public static class EstadosSesion
 {
     public const string EnCurso = "EN_CURSO";

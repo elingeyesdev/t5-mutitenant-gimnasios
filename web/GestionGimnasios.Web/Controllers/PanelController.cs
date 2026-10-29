@@ -58,6 +58,7 @@ public static class Menu
         new("Lista de espera", "ti-list-numbers", "Reservas", "ListaEspera", 4, Grupo: "Operación"),
         new("Suscripciones", "ti-credit-card", "Suscripciones", "Index", 4, Grupo: "Operación"),
         new("Usuarios", "ti-users", "Usuarios", "Index", 4, Grupo: "Gestión"),
+        new("Perfiles portables", "ti-transfer", "Portabilidad", "Index", 4, Grupo: "Gestión"),
         new("Actividades", "ti-calendar-time", "Actividades", "Index", 4, Grupo: "Gestión"),
         new("Máquinas", "ti-barbell", "Maquinas", "Index", 4, Grupo: "Gestión"),
         new("Rutinas", "ti-list-check", "Rutinas", "Index", 3, Grupo: "Gestión"),

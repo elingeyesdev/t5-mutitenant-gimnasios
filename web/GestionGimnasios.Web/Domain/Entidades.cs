@@ -336,6 +336,37 @@ public class ContactoEmergencia
     public bool EsPrincipal { get; set; }
 }
 
+/// <summary>
+/// Autorización del socio para que otra cadena consulte su perfil deportivo (RF-02, CU-36).
+/// No se borra: la revocación queda registrada para poder verificarla.
+/// </summary>
+public class ConsentimientoPerfil : IDeCadena
+{
+    public int Id { get; set; }
+    public int UsuarioId { get; set; }
+    /// <summary>Cadena autorizada a consultar el perfil.</summary>
+    public int CadenaId { get; set; }
+    /// <summary>Datos que comparte (DatosPortables).</summary>
+    public List<string> Datos { get; set; } = [];
+    public DateTime OtorgadoEn { get; set; } = DateTime.UtcNow;
+    public DateTime? RevocadoEn { get; set; }
+
+    public Usuario? Usuario { get; set; }
+    public Cadena? Cadena { get; set; }
+    public List<ConsultaPerfilPortable> Consultas { get; set; } = [];
+}
+
+/// <summary>Cada consulta del personal autorizado queda registrada para que el socio pueda verla.</summary>
+public class ConsultaPerfilPortable
+{
+    public int Id { get; set; }
+    public int ConsentimientoId { get; set; }
+    public int ConsultadoPorId { get; set; }
+    public DateTime ConsultadoEn { get; set; } = DateTime.UtcNow;
+
+    public Usuario? ConsultadoPor { get; set; }
+}
+
 public class SesionEntrenamiento
 {
     public int Id { get; set; }
