@@ -229,6 +229,64 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.ToTable("Asistencias");
                 });
 
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.Beneficio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("AsistenciasMinimas")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CadenaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Condiciones")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CuposTotales")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LimitePorSocio")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<bool>("RequierePlanActivo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateOnly>("VigenteDesde")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("VigenteHasta")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CadenaId", "Activo", "VigenteHasta");
+
+                    b.ToTable("Beneficios");
+                });
+
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Cadena", b =>
                 {
                     b.Property<int>("Id")
@@ -260,6 +318,54 @@ namespace GestionGimnasios.Web.Data.Migraciones
                         .IsUnique();
 
                     b.ToTable("Cadenas");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.CanjeBeneficio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BeneficioId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CadenaId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CanjeadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<DateTime?>("EntregadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("EntregadoPorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
+                    b.HasIndex("UsuarioId");
+
+                    b.HasIndex("BeneficioId", "UsuarioId");
+
+                    b.ToTable("Canjes");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.CitaNutricional", b =>
@@ -303,6 +409,65 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.HasIndex("PacienteId");
 
                     b.ToTable("Citas");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.ConsentimientoPerfil", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CadenaId")
+                        .HasColumnType("int");
+
+                    b.PrimitiveCollection<string>("Datos")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OtorgadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RevocadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CadenaId");
+
+                    b.HasIndex("UsuarioId", "CadenaId", "RevocadoEn");
+
+                    b.ToTable("Consentimientos");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.ConsultaPerfilPortable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ConsentimientoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ConsultadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ConsultadoPorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConsentimientoId");
+
+                    b.HasIndex("ConsultadoPorId");
+
+                    b.ToTable("ConsultasPerfil");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.ContactoEmergencia", b =>
@@ -1968,6 +2133,36 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.Beneficio", b =>
+                {
+                    b.HasOne("GestionGimnasios.Web.Domain.Cadena", "Cadena")
+                        .WithMany()
+                        .HasForeignKey("CadenaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cadena");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.CanjeBeneficio", b =>
+                {
+                    b.HasOne("GestionGimnasios.Web.Domain.Beneficio", "Beneficio")
+                        .WithMany("Canjes")
+                        .HasForeignKey("BeneficioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Beneficio");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("GestionGimnasios.Web.Domain.CitaNutricional", b =>
                 {
                     b.HasOne("GestionGimnasios.Web.Domain.Usuario", "Nutricionista")
@@ -1985,6 +2180,42 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.Navigation("Nutricionista");
 
                     b.Navigation("Paciente");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.ConsentimientoPerfil", b =>
+                {
+                    b.HasOne("GestionGimnasios.Web.Domain.Cadena", "Cadena")
+                        .WithMany()
+                        .HasForeignKey("CadenaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cadena");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.ConsultaPerfilPortable", b =>
+                {
+                    b.HasOne("GestionGimnasios.Web.Domain.ConsentimientoPerfil", null)
+                        .WithMany("Consultas")
+                        .HasForeignKey("ConsentimientoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "ConsultadoPor")
+                        .WithMany()
+                        .HasForeignKey("ConsultadoPorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ConsultadoPor");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.ContactoEmergencia", b =>
@@ -2404,9 +2635,19 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.Navigation("Intervenciones");
                 });
 
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.Beneficio", b =>
+                {
+                    b.Navigation("Canjes");
+                });
+
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Cadena", b =>
                 {
                     b.Navigation("Sucursales");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.ConsentimientoPerfil", b =>
+                {
+                    b.Navigation("Consultas");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Conversacion", b =>

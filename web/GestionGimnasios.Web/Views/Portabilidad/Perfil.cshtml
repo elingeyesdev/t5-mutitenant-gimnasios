@@ -1,0 +1,115 @@
+@model PerfilPortableDto
+@{
+    ViewData["Title"] = Model.Socio;
+    ViewData["Pretitulo"] = "Perfil portable";
+}
+@section Acciones {
+    <a class="btn btn-outline-secondary" asp-action="Index"><i class="ti ti-arrow-left me-1"></i>Volver</a>
+}
+<div class="alert alert-info">
+    Autorizado a @Model.Cadena el @Reloj.ALocal(Model.OtorgadoEn).ToString("dd/MM/yyyy").
+    Comparte: @string.Join(", ", Model.Datos.Select(DatosPortables.Etiqueta)).
+</div>
+<div class="row row-cards">
+    @if (Model.Datos.Contains(DatosPortables.Perfil))
+    {
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Perfil de entrenamiento</h3></div>
+                <div class="card-body">
+                    @if (Model.Entrenamiento is { } p)
+                    {
+                        <dl class="row mb-0">
+                            <dt class="col-5">Objetivo</dt><dd class="col-7">@(p.ObjetivoPrincipal ?? "—")</dd>
+                            <dt class="col-5">Nivel</dt><dd class="col-7">@(p.NivelExperiencia ?? "—")</dd>
+                            <dt class="col-5">Días disponibles</dt><dd class="col-7">@(p.DiasDisponibles?.ToString() ?? "—")</dd>
+                            <dt class="col-5">Prefiere</dt><dd class="col-7">@(p.TiposPreferidos.Count > 0 ? string.Join(", ", p.TiposPreferidos) : "—")</dd>
+                            <dt class="col-5">Áreas prioritarias</dt><dd class="col-7">@(p.AreasPrioritarias.Count > 0 ? string.Join(", ", p.AreasPrioritarias) : "—")</dd>
+                        </dl>
+                    }
+                    else
+                    {
+                        <div class="text-secondary">El socio no completó su perfil de entrenamiento.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.Datos.Contains(DatosPortables.Restricciones))
+    {
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Restricciones</h3></div>
+                <div class="card-body">
+                    @if (Model.Restriccion is { Activa: true } r)
+                    {
+                        <div class="fw-bold">@r.Tipo</div>
+                        <div class="text-secondary">@r.Descripcion</div>
+                        <div class="mt-2 small">Áreas afectadas: @(r.AreasAfectadas.Count > 0 ? string.Join(", ", r.AreasAfectadas) : "—")</div>
+                        <div class="small">Evitar: @(r.MovimientosEvitar.Count > 0 ? string.Join(", ", r.MovimientosEvitar) : "—")</div>
+                    }
+                    else
+                    {
+                        <div class="text-secondary">Sin restricciones registradas.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.Sesiones is { } sesiones)
+    {
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Últimas sesiones</h3></div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead><tr><th>Fecha</th><th>Actividad</th><th>Duración</th><th>Series</th></tr></thead>
+                        <tbody>
+                        @foreach (var s in sesiones)
+                        {
+                            <tr>
+                                <td>@Reloj.ALocal(s.Inicio).ToString("dd/MM/yyyy")</td>
+                                <td>@s.Actividad</td>
+                                <td>@(s.DuracionSeg is int d ? $"{d / 60} min" : "—")</td>
+                                <td>@s.Series</td>
+                            </tr>
+                        }
+                        @if (sesiones.Count == 0)
+                        {
+                            <tr><td colspan="4" class="text-center text-secondary py-3">Sin sesiones registradas.</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.Metricas is { } metricas)
+    {
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Métricas físicas</h3></div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead><tr><th>Fecha</th><th>Peso (kg)</th><th>Grasa (%)</th><th>Masa muscular (kg)</th></tr></thead>
+                        <tbody>
+                        @foreach (var m in metricas)
+                        {
+                            <tr>
+                                <td>@Reloj.ALocal(m.RegistradaEn).ToString("dd/MM/yyyy")</td>
+                                <td>@(m.PesoKg?.ToString("0.0") ?? "—")</td>
+                                <td>@(m.GrasaPct?.ToString("0.0") ?? "—")</td>
+                                <td>@(m.MasaMuscularKg?.ToString("0.0") ?? "—")</td>
+                            </tr>
+                        }
+                        @if (metricas.Count == 0)
+                        {
+                            <tr><td colspan="4" class="text-center text-secondary py-3">Sin métricas registradas.</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

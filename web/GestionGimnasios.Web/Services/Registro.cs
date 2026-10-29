@@ -18,11 +18,13 @@ public static class Registro
         services.AddScoped<EjerciciosService>();
         services.AddScoped<RutinasService>();
         services.AddScoped<EntrenamientoService>();
+        services.AddScoped<PortabilidadService>();
         services.AddScoped<SuscripcionesService>();
         services.AddScoped<NotificacionesService>();
         services.AddScoped<ReservasService>();
         services.AddScoped<ListaEsperaService>();
         services.AddScoped<AccesosService>();
+        services.AddScoped<BeneficiosService>();
         services.AddScoped<PersonalService>();
         services.AddScoped<ReportesService>();
         services.AddScoped<AlertasService>();

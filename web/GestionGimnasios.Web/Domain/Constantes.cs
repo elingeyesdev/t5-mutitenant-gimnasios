@@ -58,12 +58,62 @@ public static class EstadosSuscripcion
     public const string Cancelada = "CANCELADA";
 }
 
+/// <summary>Tipos de beneficio que la cadena ofrece a sus socios (RF-03).</summary>
+public static class TiposBeneficio
+{
+    public const string Descuento = "DESCUENTO";
+    /// <summary>Producto o servicio sin costo (bebida, clase, evaluación).</summary>
+    public const string Vale = "VALE";
+    public const string Cupon = "CUPON";
+
+    public static readonly string[] Todos = [Descuento, Vale, Cupon];
+
+    public static string Etiqueta(string tipo) => tipo switch
+    {
+        Descuento => "Descuento",
+        Vale => "Vale",
+        Cupon => "Cupón",
+        _ => tipo,
+    };
+}
+
+public static class EstadosCanje
+{
+    /// <summary>Canje registrado; el socio muestra el comprobante en recepción.</summary>
+    public const string Emitido = "EMITIDO";
+    public const string Entregado = "ENTREGADO";
+}
+
 public static class EstadosAsesoria
 {
     public const string Pendiente = "PENDIENTE";
     public const string Activa = "ACTIVA";
     public const string Rechazada = "RECHAZADA";
     public const string Cancelada = "CANCELADA";
+}
+
+/// <summary>Datos del perfil deportivo que el socio puede compartir con otra cadena (RF-02).</summary>
+public static class DatosPortables
+{
+    /// <summary>Objetivo, nivel de experiencia y preferencias de entrenamiento.</summary>
+    public const string Perfil = "PERFIL";
+    /// <summary>Lesiones y movimientos a evitar.</summary>
+    public const string Restricciones = "RESTRICCIONES";
+    /// <summary>Sesiones de entrenamiento registradas.</summary>
+    public const string Historial = "HISTORIAL";
+    /// <summary>Medidas físicas (peso, grasa, circunferencias).</summary>
+    public const string Metricas = "METRICAS";
+
+    public static readonly string[] Todos = [Perfil, Restricciones, Historial, Metricas];
+
+    public static string Etiqueta(string dato) => dato switch
+    {
+        Perfil => "Perfil de entrenamiento",
+        Restricciones => "Restricciones",
+        Historial => "Historial de sesiones",
+        Metricas => "Métricas físicas",
+        _ => dato,
+    };
 }
 
 public static class EstadosSesion
