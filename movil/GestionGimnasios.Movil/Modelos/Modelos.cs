@@ -126,6 +126,54 @@ public record ConsultaPerfil(DateTime ConsultadoEn, string ConsultadoPor)
     [JsonIgnore] public string Fecha => Hora.FechaHora(ConsultadoEn);
 }
 
+// ── Beneficios y canjes ───────────────────────────────────────────────────
+
+public record BeneficioDisponible(
+    int Id, string Cadena, string Nombre, string? Descripcion, string Tipo, string? Condiciones,
+    DateOnly VigenteDesde, DateOnly VigenteHasta, List<string> Reglas, int CanjesUsados, int? CuposRestantes,
+    bool Elegible, string? Motivo)
+{
+    [JsonIgnore] public string TipoTexto => Tipo switch
+    {
+        "DESCUENTO" => "Descuento",
+        "VALE" => "Vale",
+        "CUPON" => "Cupón",
+        _ => Tipo,
+    };
+    [JsonIgnore] public string Vigencia => $"Válido del {VigenteDesde:dd/MM/yyyy} al {VigenteHasta:dd/MM/yyyy}";
+    [JsonIgnore] public string ReglasTexto => Reglas.Count == 0 ? "Sin condiciones adicionales" : string.Join("\n", Reglas.Select(r => $"- {r}"));
+    [JsonIgnore] public string CuposTexto => CuposRestantes is null ? "Sin límite total de canjes" : $"{CuposRestantes} cupos restantes";
+    [JsonIgnore] public string ElegibilidadTexto => Elegible ? "Elegible para canjear" : $"No elegible: {Motivo ?? "No cumple las condiciones actuales."}";
+    [JsonIgnore] public Color ColorElegibilidad => Elegible ? Colores.Exito : Colores.Peligro;
+}
+
+public record CanjeBeneficio(
+    int Id, string Codigo, int BeneficioId, string Beneficio, string Tipo, int UsuarioId, string Socio, string Cadena,
+    DateTime CanjeadoEn, string Estado, DateTime? EntregadoEn)
+{
+    [JsonIgnore] public string TipoTexto => Tipo switch
+    {
+        "DESCUENTO" => "Descuento",
+        "VALE" => "Vale",
+        "CUPON" => "Cupón",
+        _ => Tipo,
+    };
+    [JsonIgnore] public string Fecha => Hora.FechaHora(CanjeadoEn);
+    [JsonIgnore] public string EstadoTexto => Estado switch
+    {
+        "EMITIDO" => "Emitido",
+        "ENTREGADO" => "Entregado",
+        _ => Textos.Estado(Estado),
+    };
+    [JsonIgnore] public Color ColorEstado => Estado switch
+    {
+        "EMITIDO" => Colores.Alerta,
+        "ENTREGADO" => Colores.Exito,
+        _ => Colores.GrisTexto,
+    };
+    [JsonIgnore] public string FechaEntrega => EntregadoEn is null ? "" : $"Entregado: {Hora.FechaHora(EntregadoEn.Value)}";
+}
+
 public record EntradaEspera(
     int Id, int UsuarioId, string Usuario, int HorarioActividadId, string Actividad, string Sucursal, string DiaSemana,
     TimeOnly Inicio, DateOnly? Fecha, int Posicion, string Estado, DateTime CreadaEn, DateTime? AsignadaEn, int? ReservaId)
