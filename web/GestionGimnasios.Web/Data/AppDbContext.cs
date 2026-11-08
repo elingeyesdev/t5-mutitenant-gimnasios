@@ -50,6 +50,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
     public DbSet<Visita> Visitas => Set<Visita>();
     public DbSet<HorarioPersonal> HorariosPersonal => Set<HorarioPersonal>();
     public DbSet<Asesoria> Asesorias => Set<Asesoria>();
+    public DbSet<VideoTecnica> VideosTecnica => Set<VideoTecnica>();
     public DbSet<CitaNutricional> Citas => Set<CitaNutricional>();
     public DbSet<PlanNutricional> PlanesNutricionales => Set<PlanNutricional>();
     public DbSet<ReglaInactividad> ReglasInactividad => Set<ReglaInactividad>();
@@ -209,6 +210,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
         b.Entity<Asesoria>(e =>
         {
             e.HasIndex(x => new { x.ClienteId, x.AsesorId }).IsUnique();
+            e.HasOne(x => x.Cliente).WithMany().HasForeignKey(x => x.ClienteId);
+            e.HasOne(x => x.Asesor).WithMany().HasForeignKey(x => x.AsesorId);
+        });
+        b.Entity<VideoTecnica>(e =>
+        {
+            e.HasIndex(x => new { x.ClienteId, x.Estado });
+            e.HasIndex(x => new { x.AsesorId, x.Estado });
+            e.Property(x => x.Comentario).HasMaxLength(500);
+            e.Property(x => x.Archivo).HasMaxLength(200);
+            e.Property(x => x.TipoContenido).HasMaxLength(40);
+            e.Property(x => x.Estado).HasMaxLength(20);
+            e.Property(x => x.Valoracion).HasMaxLength(20);
+            e.Property(x => x.Observacion).HasMaxLength(1000);
             e.HasOne(x => x.Cliente).WithMany().HasForeignKey(x => x.ClienteId);
             e.HasOne(x => x.Asesor).WithMany().HasForeignKey(x => x.AsesorId);
         });
