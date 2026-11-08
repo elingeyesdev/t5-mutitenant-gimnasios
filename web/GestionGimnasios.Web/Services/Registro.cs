@@ -8,6 +8,7 @@ public static class Registro
         services.AddSingleton(configuration.GetSection("Correo").Get<OpcionesCorreo>() ?? new OpcionesCorreo());
         services.AddScoped<Alcances>();
         services.AddScoped<Almacenamiento>();
+        services.AddSingleton<ArchivosPrivados>();
         services.AddScoped<DatosPersonales>();
         services.AddScoped<CuentaService>();
         services.AddScoped<UsuariosService>();
@@ -20,6 +21,7 @@ public static class Registro
         services.AddScoped<EntrenamientoService>();
         services.AddScoped<PortabilidadService>();
         services.AddScoped<SuscripcionesService>();
+        services.AddScoped<PagosQrService>();
         services.AddScoped<NotificacionesService>();
         services.AddScoped<ReservasService>();
         services.AddScoped<ListaEsperaService>();
