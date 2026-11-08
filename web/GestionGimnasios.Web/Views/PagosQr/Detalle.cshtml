@@ -1,0 +1,102 @@
+@model OrdenPagoDto
+@{
+    ViewData["Title"] = $"Orden {Model.Codigo}";
+    ViewData["Pretitulo"] = "Pago QR";
+    var pendiente = Model.Estado == EstadosOrdenPago.Pendiente;
+    var color = Model.Estado switch
+    {
+        EstadosOrdenPago.Pendiente => "bg-yellow-lt",
+        EstadosOrdenPago.Confirmada => "bg-green-lt",
+        EstadosOrdenPago.Rechazada => "bg-red-lt",
+        _ => "bg-secondary-lt",
+    };
+}
+@section Acciones {
+    <a class="btn btn-outline-secondary" asp-action="Index"><i class="ti ti-arrow-left me-1"></i>Volver a las órdenes</a>
+}
+<div class="row row-cards">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Datos de la orden</h3>
+                <div class="card-actions"><span class="badge @color">@EstadosOrdenPago.Etiqueta(Model.Estado)</span></div>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-5">Código</dt><dd class="col-7 font-monospace">@Model.Codigo</dd>
+                    <dt class="col-5">Socio</dt><dd class="col-7">@Model.Socio</dd>
+                    <dt class="col-5">Sucursal</dt><dd class="col-7">@(Model.Sucursal ?? "Sin sucursal")</dd>
+                    <dt class="col-5">Plan</dt><dd class="col-7">@Model.Plan · @Model.Meses @(Model.Meses == 1 ? "mes" : "meses")</dd>
+                    <dt class="col-5">Monto</dt><dd class="col-7">Bs @Model.Monto.ToString("0.00")</dd>
+                    <dt class="col-5">Vencimiento del plan</dt><dd class="col-7">@Model.VenceSuscripcion.ToString("dd/MM/yyyy")</dd>
+                    <dt class="col-5">Creada</dt><dd class="col-7">@Reloj.ALocal(Model.CreadaEn).ToString("dd/MM/yyyy HH:mm")</dd>
+                    @if (pendiente && Model.ComprobanteEn is null)
+                    {
+                        <dt class="col-5">Vence sin comprobante</dt><dd class="col-7">@Reloj.ALocal(Model.ExpiraEn).ToString("dd/MM/yyyy HH:mm")</dd>
+                    }
+                    @if (Model.RevisadaEn is DateTime r)
+                    {
+                        <dt class="col-5">Revisada por</dt><dd class="col-7">@Model.RevisadaPor · @Reloj.ALocal(r).ToString("dd/MM/yyyy HH:mm")</dd>
+                    }
+                    @if (Model.MotivoRechazo is not null)
+                    {
+                        <dt class="col-5">Motivo del rechazo</dt><dd class="col-7">@Model.MotivoRechazo</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header"><h3 class="card-title">Comprobante del socio</h3></div>
+            <div class="card-body">
+                @if (Model.ComprobanteEn is DateTime c)
+                {
+                    <dl class="row mb-0">
+                        <dt class="col-5">Referencia</dt><dd class="col-7">@Model.ComprobanteReferencia</dd>
+                        <dt class="col-5">Registrado</dt><dd class="col-7">@Reloj.ALocal(c).ToString("dd/MM/yyyy HH:mm")</dd>
+                    </dl>
+                    @if (Model.TieneImagenComprobante)
+                    {
+                        <a asp-action="Comprobante" asp-route-id="@Model.Id" target="_blank" rel="noopener">
+                            <img src="@Url.Action("Comprobante", new { id = Model.Id })" alt="Imagen del comprobante" class="img-fluid rounded mt-3" style="max-height: 320px" />
+                        </a>
+                    }
+                }
+                else
+                {
+                    <p class="text-secondary mb-0">El socio todavía no registró su comprobante. La orden no se puede confirmar hasta entonces.</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        @if (pendiente)
+        {
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Revisión de recepción</h3></div>
+                <div class="card-body">
+                    <p class="text-secondary">Confirma solo después de ver el dinero en el extracto. Al confirmar se registra el pago y se renueva el plan.</p>
+                    <form method="post" asp-action="Confirmar" asp-route-id="@Model.Id" data-confirmar="¿Confirmar el pago de Bs @Model.Monto.ToString("0.00") de @Model.Socio?">
+                        <button class="btn btn-success w-100" disabled="@(Model.ComprobanteEn is null)"><i class="ti ti-check me-1"></i>Confirmar pago</button>
+                    </form>
+                    <hr class="my-3" />
+                    <form method="post" asp-action="Rechazar" asp-route-id="@Model.Id">
+                        <label class="form-label required">Motivo del rechazo</label>
+                        <textarea name="motivo" class="form-control" rows="2" maxlength="300" required></textarea>
+                        <button class="btn btn-outline-danger w-100 mt-2"><i class="ti ti-x me-1"></i>Rechazar orden</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-header"><h3 class="card-title">Código QR de la orden</h3></div>
+                <div class="card-body text-center">
+                    <img src="data:image/png;base64,@Model.QrPngBase64" alt="Código QR de la orden @Model.Codigo" width="200" height="200" />
+                    <p class="text-secondary small mt-2 mb-0">Identifica la orden y el monto. Es de demostración: no está conectado a un banco.</p>
+                </div>
+            </div>
+        }
+        else if (Model.Estado == EstadosOrdenPago.Vencida)
+        {
+            <div class="card"><div class="card-body text-secondary">La orden venció sin comprobante. El plan del socio no cambió.</div></div>
+        }
+    </div>
+</div>
