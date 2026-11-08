@@ -1,6 +1,9 @@
+using System.Reflection;
+using GestionGimnasios.Web.Controllers;
 using GestionGimnasios.Web.Domain;
 using GestionGimnasios.Web.Infrastructure;
 using GestionGimnasios.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestionGimnasios.Web.Tests;
 
@@ -46,4 +49,13 @@ public class AlertasTests
 
     [Fact]
     public void Umbrales_por_defecto_son_validos() => AlertasService.ValidarRegla(new ReglaInactividadForm());
+
+    [Fact]
+    public void La_bandeja_es_del_asesor_y_los_umbrales_solo_del_gerente()
+    {
+        Assert.Equal(Politicas.Asesor, typeof(AlertasController).GetCustomAttribute<AuthorizeAttribute>(inherit: false)!.Policy);
+        foreach (var accion in new[] { nameof(AlertasController.Configuracion), nameof(AlertasController.Detectar) })
+            Assert.All(typeof(AlertasController).GetMethods().Where(m => m.Name == accion),
+                m => Assert.Equal(Politicas.Gerente, m.GetCustomAttribute<AuthorizeAttribute>()?.Policy));
+    }
 }
