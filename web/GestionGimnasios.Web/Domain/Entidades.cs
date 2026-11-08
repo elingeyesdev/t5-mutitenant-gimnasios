@@ -471,6 +471,42 @@ public class PagoSuscripcion
     public string Estado { get; set; } = "PAGADO";
 }
 
+/// <summary>
+/// Orden de renovación con QR (RF-05, CU-39). Identifica el pago esperado y guarda el comprobante;
+/// la suscripción solo se renueva cuando recepción la confirma.
+/// </summary>
+public class OrdenPagoQr : IDeCadena
+{
+    public int Id { get; set; }
+    public int CadenaId { get; set; }
+    public int UsuarioId { get; set; }
+    public int SuscripcionId { get; set; }
+    public int? SucursalId { get; set; }
+    public string Codigo { get; set; } = "";
+    public int Meses { get; set; }
+    public decimal Monto { get; set; }
+    public string Estado { get; set; } = EstadosOrdenPago.Pendiente;
+    public DateTime CreadaEn { get; set; } = DateTime.UtcNow;
+    public DateTime ExpiraEn { get; set; }
+    /// <summary>Número o referencia de la transacción que indica el socio.</summary>
+    public string? ComprobanteReferencia { get; set; }
+    /// <summary>Imagen opcional del comprobante; se guarda fuera de la carpeta pública.</summary>
+    public string? ComprobanteArchivo { get; set; }
+    public DateTime? ComprobanteEn { get; set; }
+    public int? RevisadaPorId { get; set; }
+    public DateTime? RevisadaEn { get; set; }
+    public string? MotivoRechazo { get; set; }
+    /// <summary>Pago creado al confirmar: une la orden con el registro de pagos (conciliación).</summary>
+    public int? PagoId { get; set; }
+
+    public Cadena? Cadena { get; set; }
+    public Usuario? Usuario { get; set; }
+    public Suscripcion? Suscripcion { get; set; }
+    public Sucursal? Sucursal { get; set; }
+    public Usuario? RevisadaPor { get; set; }
+    public PagoSuscripcion? Pago { get; set; }
+}
+
 // ── Beneficios y canjes (RF-03) ─────────────────────────────────────────
 
 /// <summary>Beneficio, vale o cupón que la cadena ofrece a sus socios, con sus reglas de canje (CU-37).</summary>
