@@ -1,0 +1,44 @@
+@model List<VideoRevisionDto>
+@{
+    ViewData["Title"] = "Videos de técnica";
+    ViewData["Pretitulo"] = "Gestión";
+    var estado = (string?)ViewBag.Estado;
+}
+<div class="card">
+    <div class="card-body border-bottom">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Estado</label>
+                <select name="estado" class="form-select" onchange="this.form.submit()">
+                    <option value="">Todos</option>
+                    <option value="@EstadosVideoTecnica.Pendiente" selected="@(estado == EstadosVideoTecnica.Pendiente)">Por revisar</option>
+                    <option value="@EstadosVideoTecnica.Revisado" selected="@(estado == EstadosVideoTecnica.Revisado)">Revisados</option>
+                </select>
+            </div>
+            <div class="col-md-8 text-secondary">Videos enviados por tus alumnos con asesoría activa.</div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead><tr><th>Socio</th><th>Ejercicio</th><th>Enviado</th><th>Estado</th><th>Valoración</th><th class="w-1"></th></tr></thead>
+            <tbody>
+            @foreach (var v in Model)
+            {
+                var pendiente = v.Estado == EstadosVideoTecnica.Pendiente;
+                <tr>
+                    <td class="fw-medium">@v.Socio</td>
+                    <td>@v.Ejercicio <div class="text-secondary small">@v.GrupoMuscular</div></td>
+                    <td class="text-secondary">@Reloj.ALocal(v.EnviadoEn).ToString("dd/MM/yyyy HH:mm")</td>
+                    <td><span class="badge @(pendiente ? "bg-yellow-lt" : "bg-green-lt")">@(pendiente ? "Por revisar" : "Revisado")</span></td>
+                    <td>@(v.Valoracion is null ? "" : ValoracionesTecnica.Etiqueta(v.Valoracion))</td>
+                    <td><a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@v.Id">@(pendiente ? "Revisar" : "Ver")</a></td>
+                </tr>
+            }
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-secondary py-4">No hay videos con este estado.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -46,7 +46,7 @@ public abstract class PanelController : Controller
 }
 
 /// <summary>Opciones del menú lateral según el nivel del usuario (NAV_ROUTES del panel base).</summary>
-public record OpcionMenu(string Titulo, string Icono, string Controlador, string Accion, int NivelMinimo, bool SoloSuperAdmin = false, string? Grupo = null);
+public record OpcionMenu(string Titulo, string Icono, string Controlador, string Accion, int NivelMinimo, bool SoloSuperAdmin = false, string? Grupo = null, int? NivelMaximo = null);
 
 public static class Menu
 {
@@ -63,6 +63,7 @@ public static class Menu
         new("Actividades", "ti-calendar-time", "Actividades", "Index", 4, Grupo: "Gestión"),
         new("Máquinas", "ti-barbell", "Maquinas", "Index", 4, Grupo: "Gestión"),
         new("Rutinas", "ti-list-check", "Rutinas", "Index", 3, Grupo: "Gestión"),
+        new("Videos de técnica", "ti-video", "VideosTecnica", "Index", 3, Grupo: "Gestión", NivelMaximo: 3),
         new("Planes", "ti-receipt", "Suscripciones", "Planes", 5, Grupo: "Gestión"),
         new("Sucursales", "ti-building-store", "Sucursales", "Index", 4, Grupo: "Gestión"),
         new("Mapa de sucursales", "ti-map-pin", "Sucursales", "Mapa", 4, Grupo: "Gestión"),
