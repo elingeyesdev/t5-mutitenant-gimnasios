@@ -113,6 +113,31 @@ public static class EstadosAsesoria
     public const string Cancelada = "CANCELADA";
 }
 
+/// <summary>Estado del video de técnica que envía el socio (RF-01).</summary>
+public static class EstadosVideoTecnica
+{
+    public const string Pendiente = "PENDIENTE";
+    public const string Revisado = "REVISADO";
+}
+
+/// <summary>Valoración final que el entrenador da a la técnica (RF-01).</summary>
+public static class ValoracionesTecnica
+{
+    public const string Adecuada = "ADECUADA";
+    public const string Mejorable = "MEJORABLE";
+    public const string Incorrecta = "INCORRECTA";
+
+    public static readonly string[] Todas = [Adecuada, Mejorable, Incorrecta];
+
+    public static string Etiqueta(string valoracion) => valoracion switch
+    {
+        Adecuada => "Técnica adecuada",
+        Mejorable => "Puede mejorar",
+        Incorrecta => "Técnica incorrecta",
+        _ => valoracion,
+    };
+}
+
 /// <summary>Datos del perfil deportivo que el socio puede compartir con otra cadena (RF-02).</summary>
 public static class DatosPortables
 {

@@ -3,7 +3,7 @@
 @{
     var controlador = ViewContext.RouteData.Values["controller"]?.ToString();
     var accion = ViewContext.RouteData.Values["action"]?.ToString();
-    var opciones = Menu.Opciones.Where(o => Usuario.Nivel >= o.NivelMinimo && (!o.SoloSuperAdmin || Usuario.EsSuperAdmin)).ToList();
+    var opciones = Menu.Opciones.Where(o => Usuario.Nivel >= o.NivelMinimo && Usuario.Nivel <= (o.NivelMaximo ?? int.MaxValue) && (!o.SoloSuperAdmin || Usuario.EsSuperAdmin)).ToList();
     var sinLeer = Usuario.Autenticado ? await Notificaciones.SinLeerAsync() : 0;
     var alcance = Usuario.EsSuperAdmin ? "Todas las cadenas" : User.FindFirst("alcance")?.Value;
 }

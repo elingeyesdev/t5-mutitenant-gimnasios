@@ -656,6 +656,31 @@ public class Asesoria
     public Usuario? Asesor { get; set; }
 }
 
+/// <summary>Video de un ejercicio que el socio envía a su entrenador para revisar la técnica (RF-01, CU-35).</summary>
+public class VideoTecnica
+{
+    public int Id { get; set; }
+    public int ClienteId { get; set; }
+    public int AsesorId { get; set; }
+    public int EjercicioId { get; set; }
+    public string? Comentario { get; set; }
+    /// <summary>Ruta relativa en la carpeta privada: el video no tiene URL pública.</summary>
+    public string Archivo { get; set; } = "";
+    public string TipoContenido { get; set; } = "";
+    public long TamanoBytes { get; set; }
+    public DateTime EnviadoEn { get; set; } = DateTime.UtcNow;
+    public string Estado { get; set; } = EstadosVideoTecnica.Pendiente;
+    /// <summary>Solo lo ve el entrenador. Nulo mientras no haya una tecnología de análisis aprobada (CU-35, alterno 2a).</summary>
+    public string? AnalisisPreliminar { get; set; }
+    public string? Valoracion { get; set; }
+    public string? Observacion { get; set; }
+    public DateTime? RevisadoEn { get; set; }
+
+    public Usuario? Cliente { get; set; }
+    public Usuario? Asesor { get; set; }
+    public Ejercicio? Ejercicio { get; set; }
+}
+
 public class CitaNutricional
 {
     public int Id { get; set; }

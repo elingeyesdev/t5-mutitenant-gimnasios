@@ -19,6 +19,7 @@ public static class Registro
         services.AddScoped<EjerciciosService>();
         services.AddScoped<RutinasService>();
         services.AddScoped<EntrenamientoService>();
+        services.AddScoped<VideosTecnicaService>();
         services.AddScoped<PortabilidadService>();
         services.AddScoped<SuscripcionesService>();
         services.AddScoped<PagosQrService>();

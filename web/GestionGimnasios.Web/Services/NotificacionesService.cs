@@ -30,6 +30,7 @@ public static class TiposNotificacion
     public const string IngresoRegistrado = "INGRESO_REGISTRADO";
     public const string Inactividad = "ALERTA_INACTIVIDAD";
     public const string Asesoria = "ASESORIA";
+    public const string VideoTecnica = "VIDEO_TECNICA";
     public const string CupoLiberado = "CUPO_LIBERADO";
     public const string PagoQr = "PAGO_QR";
 }

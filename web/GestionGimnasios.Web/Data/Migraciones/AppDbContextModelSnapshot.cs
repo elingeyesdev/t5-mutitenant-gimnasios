@@ -2103,6 +2103,73 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.ToTable("UsuarioRoles");
                 });
 
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.VideoTecnica", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AnalisisPreliminar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Archivo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("AsesorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comentario")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("EjercicioId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EnviadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Observacion")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("RevisadoEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("TamanoBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TipoContenido")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("Valoracion")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EjercicioId");
+
+                    b.HasIndex("AsesorId", "Estado");
+
+                    b.HasIndex("ClienteId", "Estado");
+
+                    b.ToTable("VideosTecnica");
+                });
+
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Visita", b =>
                 {
                     b.Property<int>("Id")
@@ -2749,6 +2816,33 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.Navigation("Sucursal");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.VideoTecnica", b =>
+                {
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "Asesor")
+                        .WithMany()
+                        .HasForeignKey("AsesorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "Cliente")
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Ejercicio", "Ejercicio")
+                        .WithMany()
+                        .HasForeignKey("EjercicioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Asesor");
+
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Ejercicio");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.Visita", b =>
