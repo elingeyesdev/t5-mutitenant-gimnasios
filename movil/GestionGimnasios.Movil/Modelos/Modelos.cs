@@ -199,6 +199,23 @@ public record Suscripcion(
     [JsonIgnore] public string Precio => $"Bs {PrecioMensual:0.00} / mes";
 }
 
+// ── Pagos QR ────────────────────────────────────────────────────────────
+
+public record OrdenPagoQr(
+    int Id, string Codigo, int SuscripcionId, string Plan, string Cadena, int UsuarioId, string Socio, string? Sucursal,
+    int Meses, decimal Monto, string Estado, DateTime CreadaEn, DateTime ExpiraEn, string? ComprobanteReferencia,
+    bool TieneImagenComprobante, DateTime? ComprobanteEn, string? RevisadaPor, DateTime? RevisadaEn, string? MotivoRechazo,
+    DateOnly VenceSuscripcion, string? QrPngBase64)
+{
+    [JsonIgnore] public string EstadoTexto => Textos.Estado(Estado);
+    [JsonIgnore] public string MontoTexto => $"Bs {Monto:0.00}";
+    [JsonIgnore] public string CreadaTexto => Hora.FechaHora(CreadaEn);
+    [JsonIgnore] public string ExpiraTexto => Hora.FechaHora(ExpiraEn);
+    [JsonIgnore] public string VenceSuscripcionTexto => $"Suscripción hasta el {VenceSuscripcion:dd/MM/yyyy}";
+    [JsonIgnore] public string ComprobanteTexto => ComprobanteEn is null ? "Sin comprobante registrado" : $"Comprobante registrado el {Hora.FechaHora(ComprobanteEn.Value)}";
+    [JsonIgnore] public Color ColorEstado => Textos.ColorEstado(Estado);
+}
+
 // ── Accesos ─────────────────────────────────────────────────────────────
 
 public record VistaPreviaAcceso(int UsuarioId, string NombreCompleto, string Rol, string Sucursal, bool Dentro, string? AvatarUrl)

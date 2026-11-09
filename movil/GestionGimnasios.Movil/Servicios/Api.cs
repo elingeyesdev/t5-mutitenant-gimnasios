@@ -38,12 +38,18 @@ public class Api
     public Task PutAsync(string ruta, object? cuerpo = null) => EnviarAsync<JsonElement?>(HttpMethod.Put, ruta, cuerpo);
     public Task DeleteAsync(string ruta) => EnviarAsync<JsonElement?>(HttpMethod.Delete, ruta, null);
 
-    /// <summary>Sube un archivo como multipart/form-data en el campo "archivo" (avatar, imágenes).</summary>
-    public async Task<T> SubirAsync<T>(string ruta, Stream contenido, string nombre, string tipo)
+    /// <summary>Envía un formulario multipart con un archivo opcional y campos adicionales.</summary>
+    public async Task<T> SubirAsync<T>(string ruta, Stream? contenido, string nombre, string tipo, params (string Nombre, string Valor)[] campos)
     {
-        var archivo = new StreamContent(contenido);
-        archivo.Headers.ContentType = new MediaTypeHeaderValue(tipo);
-        var form = new MultipartFormDataContent { { archivo, "archivo", nombre } };
+        var form = new MultipartFormDataContent();
+        if (contenido is not null)
+        {
+            var archivo = new StreamContent(contenido);
+            archivo.Headers.ContentType = new MediaTypeHeaderValue(tipo);
+            form.Add(archivo, "archivo", nombre);
+        }
+        foreach (var campo in campos)
+            form.Add(new StringContent(campo.Valor), campo.Nombre);
         return await EnviarAsync<T>(HttpMethod.Post, ruta, form);
     }
 
