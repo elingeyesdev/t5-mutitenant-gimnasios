@@ -152,6 +152,8 @@ public static class NivelesAlerta
 {
     public const string Medio = "MEDIO";
     public const string Alto = "ALTO";
+
+    public static string Etiqueta(string nivel) => nivel == Alto ? "Riesgo alto" : "Aviso";
 }
 
 public static class EstadosAlerta
@@ -160,6 +162,14 @@ public static class EstadosAlerta
     /// <summary>El personal ya registró al menos un contacto.</summary>
     public const string EnSeguimiento = "EN_SEGUIMIENTO";
     public const string Cerrada = "CERRADA";
+
+    public static string Etiqueta(string estado) => estado switch
+    {
+        Abierta => "Abierta",
+        EnSeguimiento => "En seguimiento",
+        Cerrada => "Cerrada",
+        _ => estado,
+    };
 }
 
 public static class TiposIntervencion

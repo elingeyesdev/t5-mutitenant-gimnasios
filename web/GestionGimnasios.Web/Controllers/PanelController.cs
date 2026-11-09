@@ -56,6 +56,7 @@ public static class Menu
         new("Control de acceso", "ti-id-badge-2", "Accesos", "Index", 4, Grupo: "Operación"),
         new("Reservas", "ti-calendar-event", "Reservas", "Index", 4, Grupo: "Operación"),
         new("Lista de espera", "ti-list-numbers", "Reservas", "ListaEspera", 4, Grupo: "Operación"),
+        new("Alertas de inactividad", "ti-bell-exclamation", "Alertas", "Index", 3, Grupo: "Operación"),
         new("Canjes", "ti-ticket", "Beneficios", "Canjes", 4, Grupo: "Operación"),
         new("Suscripciones", "ti-credit-card", "Suscripciones", "Index", 4, Grupo: "Operación"),
         new("Usuarios", "ti-users", "Usuarios", "Index", 4, Grupo: "Gestión"),

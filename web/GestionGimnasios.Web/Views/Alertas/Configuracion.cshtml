@@ -5,6 +5,7 @@
     var resumen = (ResumenAlertasDto)ViewBag.Resumen;
 }
 @section Acciones {
+    <a class="btn btn-outline-secondary" asp-action="Index"><i class="ti ti-bell-exclamation me-1"></i>Ver alertas</a>
     <form method="post" asp-action="Detectar">
         <button class="btn btn-primary"><i class="ti ti-refresh me-1"></i>Revisar socios ahora</button>
     </form>

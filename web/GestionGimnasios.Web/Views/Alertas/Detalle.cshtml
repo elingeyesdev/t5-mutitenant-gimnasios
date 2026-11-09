@@ -1,0 +1,87 @@
+@model AlertaDto
+@{
+    ViewData["Title"] = Model.Socio;
+    ViewData["Pretitulo"] = "Alerta de inactividad";
+    var cerrada = Model.Estado == EstadosAlerta.Cerrada;
+}
+@section Acciones {
+    <a class="btn btn-outline-secondary" asp-action="Index"><i class="ti ti-arrow-left me-1"></i>Volver a las alertas</a>
+}
+<div class="row row-cards">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Situación del socio</h3>
+                <div class="card-actions">
+                    <span class="badge @(Model.Nivel == NivelesAlerta.Alto ? "bg-red-lt" : "bg-yellow-lt")">@NivelesAlerta.Etiqueta(Model.Nivel)</span>
+                    <span class="badge @(cerrada ? "bg-secondary-lt" : Model.Estado == EstadosAlerta.EnSeguimiento ? "bg-blue-lt" : "bg-orange-lt")">@EstadosAlerta.Etiqueta(Model.Estado)</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-6">Días sin asistir</dt><dd class="col-6">@Model.DiasInactivo</dd>
+                    <dt class="col-6">Última actividad</dt><dd class="col-6">@(Model.UltimaActividad is DateTime u ? Reloj.ALocal(u).ToString("dd/MM/yyyy HH:mm") : "Nunca asistió")</dd>
+                    <dt class="col-6">Sucursal</dt><dd class="col-6">@(Model.Sucursal ?? "Sin sucursal")</dd>
+                    <dt class="col-6">Teléfono</dt><dd class="col-6">@(Model.Telefono ?? "No registrado")</dd>
+                    <dt class="col-6">Detectada</dt><dd class="col-6">@Reloj.ALocal(Model.DetectadaEn).ToString("dd/MM/yyyy HH:mm")</dd>
+                    @if (Model.CerradaEn is DateTime c)
+                    {
+                        <dt class="col-6">Cerrada</dt><dd class="col-6">@Reloj.ALocal(c).ToString("dd/MM/yyyy HH:mm")</dd>
+                        <dt class="col-6">Motivo</dt><dd class="col-6">@Model.MotivoCierre</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+        @if (!cerrada)
+        {
+            <form method="post" asp-action="Intervenir" asp-route-id="@Model.Id" class="card mt-3">
+                <div class="card-header"><h3 class="card-title">Registrar contacto</h3></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label required">Tipo de contacto</label>
+                        <select name="Tipo" class="form-select">
+                            @foreach (var t in TiposIntervencion.Todos)
+                            {
+                                <option value="@t">@TiposIntervencion.Etiqueta(t)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">Qué se habló o acordó</label>
+                        <textarea name="Nota" class="form-control" rows="3" maxlength="500" required></textarea>
+                    </div>
+                    <label class="form-check mb-0">
+                        <input type="hidden" name="Cerrar" value="false" />
+                        <input class="form-check-input" type="checkbox" name="Cerrar" value="true" />
+                        <span class="form-check-label">Cerrar la alerta después de este contacto</span>
+                    </label>
+                </div>
+                <div class="card-footer text-end">
+                    <button class="btn btn-primary">Guardar contacto</button>
+                </div>
+            </form>
+        }
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header"><h3 class="card-title">Historial de seguimiento</h3></div>
+            <div class="list-group list-group-flush">
+                @foreach (var i in Model.Intervenciones)
+                {
+                    <div class="list-group-item">
+                        <div class="d-flex">
+                            <span class="badge bg-blue-lt">@TiposIntervencion.Etiqueta(i.Tipo)</span>
+                            <span class="text-secondary small ms-auto">@Reloj.ALocal(i.RegistradaEn).ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <div class="mt-2">@i.Nota</div>
+                        <div class="text-secondary small mt-1">Registrado por @i.RegistradaPor</div>
+                    </div>
+                }
+                @if (Model.Intervenciones.Count == 0)
+                {
+                    <div class="list-group-item text-center text-secondary py-4">Todavía no se registró ningún contacto.</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,94 @@
+@model List<AlertaDto>
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Usuario
+@{
+    ViewData["Title"] = "Alertas de inactividad";
+    ViewData["Pretitulo"] = "Operación";
+    var resumen = (ResumenAlertasDto)ViewBag.Resumen;
+    var estado = (string?)ViewBag.Estado;
+    var nivel = (string?)ViewBag.Nivel;
+    var sucursalId = (int?)ViewBag.SucursalId;
+    var sucursales = (List<SucursalDto>)ViewBag.Sucursales;
+}
+@section Acciones {
+    @if (Usuario.Nivel >= Niveles.Gerente && !Usuario.EsSuperAdmin)
+    {
+        <a class="btn btn-outline-secondary" asp-action="Configuracion"><i class="ti ti-adjustments-alt me-1"></i>Umbrales</a>
+    }
+}
+<div class="row row-cards mb-3">
+    <div class="col-6 col-lg-3">
+        <div class="card"><div class="card-body"><div class="subheader">Riesgo alto</div><div class="h1 mb-0 text-red">@resumen.Altas</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card"><div class="card-body"><div class="subheader">Aviso</div><div class="h1 mb-0 text-yellow">@resumen.Medias</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card"><div class="card-body"><div class="subheader">En seguimiento</div><div class="h1 mb-0">@resumen.EnSeguimiento</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card"><div class="card-body"><div class="subheader">Cerradas en 30 días</div><div class="h1 mb-0 text-green">@resumen.CerradasUltimos30Dias</div></div></div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body border-bottom">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Estado</label>
+                <select name="estado" class="form-select" onchange="this.form.submit()">
+                    <option value="">Pendientes de atender</option>
+                    @foreach (var e in new[] { EstadosAlerta.Abierta, EstadosAlerta.EnSeguimiento, EstadosAlerta.Cerrada })
+                    {
+                        <option value="@e" selected="@(estado == e)">@EstadosAlerta.Etiqueta(e)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Nivel</label>
+                <select name="nivel" class="form-select" onchange="this.form.submit()">
+                    <option value="">Todos</option>
+                    @foreach (var n in new[] { NivelesAlerta.Alto, NivelesAlerta.Medio })
+                    {
+                        <option value="@n" selected="@(nivel == n)">@NivelesAlerta.Etiqueta(n)</option>
+                    }
+                </select>
+            </div>
+            @if (Usuario.SucursalFiltro is null)
+            {
+                <div class="col-md-3">
+                    <label class="form-label">Sucursal</label>
+                    <select name="sucursalId" class="form-select" onchange="this.form.submit()">
+                        <option value="">Todas</option>
+                        @foreach (var s in sucursales)
+                        {
+                            <option value="@s.Id" selected="@(sucursalId == s.Id)">@s.Nombre</option>
+                        }
+                    </select>
+                </div>
+            }
+            <div class="col-md-3 text-secondary">@Model.Count alertas</div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead><tr><th>Socio</th><th>Sucursal</th><th>Nivel</th><th>Días sin asistir</th><th>Última actividad</th><th>Estado</th><th class="w-1"></th></tr></thead>
+            <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td class="fw-medium">@a.Socio @if (a.Telefono is not null) { <div class="text-secondary small">@a.Telefono</div> }</td>
+                    <td class="text-secondary">@(a.Sucursal ?? "Sin sucursal")</td>
+                    <td><span class="badge @(a.Nivel == NivelesAlerta.Alto ? "bg-red-lt" : "bg-yellow-lt")">@NivelesAlerta.Etiqueta(a.Nivel)</span></td>
+                    <td>@a.DiasInactivo</td>
+                    <td class="text-secondary">@(a.UltimaActividad is DateTime u ? Reloj.ALocal(u).ToString("dd/MM/yyyy") : "Nunca asistió")</td>
+                    <td><span class="badge @(a.Estado == EstadosAlerta.Cerrada ? "bg-secondary-lt" : a.Estado == EstadosAlerta.EnSeguimiento ? "bg-blue-lt" : "bg-orange-lt")">@EstadosAlerta.Etiqueta(a.Estado)</span></td>
+                    <td><a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@a.Id">@(a.Estado == EstadosAlerta.Cerrada ? "Ver" : "Atender")</a></td>
+                </tr>
+            }
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="7" class="text-center text-secondary py-4">No hay alertas con estos filtros.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
