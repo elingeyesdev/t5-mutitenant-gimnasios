@@ -1,0 +1,69 @@
+@model List<OrdenPagoDto>
+@{
+    ViewData["Title"] = "Pagos QR";
+    ViewData["Pretitulo"] = "Operación";
+    var resumen = (ResumenPagosQrDto)ViewBag.Resumen;
+    var estado = (string)ViewBag.Estado;
+    string Color(string e) => e switch
+    {
+        EstadosOrdenPago.Pendiente => "bg-yellow-lt",
+        EstadosOrdenPago.Confirmada => "bg-green-lt",
+        EstadosOrdenPago.Rechazada => "bg-red-lt",
+        _ => "bg-secondary-lt",
+    };
+}
+<div class="row row-cards mb-3">
+    <div class="col-6 col-lg-3">
+        <div class="card"><div class="card-body"><div class="subheader">Por confirmar</div><div class="h1 mb-0 text-yellow">@resumen.PorConfirmar</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card"><div class="card-body"><div class="subheader">Esperando comprobante</div><div class="h1 mb-0">@resumen.SinComprobante</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card"><div class="card-body"><div class="subheader">Confirmadas este mes</div><div class="h1 mb-0 text-green">@resumen.ConfirmadasDelMes</div></div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card"><div class="card-body"><div class="subheader">Confirmado este mes</div><div class="h1 mb-0">Bs @resumen.MontoConfirmadoDelMes.ToString("0.00")</div></div></div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body border-bottom">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Estado</label>
+                <select name="estado" class="form-select" onchange="this.form.submit()">
+                    @foreach (var e in EstadosOrdenPago.Todos)
+                    {
+                        <option value="@e" selected="@(estado == e)">@EstadosOrdenPago.Etiqueta(e)</option>
+                    }
+                    <option value="TODAS" selected="@(estado == "TODAS")">Todas</option>
+                </select>
+            </div>
+            <div class="col-md-8 text-secondary">Verifica cada comprobante con el extracto antes de confirmar: el sistema no está conectado a un banco.</div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead><tr><th>Orden</th><th>Socio</th><th>Plan</th><th>Monto</th><th>Comprobante</th><th>Creada</th><th>Estado</th><th class="w-1"></th></tr></thead>
+            <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td class="font-monospace">@o.Codigo</td>
+                    <td class="fw-medium">@o.Socio @if (o.Sucursal is not null) { <div class="text-secondary small">@o.Sucursal</div> }</td>
+                    <td>@o.Plan <div class="text-secondary small">@o.Meses @(o.Meses == 1 ? "mes" : "meses")</div></td>
+                    <td class="text-nowrap">Bs @o.Monto.ToString("0.00")</td>
+                    <td>@(o.ComprobanteReferencia ?? "Sin comprobante")</td>
+                    <td class="text-secondary">@Reloj.ALocal(o.CreadaEn).ToString("dd/MM/yyyy HH:mm")</td>
+                    <td><span class="badge @Color(o.Estado)">@EstadosOrdenPago.Etiqueta(o.Estado)</span></td>
+                    <td><a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@o.Id">@(o.Estado == EstadosOrdenPago.Pendiente ? "Revisar" : "Ver")</a></td>
+                </tr>
+            }
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="8" class="text-center text-secondary py-4">No hay órdenes con este estado.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

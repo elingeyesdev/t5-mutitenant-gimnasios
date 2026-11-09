@@ -59,6 +59,7 @@ public static class Menu
         new("Alertas de inactividad", "ti-bell-exclamation", "Alertas", "Index", 3, Grupo: "Operación"),
         new("Canjes", "ti-ticket", "Beneficios", "Canjes", 4, Grupo: "Operación"),
         new("Suscripciones", "ti-credit-card", "Suscripciones", "Index", 4, Grupo: "Operación"),
+        new("Pagos QR", "ti-qrcode", "PagosQr", "Index", 4, Grupo: "Operación"),
         new("Usuarios", "ti-users", "Usuarios", "Index", 4, Grupo: "Gestión"),
         new("Perfiles portables", "ti-transfer", "Portabilidad", "Index", 4, Grupo: "Gestión"),
         new("Actividades", "ti-calendar-time", "Actividades", "Index", 4, Grupo: "Gestión"),

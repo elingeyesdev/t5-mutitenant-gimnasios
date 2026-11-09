@@ -1009,6 +1009,95 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.ToTable("Notificaciones");
                 });
 
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.OrdenPagoQr", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CadenaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<string>("ComprobanteArchivo")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("ComprobanteEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ComprobanteReferencia")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<DateTime>("CreadaEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("ExpiraEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Meses")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Monto")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("MotivoRechazo")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int?>("PagoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("RevisadaEn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RevisadaPorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SucursalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SuscripcionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Codigo")
+                        .IsUnique();
+
+                    b.HasIndex("PagoId");
+
+                    b.HasIndex("RevisadaPorId");
+
+                    b.HasIndex("SucursalId");
+
+                    b.HasIndex("SuscripcionId")
+                        .IsUnique()
+                        .HasFilter("[Estado] = 'PENDIENTE'");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.HasIndex("CadenaId", "Estado");
+
+                    b.ToTable("OrdenesPagoQr");
+                });
+
             modelBuilder.Entity("GestionGimnasios.Web.Domain.PagoSuscripcion", b =>
                 {
                     b.Property<int>("Id")
@@ -2372,6 +2461,54 @@ namespace GestionGimnasios.Web.Data.Migraciones
                         .HasForeignKey("ConversacionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GestionGimnasios.Web.Domain.OrdenPagoQr", b =>
+                {
+                    b.HasOne("GestionGimnasios.Web.Domain.Cadena", "Cadena")
+                        .WithMany()
+                        .HasForeignKey("CadenaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestionGimnasios.Web.Domain.PagoSuscripcion", "Pago")
+                        .WithMany()
+                        .HasForeignKey("PagoId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "RevisadaPor")
+                        .WithMany()
+                        .HasForeignKey("RevisadaPorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Sucursal", "Sucursal")
+                        .WithMany()
+                        .HasForeignKey("SucursalId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Suscripcion", "Suscripcion")
+                        .WithMany()
+                        .HasForeignKey("SuscripcionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestionGimnasios.Web.Domain.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cadena");
+
+                    b.Navigation("Pago");
+
+                    b.Navigation("RevisadaPor");
+
+                    b.Navigation("Sucursal");
+
+                    b.Navigation("Suscripcion");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("GestionGimnasios.Web.Domain.PagoSuscripcion", b =>

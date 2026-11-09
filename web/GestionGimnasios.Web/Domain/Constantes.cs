@@ -58,6 +58,27 @@ public static class EstadosSuscripcion
     public const string Cancelada = "CANCELADA";
 }
 
+/// <summary>Estados de una orden de renovación con QR (RF-05).</summary>
+public static class EstadosOrdenPago
+{
+    public const string Pendiente = "PENDIENTE";
+    public const string Confirmada = "CONFIRMADA";
+    public const string Rechazada = "RECHAZADA";
+    /// <summary>Pasó el plazo sin comprobante: la suscripción no cambió.</summary>
+    public const string Vencida = "VENCIDA";
+
+    public static readonly string[] Todos = [Pendiente, Confirmada, Rechazada, Vencida];
+
+    public static string Etiqueta(string estado) => estado switch
+    {
+        Pendiente => "Pendiente",
+        Confirmada => "Confirmada",
+        Rechazada => "Rechazada",
+        Vencida => "Vencida",
+        _ => estado,
+    };
+}
+
 /// <summary>Tipos de beneficio que la cadena ofrece a sus socios (RF-03).</summary>
 public static class TiposBeneficio
 {

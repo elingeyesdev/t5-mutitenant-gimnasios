@@ -31,6 +31,7 @@ public static class TiposNotificacion
     public const string Inactividad = "ALERTA_INACTIVIDAD";
     public const string Asesoria = "ASESORIA";
     public const string CupoLiberado = "CUPO_LIBERADO";
+    public const string PagoQr = "PAGO_QR";
 }
 
 /// <summary>

@@ -42,6 +42,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
     public DbSet<PlanSuscripcion> Planes => Set<PlanSuscripcion>();
     public DbSet<Suscripcion> Suscripciones => Set<Suscripcion>();
     public DbSet<PagoSuscripcion> Pagos => Set<PagoSuscripcion>();
+    public DbSet<OrdenPagoQr> OrdenesPagoQr => Set<OrdenPagoQr>();
     public DbSet<Beneficio> Beneficios => Set<Beneficio>();
     public DbSet<CanjeBeneficio> Canjes => Set<CanjeBeneficio>();
     public DbSet<Reserva> Reservas => Set<Reserva>();
@@ -175,6 +176,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
             e.HasMany(x => x.Pagos).WithOne().HasForeignKey(x => x.SuscripcionId).OnDelete(DeleteBehavior.Cascade);
         });
         b.Entity<PagoSuscripcion>(e => e.Property(x => x.Monto).HasPrecision(10, 2));
+        b.Entity<OrdenPagoQr>(e =>
+        {
+            e.HasIndex(x => x.Codigo).IsUnique();
+            // Una sola orden pendiente por suscripción: evita cobrar dos veces la misma renovación.
+            e.HasIndex(x => x.SuscripcionId).IsUnique().HasFilter("[Estado] = 'PENDIENTE'");
+            e.HasIndex(x => new { x.CadenaId, x.Estado });
+            e.HasIndex(x => x.UsuarioId);
+            e.Property(x => x.Codigo).HasMaxLength(12);
+            e.Property(x => x.Estado).HasMaxLength(20);
+            e.Property(x => x.Monto).HasPrecision(10, 2);
+            e.Property(x => x.ComprobanteReferencia).HasMaxLength(60);
+            e.Property(x => x.ComprobanteArchivo).HasMaxLength(200);
+            e.Property(x => x.MotivoRechazo).HasMaxLength(300);
+            e.HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.UsuarioId);
+            e.HasOne(x => x.RevisadaPor).WithMany().HasForeignKey(x => x.RevisadaPorId);
+        });
         b.Entity<Beneficio>(e =>
         {
             e.HasIndex(x => new { x.CadenaId, x.Activo, x.VigenteHasta });
