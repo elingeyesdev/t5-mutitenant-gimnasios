@@ -36,6 +36,7 @@ public class MasPage : PaginaBase
         {
             opciones.Add(("Mi gimnasio", "Carnet virtual", () => new CarnetPage()));
             opciones.Add(("Mi gimnasio", "Mi plan y pagos", () => new MiPlanPage()));
+            opciones.Add(("Mi gimnasio", "Renovar con QR", () => new PagosQrPage()));
             opciones.Add(("Mi gimnasio", "Mi historial de ingresos", () => new HistorialAccesosPage()));
             opciones.Add(("Entrenamiento", "Mi progreso y récords", () => new ProgresoPage()));
             opciones.Add(("Entrenamiento", "Medidas corporales", () => new MetricasPage()));
