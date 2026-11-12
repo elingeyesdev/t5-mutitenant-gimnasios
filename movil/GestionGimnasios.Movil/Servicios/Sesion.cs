@@ -11,7 +11,7 @@ public static class Sesion
     private const string ClaveServidor = "servidor";
 
     /// <summary>En el emulador de Android, 10.0.2.2 es la computadora donde corre la web.</summary>
-    public const string ServidorPorDefecto = "http://10.0.2.2:5253";
+    public const string ServidorPorDefecto = "http://10.0.2.2:8081";
 
     public static Api Api { get; } = new();
     public static Usuario? Usuario { get; private set; }
