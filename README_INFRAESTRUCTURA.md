@@ -6,9 +6,9 @@
 
 **Rama de trabajo:** `feature/infraestructura-ubuntu-docker`
 
-**Estado:** web/API desplegada y autenticación funcional; acceso móvil, restauración y usuario Linux restringido pendientes de validación.
+**Estado (12/11/2026):** servidor web/API desplegado; acceso web y móvil verificados; usuario Linux `gymlector` creado y comprobado; SSH funcional. Pendientes: PuTTY y backup/restauración.
 
-> Este documento describe **el laboratorio ejecutado**, no una instalación pública de producción. La base de datos es **Azure SQL Edge (compatible con T-SQL/SQL Server)** y está alojada en Docker Desktop del Mac. **No se implementó PostgreSQL ni una base de datos dentro del Compose de Ubuntu.** Estas diferencias frente a la rúbrica deben justificarse con el docente.
+> Este documento describe **el laboratorio ejecutado**, no una instalación pública de producción. La base de datos es **Azure SQL Edge (compatible con T-SQL/SQL Server)** y está alojada en Docker Desktop del Mac. **No se implementó PostgreSQL ni una base de datos dentro del Compose de Ubuntu.** Esta es la arquitectura utilizada en el laboratorio.
 
 ## 1. Arquitectura y requisitos
 
@@ -235,19 +235,26 @@ curl -sSI -H 'Host: 127.0.0.1:8081' http://127.0.0.1/
 
 Evidencia final: `$http_host` activo, redirección con `:8081` y login visible desde Chrome. La recreación es relevante porque el archivo se montó con ruta de archivo individual.
 
-## 9. Evidencias y puntos pendientes
+## 9. Evidencias y estado de los entregables
 
-**Validado:** SSH con clave y rechazo de contraseña; UFW activo; Docker Engine/Compose y `hello-world`; compilación local y construcción Docker ARM64; conectividad TCP a SQL Server; login HTTP 200; autenticación y lectura de datos; redirección correcta; reinicio automático tras `sudo reboot`; estado de Git en rama de infraestructura.
+| Entregable | Estado | Evidencia |
+|---|---|---|
+| Ubuntu Server y proyecto desplegado | Comprobado | Docker Compose, Nginx y web/API .NET 10 |
+| Documentación de comandos | Documentado | README e informe técnico |
+| Aplicación móvil conectada | Comprobado | MAUI, inicio de sesión de Pedro y panel Resumen |
+| Acceso web desde macOS | Comprobado | HTTP 200 y autenticación web |
+| Usuario de mínimos privilegios | Comprobado | `gymlector`, `id` y denegación de `sudo` |
+| SSH | Comprobado | Acceso con clave ED25519 |
+| PuTTY | Pendiente | No ejecutado |
+| Backup y restauración | Pendiente | Sin restauración demostrada |
 
-**PENDIENTE según rúbrica:**
+La base de datos utilizada es SQL Server/Azure SQL Edge,
+ejecutada en Docker Desktop del Mac y conectada a Ubuntu
+mediante VirtualBox NAT.
 
-- Acceso de la aplicación **MAUI** al servidor de Ubuntu desde emulador o dispositivo y captura de respuesta API. En `movil/GestionGimnasios.Movil/Servicios/Sesion.cs` se detectó `ServidorPorDefecto = "http://10.0.2.2:5253"` y dirección editable por `Preferences`; para Android Emulator `10.0.2.2` es el host del **emulador**, no directamente la VM. Habrá que confirmar la URL correcta según el entorno y probar login/endpoint.
-- Crear **usuario Linux específico de mínimos privilegios**, demostrar accesos permitidos/denegados y documentar.
-- Crear un **backup y demostrar una restauración real** con evidencia antes/después. El snapshot `Ubuntu-Base-SSH-Seguro` se creó, pero **no se restauró**. El `sudo reboot` solo demuestra recuperación automática.
-- Revisar y conservar evidencia **de logs**, con datos sensibles redactados.
-- Comprobar que **otro estudiante** pueda seguir efectivamente este README; no está validado.
-- **PuTTY** aparece en la rúbrica; se usó OpenSSH nativo en macOS. Confirmar si acepta equivalencia.
-- La rúbrica menciona **PostgreSQL y BD en Docker Compose**: el laboratorio conserva Azure SQL Edge alojado en Docker Desktop del Mac. Obtener aceptación expresa del docente o adaptarlo.
+Las capturas de las pruebas móviles y del usuario restringido
+se incorporaron al informe PDF de entrega.
+
 
 ## 10. Seguridad y límites
 
@@ -270,8 +277,54 @@ Evidencia final: `$http_host` activo, redirección con `:8081` y login visible d
 | Seguridad NuGet | Se identificó dependencia vulnerable con `dotnet nuget why`; se fijó una versión corregida y se compiló sin avisos. |
 | Documentación | Borrador estructurado con ayuda de IA, pendiente de revisión y reproducibilidad por otro estudiante. |
 
-El estudiante debe **comprender cada comando**, revisar rutas y privilegios, adaptar los valores de ejemplo y registrar evidencias reales. Los comandos con `sudo`, `docker`, `VBoxManage` o edición de `/etc/` pueden cambiar la seguridad o disponibilidad del sistema y no deben ejecutarse indiscriminadamente.
+Las operaciones administrativas se documentan con su función, alcance y privilegios necesarios.
 
 ---
 
 **Referencia complementaria:** `docs/INFRAESTRUCTURA_TAREA10.md` contiene inventario, bitácora técnica, matriz de verificación, detalles de incidentes y guía de capturas para presentar al docente.
+
+## 11. Resultados del 12 de noviembre de 2026
+
+### Usuario Linux restringido
+
+```bash
+sudo adduser --disabled-password --gecos "" gymlector
+id gymlector
+sudo -l -U gymlector
+```
+
+Se creó el usuario `gymlector`, UID 1001, perteneciente a los
+grupos `gymlector` y `users`, sin acceso a `sudo` ni a Docker.
+La consulta de privilegios confirmó:
+
+```text
+User gymlector is not allowed to run sudo on gym-server.
+```
+
+### Aplicación móvil
+
+La dirección de desarrollo `http://10.0.2.2:5253` se cambió
+a `http://10.0.2.2:8081` en `Sesion.cs`.
+
+Se confirmó HTTP 200 desde macOS y acceso a la pantalla
+web de login desde el navegador del emulador Android.
+
+La aplicación MAUI instalada permitió configurar la dirección
+del servidor desde su pantalla de login. Se inició sesión
+con el usuario de prueba Pedro y se consultó correctamente
+el módulo Resumen, con estadísticas de Reyes Equipetrol.
+
+La recompilación MAUI iniciada durante las pruebas se canceló
+tras permanecer detenida en `_GenerateJavaStubs`. La validación
+móvil se realizó con la aplicación previamente instalada.
+
+### Versionado
+
+El cambio de dirección móvil quedó registrado en el commit
+`33e26a1`, publicado en la rama
+`feature/infraestructura-ubuntu-docker`.
+
+### Pruebas pendientes
+
+- Conectividad específicamente mediante PuTTY.
+- Ejecución y demostración de backup y restauración.

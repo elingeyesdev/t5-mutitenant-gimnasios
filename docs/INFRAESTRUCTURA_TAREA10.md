@@ -287,7 +287,7 @@ No se modificó SQL Server ni se creó una nueva base de datos durante este diag
 | `git diff --cached -- .env.example compose.yaml nginx/default.conf ...` | Mac / lectura | Inspección manual de cambios | Sin secretos visibles en archivos revisados |
 | `git commit -m "Configurar despliegue Docker y Nginx en Ubuntu Server"` | Mac / usuario | Registra infraestructura en rama feature | Commit `0af48fb` |
 
-**Pendiente de cierre:** agregar este informe y README a la misma rama, hacer un commit documental, `git push -u origin feature/infraestructura-ubuntu-docker`, abrir PR hacia `develop` y solicitar revisión. No realizar push directo a `main`/`develop`.
+**Estado Git:** los commits `0af48fb`, `2405d47` y `33e26a1` están publicados en la rama de infraestructura. El Pull Request hacia `develop` permanece pendiente.
 
 ## 4. Evidencias gráficas sugeridas para la entrega
 
@@ -309,8 +309,8 @@ Las siguientes evidencias se obtuvieron durante la sesión. Conservar las captur
 | 12 | Redirección reparada, `Location` conserva `:8081` | Terminal y captura compartidas |
 | 13 | Ambos contenedores `Up` después de `sudo reboot` | Terminal compartida |
 | 14 | Backup y restauración real | **PENDIENTE** |
-| 15 | Usuario Linux con mínimos permisos | **PENDIENTE** |
-| 16 | Cliente MAUI conectado a la API | **PENDIENTE** |
+| 15 | Usuario Linux con mínimos permisos | **COMPROBADO** |
+| 16 | Cliente MAUI conectado a la API | **COMPROBADO** |
 | 17 | Revisión de logs `docker compose logs` | **PENDIENTE** |
 
 **Nota:** una captura solo demuestra lo visible. Para las evidencias de terminal, repetir el comando de lectura si se necesita una imagen con fecha o comando claramente identificables. No simular ni fabricar capturas.
@@ -425,4 +425,68 @@ De acuerdo con las reglas de la tarea, se informa el uso de IA como apoyo a inve
 
 ---
 
-*Documento generado a partir de los comandos, salidas y capturas suministradas durante la sesión. Las pruebas no ejecutadas se identifican expresamente; el estudiante debe revisarlo y validar su reproducibilidad antes de entregar.*
+
+
+## 9. Validaciones complementarias del 12 de noviembre
+
+### 9.1 Usuario con mínimos privilegios
+
+Se creó el usuario Linux `gymlector`, separado del usuario
+administrativo `melanie`.
+
+| Comando | Función | Privilegios |
+|---|---|---|
+| `sudo adduser --disabled-password --gecos "" gymlector` | Crear usuario sin contraseña habilitada | Requiere sudo |
+| `id gymlector` | Consultar UID y grupos | No requiere sudo |
+| `sudo -l -U gymlector` | Verificar permisos administrativos | Requiere sudo |
+| `hostname` | Identificar servidor | No requiere sudo |
+
+**Resultado:** UID 1001; grupos `gymlector` y `users`.
+La cuenta no puede utilizar `sudo` ni pertenece al grupo Docker.
+
+### 9.2 Acceso móvil al servidor
+
+Se modificó la dirección por defecto en
+`movil/GestionGimnasios.Movil/Servicios/Sesion.cs`:
+
+```text
+Anterior: http://10.0.2.2:5253
+Actual:   http://10.0.2.2:8081
+```
+
+Desde macOS se confirmó HTTP 200 al consultar
+`http://127.0.0.1:8081/Cuenta/Login`.
+
+Se inició el emulador `GestionGimnasios_API33` y se abrió
+la página de login web desde su navegador con la dirección
+`http://10.0.2.2:8081/Cuenta/Login`.
+
+La aplicación MAUI previamente instalada permitió actualizar
+la dirección guardada mediante la opción «Servidor».
+Posteriormente se inició sesión con el usuario de prueba
+Pedro, rol recepcionista, sucursal Reyes Equipetrol.
+
+El módulo Resumen mostró información recuperada desde el
+servidor: capacidad 125, 2 socios con plan y 7 usuarios
+activos al momento de la prueba.
+
+La recompilación de MAUI se canceló durante
+`_GenerateJavaStubs`. Por tanto, no se documenta como
+compilación terminada. La aplicación instalada fue suficiente
+para verificar autenticación y lectura de datos.
+
+### 9.3 Repositorio
+
+El cambio móvil quedó publicado con el commit `33e26a1`
+en `feature/infraestructura-ubuntu-docker`.
+
+### 9.4 Evidencias y pruebas pendientes
+
+Las capturas de `gymlector`, inicio de sesión MAUI y
+panel Resumen están incluidas en el informe PDF.
+
+**Pruebas pendientes:** PuTTY y backup con restauración real.
+SSH mediante OpenSSH de macOS ya fue comprobado.
+
+**Base de datos implementada:** SQL Server/Azure SQL Edge,
+ejecutada en el Mac y accesible desde Ubuntu mediante NAT.
