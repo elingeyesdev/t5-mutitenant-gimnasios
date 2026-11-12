@@ -1,0 +1,29 @@
+services:
+  web:
+    image: gestion-gimnasios-web:1.0
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Default: ${SQL_CONNECTION_STRING:?Configurar SQL_CONNECTION_STRING}
+      Jwt__Clave: ${JWT_CLAVE:?Configurar JWT_CLAVE}
+      BaseDatos__MigrarAlIniciar: "false"
+      BaseDatos__CargarDatosDePrueba: "false"
+    networks:
+      - interna
+
+  nginx:
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web
+    networks:
+      - interna
+
+networks:
+  interna:
+    driver: bridge
