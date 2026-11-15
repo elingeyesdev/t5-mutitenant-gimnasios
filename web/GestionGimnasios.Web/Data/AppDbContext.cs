@@ -240,6 +240,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
             e.Property(x => x.Estado).HasMaxLength(20);
             e.Property(x => x.Valoracion).HasMaxLength(20);
             e.Property(x => x.Observacion).HasMaxLength(1000);
+            e.Property(x => x.ResultadoAnalisis).HasMaxLength(20);
+            e.Property(x => x.AnalisisPreliminar).HasMaxLength(1000);
+            e.Property(x => x.CorreccionAnalisis).HasMaxLength(500);
             e.HasOne(x => x.Cliente).WithMany().HasForeignKey(x => x.ClienteId);
             e.HasOne(x => x.Asesor).WithMany().HasForeignKey(x => x.AsesorId);
         });

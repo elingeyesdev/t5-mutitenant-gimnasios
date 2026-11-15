@@ -2111,8 +2111,18 @@ namespace GestionGimnasios.Web.Data.Migraciones
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("Alto")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("AnalisisConfirmado")
+                        .HasColumnType("bit");
+
                     b.Property<string>("AnalisisPreliminar")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("Ancho")
+                        .HasColumnType("int");
 
                     b.Property<string>("Archivo")
                         .IsRequired()
@@ -2129,6 +2139,13 @@ namespace GestionGimnasios.Web.Data.Migraciones
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("CorreccionAnalisis")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<double?>("DuracionSeg")
+                        .HasColumnType("float");
+
                     b.Property<int>("EjercicioId")
                         .HasColumnType("int");
 
@@ -2143,6 +2160,10 @@ namespace GestionGimnasios.Web.Data.Migraciones
                     b.Property<string>("Observacion")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("ResultadoAnalisis")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime?>("RevisadoEn")
                         .HasColumnType("datetime2");

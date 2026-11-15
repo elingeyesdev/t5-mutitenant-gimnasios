@@ -10,7 +10,12 @@ public record VideoSocioDto(int Id, string Ejercicio, string? Comentario, string
 
 public record VideoRevisionDto(
     int Id, int ClienteId, string Socio, string Ejercicio, string GrupoMuscular, string? Comentario, DateTime EnviadoEn, long TamanoBytes,
-    string Estado, string? AnalisisPreliminar, string? Valoracion, string? Observacion, DateTime? RevisadoEn);
+    string Estado, string? ResultadoAnalisis, string? AnalisisPreliminar, double? DuracionSeg, int? Ancho, int? Alto,
+    string? Valoracion, string? Observacion, bool? AnalisisConfirmado, string? CorreccionAnalisis, DateTime? RevisadoEn)
+{
+    /// <summary>Hay análisis que validar cuando se pudieron leer los datos del archivo.</summary>
+    public bool TieneAnalisis => VideosTecnicaService.AnalisisValidable(ResultadoAnalisis);
+}
 
 public record ArchivoVideo(string Ruta, string TipoContenido);
 
@@ -25,12 +30,15 @@ public class RevisionVideoForm
 {
     public string Valoracion { get; set; } = "";
     public string Observacion { get; set; } = "";
+    /// <summary>true: el entrenador confirma el análisis preliminar; false: lo corrige.</summary>
+    public bool? AnalisisConfirmado { get; set; }
+    public string? CorreccionAnalisis { get; set; }
 }
 
 /// <summary>
 /// Revisión de la técnica por video (RF-01, CU-35). El socio envía el video a su entrenador; el
-/// entrenador lo evalúa y solo entonces el socio recibe la devolución. Sin una tecnología de
-/// análisis aprobada, el análisis preliminar figura como no disponible (alterno 2a).
+/// sistema hace un análisis preliminar del archivo (AnalizadorVideo) que solo ve el entrenador; el
+/// entrenador lo confirma o lo corrige, da su valoración y solo entonces el socio recibe la devolución.
 /// </summary>
 public class VideosTecnicaService(AppDbContext db, UsuarioActual actual, ArchivosPrivados archivos, NotificacionesService notificaciones)
 {
@@ -59,10 +67,14 @@ public class VideosTecnicaService(AppDbContext db, UsuarioActual actual, Archivo
         if (await db.VideosTecnica.CountAsync(v => v.ClienteId == actual.Id && v.Estado == EstadosVideoTecnica.Pendiente) >= MaximoPendientes)
             throw ErrorNegocio.Conflicto($"Ya tienes {MaximoPendientes} videos esperando revisión. Espera la devolución de tu entrenador.");
 
+        var ruta = await archivos.GuardarAsync(f.Archivo, "videos", extension);
+        var analisis = AnalizadorVideo.Analizar(archivos.RutaCompleta(ruta), extension);
         var video = new VideoTecnica
         {
             ClienteId = actual.Id, AsesorId = asesoria.AsesorId, EjercicioId = ejercicio.Id, Comentario = comentario,
-            Archivo = await archivos.GuardarAsync(f.Archivo, "videos", extension), TipoContenido = Tipos[extension], TamanoBytes = f.Archivo.Length,
+            Archivo = ruta, TipoContenido = Tipos[extension], TamanoBytes = f.Archivo.Length,
+            ResultadoAnalisis = analisis.Resultado, AnalisisPreliminar = analisis.Texto,
+            DuracionSeg = analisis.DuracionSeg, Ancho = analisis.Ancho, Alto = analisis.Alto,
         };
         db.VideosTecnica.Add(video);
         await db.SaveChangesAsync();
@@ -99,15 +111,21 @@ public class VideosTecnicaService(AppDbContext db, UsuarioActual actual, Archivo
     public async Task<ArchivoVideo> ArchivoAsync(int id) =>
         Archivo(await Recibidos().FirstOrDefaultAsync(v => v.Id == id) ?? throw ErrorNegocio.NoEncontrado("Video no encontrado."));
 
-    /// <summary>El entrenador deja su valoración final. Desde aquí el socio ve la devolución y ya no se modifica.</summary>
+    /// <summary>
+    /// El entrenador confirma o corrige el análisis preliminar y deja su valoración final. Desde aquí
+    /// el socio ve la devolución y ya no se modifica.
+    /// </summary>
     public async Task<VideoRevisionDto> RevisarAsync(int id, RevisionVideoForm f)
     {
         var observacion = ValidarRevision(f);
         var v = await Recibidos().Include(x => x.Ejercicio).FirstOrDefaultAsync(x => x.Id == id) ?? throw ErrorNegocio.NoEncontrado("Video no encontrado.");
         if (v.Estado != EstadosVideoTecnica.Pendiente) throw ErrorNegocio.Conflicto("Este video ya fue revisado.");
+        var (confirmado, correccion) = ValidarAnalisis(v.ResultadoAnalisis, f);
 
         v.Valoracion = f.Valoracion;
         v.Observacion = observacion;
+        v.AnalisisConfirmado = confirmado;
+        v.CorreccionAnalisis = correccion;
         v.Estado = EstadosVideoTecnica.Revisado;
         v.RevisadoEn = DateTime.UtcNow;
         await db.SaveChangesAsync();
@@ -146,6 +164,24 @@ public class VideosTecnicaService(AppDbContext db, UsuarioActual actual, Archivo
         if (observacion.Length == 0) throw ErrorNegocio.Solicitud("Escribe tu observación para el socio.");
         if (observacion.Length > 1000) throw ErrorNegocio.Solicitud("La observación no puede superar los 1000 caracteres.");
         return observacion;
+    }
+
+    public static bool AnalisisValidable(string? resultado) =>
+        resultado is ResultadosAnalisisVideo.Apto or ResultadosAnalisisVideo.ConObservaciones;
+
+    /// <summary>
+    /// Validación humana del análisis preliminar: si hubo análisis, el entrenador debe confirmarlo o
+    /// corregirlo, y al corregirlo explica qué. Si no hubo análisis no hay nada que validar.
+    /// </summary>
+    public static (bool? Confirmado, string? Correccion) ValidarAnalisis(string? resultado, RevisionVideoForm f)
+    {
+        if (!AnalisisValidable(resultado)) return (null, null);
+        if (f.AnalisisConfirmado is null) throw ErrorNegocio.Solicitud("Indica si confirmas o corriges el análisis preliminar.");
+        if (f.AnalisisConfirmado.Value) return (true, null);
+        var correccion = f.CorreccionAnalisis?.Trim() ?? "";
+        if (correccion.Length == 0) throw ErrorNegocio.Solicitud("Escribe qué corriges del análisis preliminar.");
+        if (correccion.Length > 500) throw ErrorNegocio.Solicitud("La corrección no puede superar los 500 caracteres.");
+        return (false, correccion);
     }
 
     /// <summary>Mientras el video no fue revisado, el socio no recibe ninguna valoración.</summary>
@@ -188,5 +224,6 @@ public class VideosTecnicaService(AppDbContext db, UsuarioActual actual, Archivo
 
     private static VideoRevisionDto ARevision(VideoTecnica v) => new(
         v.Id, v.ClienteId, v.Cliente?.Perfil?.NombreCompleto ?? "", v.Ejercicio?.Nombre ?? "", v.Ejercicio?.GrupoMuscular ?? "", v.Comentario, v.EnviadoEn, v.TamanoBytes,
-        v.Estado, v.AnalisisPreliminar, v.Valoracion, v.Observacion, v.RevisadoEn);
+        v.Estado, v.ResultadoAnalisis, v.AnalisisPreliminar, v.DuracionSeg, v.Ancho, v.Alto,
+        v.Valoracion, v.Observacion, v.AnalisisConfirmado, v.CorreccionAnalisis, v.RevisadoEn);
 }

@@ -545,6 +545,10 @@ datos sensibles:
   y el análisis preliminar se muestra como «no disponible».
 - **Postcondición:** queda registrada la revisión, con la fecha, el entrenador y la valoración final.
 - **Regla:** el análisis preliminar nunca reemplaza el criterio del entrenador.
+- **Implementación:** mientras no haya una tecnología de análisis de movimiento aprobada, el análisis
+  preliminar revisa solo el archivo (duración y resolución) y lo marca «apto para revisar» o «con
+  observaciones»; no evalúa la técnica. El entrenador lo confirma o lo corrige explicando qué, y esa
+  validación queda registrada junto con su valoración (`AnalizadorVideo`, `VideosTecnicaService`).
 
 ### CU-36 Autorizar la portabilidad del perfil (RF-02)
 - **Actores:** cliente, gerente de otra cadena · **Canal:** app (consentimiento) y web (consulta)
