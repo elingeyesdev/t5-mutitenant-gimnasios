@@ -16,7 +16,10 @@ public record AsesoriaDto(int Id, int ClienteId, string Cliente, string? Telefon
 public record ActividadAlumnoDto(int AsesoriaId, int ClienteId, string Cliente, DateTime? UltimaSesion, int Sesiones, int SesionesSemana, int? MetaSesionesSemana, bool Inactivo);
 public record FichaClienteDto(int ClienteId, PerfilDto Perfil, MetricaDto? UltimaMetrica, RestriccionDto? Restriccion, PerfilEntrenamientoDto? Entrenamiento, IReadOnlyList<SesionResumenDto> UltimasSesiones);
 public record SesionResumenDto(int Id, DateTime Inicio, string Actividad, int? DuracionSeg, int Series);
-public record PlanNutricionalDto(int Id, int AsesorId, string Asesor, int ClienteId, string Cliente, int? KcalDiarias, decimal? ProteinaG, decimal? CarbohidratosG, decimal? GrasaG, string? Notas, Dictionary<string, Dictionary<string, string>> PlanComidas, DateTime ActualizadoEn);
+public record PlanNutricionalDto(int Id, int AsesorId, string Asesor, int ClienteId, string Cliente, int? KcalDiarias, decimal? ProteinaG, decimal? CarbohidratosG, decimal? GrasaG, string? Notas, Dictionary<string, Dictionary<string, string>> PlanComidas, DateTime ActualizadoEn,
+    string? PautaAntesEntrenar = null, string? PautaDespuesEntrenar = null, string? Hidratacion = null);
+/// <summary>Alumno con asesoría activa y su plan nutricional, si el asesor ya lo definió.</summary>
+public record AlumnoPlanDto(int AsesoriaId, int ClienteId, string Cliente, PlanNutricionalDto? Plan);
 public record CitaDto(int Id, int PacienteId, string Paciente, string? AvatarUrl, DateOnly Fecha, TimeOnly Hora, string Tipo, string Estado, string? Notas);
 
 public class PlanNutricionalForm
@@ -28,6 +31,15 @@ public class PlanNutricionalForm
     public string? Notas { get; set; }
     /// <summary>Día → comida → descripción (meal_plan del proyecto base).</summary>
     public Dictionary<string, Dictionary<string, string>>? PlanComidas { get; set; }
+
+    // Pautas para los días de entrenamiento (RF-06). Nulo = no se modifican (la app aún no las envía);
+    // texto vacío = se borran. Por eso el panel no convierte el texto vacío en nulo.
+    [System.ComponentModel.DataAnnotations.DisplayFormat(ConvertEmptyStringToNull = false)]
+    public string? PautaAntesEntrenar { get; set; }
+    [System.ComponentModel.DataAnnotations.DisplayFormat(ConvertEmptyStringToNull = false)]
+    public string? PautaDespuesEntrenar { get; set; }
+    [System.ComponentModel.DataAnnotations.DisplayFormat(ConvertEmptyStringToNull = false)]
+    public string? Hidratacion { get; set; }
 }
 
 public class CitaForm
@@ -275,7 +287,10 @@ public class PersonalService(AppDbContext db, UsuarioActual actual, Alcances alc
         p.CarbohidratosG = f.CarbohidratosG;
         p.GrasaG = f.GrasaG;
         p.Notas = f.Notas;
-        if (f.PlanComidas is not null) p.PlanComidas = JsonSerializer.Serialize(f.PlanComidas);
+        if (f.PlanComidas is not null) p.PlanComidas = JsonSerializer.Serialize(LimpiarComidas(f.PlanComidas));
+        if (f.PautaAntesEntrenar is not null) p.PautaAntesEntrenar = ValidarPauta(f.PautaAntesEntrenar, "antes de entrenar");
+        if (f.PautaDespuesEntrenar is not null) p.PautaDespuesEntrenar = ValidarPauta(f.PautaDespuesEntrenar, "después de entrenar");
+        if (f.Hidratacion is not null) p.Hidratacion = ValidarPauta(f.Hidratacion, "de hidratación");
         p.ActualizadoEn = DateTime.UtcNow;
         await db.SaveChangesAsync();
         await notificaciones.NotificarAsync(clienteId, TiposNotificacion.Asesoria, "Plan nutricional actualizado", $"{actual.Nombre} actualizó tu plan nutricional.");
@@ -288,13 +303,52 @@ public class PersonalService(AppDbContext db, UsuarioActual actual, Alcances alc
         return (await Planes(db.PlanesNutricionales.Where(x => x.AsesorId == actual.Id && x.ClienteId == clienteId))).FirstOrDefault();
     }
 
-    /// <summary>Plan nutricional vigente del cliente: el de su asesoría activa más reciente (getMyPlan).</summary>
-    public async Task<PlanNutricionalDto?> MiPlanAsync()
+    /// <summary>
+    /// Plan nutricional vigente del cliente (getMyPlan): el actualizado más recientemente entre los de
+    /// sus asesorías activas. Así un socio con entrenador y nutricionista ve el plan aunque la asesoría
+    /// más nueva sea la del entrenador, que no define plan.
+    /// </summary>
+    public Task<PlanNutricionalDto?> MiPlanAsync() => PlanVigenteAsync(actual.Id);
+
+    public async Task<PlanNutricionalDto?> PlanVigenteAsync(int clienteId) =>
+        (await Planes(db.PlanesNutricionales
+            .Where(p => p.ClienteId == clienteId
+                        && db.Asesorias.Any(a => a.ClienteId == clienteId && a.AsesorId == p.AsesorId && a.Estado == EstadosAsesoria.Activa))
+            .OrderByDescending(p => p.ActualizadoEn).Take(1))).FirstOrDefault();
+
+    /// <summary>Alumnos con asesoría activa del asesor y su plan, para el panel web (RF-06).</summary>
+    public async Task<List<AlumnoPlanDto>> PlanesDeMisAlumnosAsync()
     {
-        var asesor = await db.Asesorias.Where(a => a.ClienteId == actual.Id && a.Estado == EstadosAsesoria.Activa)
-            .OrderByDescending(a => a.CreadaEn).Select(a => (int?)a.AsesorId).FirstOrDefaultAsync();
-        if (asesor is null) return null;
-        return (await Planes(db.PlanesNutricionales.Where(x => x.AsesorId == asesor && x.ClienteId == actual.Id))).FirstOrDefault();
+        var alumnos = await ActivasAsync();
+        var ids = alumnos.Select(a => a.ClienteId).ToList();
+        var planes = (await Planes(db.PlanesNutricionales.Where(p => p.AsesorId == actual.Id && ids.Contains(p.ClienteId))))
+            .ToDictionary(p => p.ClienteId);
+        return alumnos.OrderBy(a => a.Cliente).Select(a => new AlumnoPlanDto(a.Id, a.ClienteId, a.Cliente, planes.GetValueOrDefault(a.ClienteId))).ToList();
+    }
+
+    public const int MaximoPauta = 500;
+    public const int MaximoComida = 300;
+
+    /// <summary>Texto vacío borra la pauta.</summary>
+    public static string? ValidarPauta(string texto, string nombre)
+    {
+        var t = texto.Trim();
+        if (t.Length > MaximoPauta) throw ErrorNegocio.Solicitud($"La pauta {nombre} no puede superar los {MaximoPauta} caracteres.");
+        return t.Length == 0 ? null : t;
+    }
+
+    /// <summary>Quita los días y las comidas vacíos que llegan del formulario del panel.</summary>
+    public static Dictionary<string, Dictionary<string, string>> LimpiarComidas(Dictionary<string, Dictionary<string, string>> comidas)
+    {
+        var limpio = new Dictionary<string, Dictionary<string, string>>();
+        foreach (var (dia, delDia) in comidas)
+        {
+            var valores = (delDia ?? []).Where(c => !string.IsNullOrWhiteSpace(c.Value)).ToDictionary(c => c.Key, c => c.Value.Trim());
+            if (valores.Values.Any(v => v.Length > MaximoComida))
+                throw ErrorNegocio.Solicitud($"Cada comida del menú puede tener hasta {MaximoComida} caracteres.");
+            if (valores.Count > 0) limpio[dia] = valores;
+        }
+        return limpio;
     }
 
     // ── Citas nutricionales (CU-29) ──────────────────────────────────────
@@ -359,6 +413,6 @@ public class PersonalService(AppDbContext db, UsuarioActual actual, Alcances alc
             p.Id, p.AsesorId, nombres.GetValueOrDefault(p.AsesorId, ""), p.ClienteId, nombres.GetValueOrDefault(p.ClienteId, ""),
             p.KcalDiarias, p.ProteinaG, p.CarbohidratosG, p.GrasaG, p.Notas,
             string.IsNullOrEmpty(p.PlanComidas) ? [] : JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(p.PlanComidas) ?? [],
-            p.ActualizadoEn)).ToList();
+            p.ActualizadoEn, p.PautaAntesEntrenar, p.PautaDespuesEntrenar, p.Hidratacion)).ToList();
     }
 }

@@ -1,0 +1,52 @@
+@model List<AlumnoPlanDto>
+@{
+    ViewData["Title"] = "Planes nutricionales";
+    ViewData["Pretitulo"] = "Gestión";
+}
+<div class="card">
+    <div class="card-body border-bottom text-secondary">
+        Tus alumnos con asesoría activa. Lo que definas aquí lo ven en la app, junto a la simulación de cada ejercicio de su rutina.
+    </div>
+    <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+            <thead><tr><th>Socio</th><th>Objetivo diario</th><th>Pautas de entrenamiento</th><th>Actualizado</th><th class="w-1"></th></tr></thead>
+            <tbody>
+            @foreach (var a in Model)
+            {
+                var p = a.Plan;
+                var pautas = new[] { p?.PautaAntesEntrenar, p?.PautaDespuesEntrenar, p?.Hidratacion }.Count(x => x is not null);
+                <tr>
+                    <td class="fw-medium">@a.Cliente</td>
+                    <td>
+                        @if (p?.KcalDiarias is not null)
+                        {
+                            <span>@p.KcalDiarias kcal</span>
+                            <div class="text-secondary small">P @(p.ProteinaG?.ToString("0") ?? "–") g · C @(p.CarbohidratosG?.ToString("0") ?? "–") g · G @(p.GrasaG?.ToString("0") ?? "–") g</div>
+                        }
+                        else
+                        {
+                            <span class="text-secondary">Sin definir</span>
+                        }
+                    </td>
+                    <td>
+                        @if (pautas > 0)
+                        {
+                            <span class="badge bg-green-lt">@pautas de 3 definidas</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary-lt">Sin pautas</span>
+                        }
+                    </td>
+                    <td class="text-secondary">@(p is null ? "—" : Reloj.ALocal(p.ActualizadoEn).ToString("dd/MM/yyyy HH:mm"))</td>
+                    <td><a class="btn btn-sm btn-outline-primary" asp-action="Editar" asp-route-clienteId="@a.ClienteId">@(p is null ? "Crear plan" : "Editar plan")</a></td>
+                </tr>
+            }
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="5" class="text-center text-secondary py-4">No tienes alumnos con asesoría activa.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

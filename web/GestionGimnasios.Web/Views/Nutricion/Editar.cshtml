@@ -1,0 +1,124 @@
+@model AlumnoPlanDto
+@{
+    ViewData["Title"] = Model.Cliente;
+    ViewData["Pretitulo"] = "Plan nutricional";
+    var p = Model.Plan;
+    string? Valor(decimal? d) => d?.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+    string? Comida(string dia, string comida) => p?.PlanComidas.GetValueOrDefault(dia)?.GetValueOrDefault(comida);
+}
+@section Acciones {
+    <a class="btn btn-outline-secondary" asp-action="Index"><i class="ti ti-arrow-left me-1"></i>Volver a los planes</a>
+}
+<form method="post" asp-action="Editar" asp-route-clienteId="@Model.ClienteId">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="row row-cards">
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Objetivo diario</h3></div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <label class="form-label">Kcal diarias</label>
+                            <input name="KcalDiarias" type="number" min="0" max="10000" class="form-control" value="@p?.KcalDiarias" />
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label">Proteína (g)</label>
+                            <input name="ProteinaG" type="number" min="0" max="1000" step="0.1" class="form-control" value="@Valor(p?.ProteinaG)" />
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label">Carbohidratos (g)</label>
+                            <input name="CarbohidratosG" type="number" min="0" max="1000" step="0.1" class="form-control" value="@Valor(p?.CarbohidratosG)" />
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label">Grasa (g)</label>
+                            <input name="GrasaG" type="number" min="0" max="1000" step="0.1" class="form-control" value="@Valor(p?.GrasaG)" />
+                        </div>
+                    </div>
+                    <label class="form-label mt-3">Indicaciones generales</label>
+                    <textarea name="Notas" class="form-control" rows="2">@p?.Notas</textarea>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header"><h3 class="card-title">Pautas para los días de entrenamiento</h3></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Antes de entrenar</label>
+                        <textarea name="PautaAntesEntrenar" class="form-control" rows="2" maxlength="@PersonalService.MaximoPauta"
+                                  placeholder="Por ejemplo: una fruta y yogur una hora antes.">@p?.PautaAntesEntrenar</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Después de entrenar</label>
+                        <textarea name="PautaDespuesEntrenar" class="form-control" rows="2" maxlength="@PersonalService.MaximoPauta">@p?.PautaDespuesEntrenar</textarea>
+                    </div>
+                    <div>
+                        <label class="form-label">Hidratación</label>
+                        <textarea name="Hidratacion" class="form-control" rows="2" maxlength="@PersonalService.MaximoPauta">@p?.Hidratacion</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Lo que ve el socio</h3></div>
+                <div class="card-body">
+                    <p>Al abrir un ejercicio de su rutina en la app, el socio ve la demostración del ejercicio y, debajo, las pautas de este plan:</p>
+                    <dl class="row mb-0">
+                        <dt class="col-5">Objetivo diario</dt>
+                        <dd class="col-7">@(p?.KcalDiarias is null ? "Sin definir" : $"{p.KcalDiarias} kcal")</dd>
+                        <dt class="col-5">Antes de entrenar</dt>
+                        <dd class="col-7">@(p?.PautaAntesEntrenar ?? "Sin pauta")</dd>
+                        <dt class="col-5">Después de entrenar</dt>
+                        <dd class="col-7">@(p?.PautaDespuesEntrenar ?? "Sin pauta")</dd>
+                        <dt class="col-5">Hidratación</dt>
+                        <dd class="col-7">@(p?.Hidratacion ?? "Sin pauta")</dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-secondary small">
+                    El sistema no genera recomendaciones: el socio ve solo lo que escribes aquí, con tu nombre y la fecha.
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Menú por día</h3></div>
+                <div class="table-responsive">
+                    <table class="table table-vcenter card-table">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                @foreach (var c in MenuNutricional.Comidas)
+                                {
+                                    <th>@MenuNutricional.Comida(c)</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for (var i = 0; i < MenuNutricional.Dias.Length; i++)
+                        {
+                            var dia = MenuNutricional.Dias[i];
+                            <tr>
+                                <td class="fw-medium">
+                                    @MenuNutricional.Dia(dia)
+                                    <input type="hidden" name="PlanComidas[@i].Key" value="@dia" />
+                                </td>
+                                @foreach (var c in MenuNutricional.Comidas)
+                                {
+                                    <td style="min-width: 150px">
+                                        <textarea name="PlanComidas[@i].Value[@c]" class="form-control form-control-sm" rows="2" maxlength="@PersonalService.MaximoComida">@Comida(dia, c)</textarea>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex align-items-center">
+                    <span class="text-secondary small">@(p is null ? "Este socio todavía no tiene plan." : $"Última modificación: {Reloj.ALocal(p.ActualizadoEn):dd/MM/yyyy HH:mm}")</span>
+                    <button class="btn btn-primary ms-auto"><i class="ti ti-device-floppy me-1"></i>Guardar plan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
