@@ -27,17 +27,47 @@
     </div>
     <div class="col-lg-5">
         <div class="card">
-            <div class="card-header"><h3 class="card-title">Análisis preliminar</h3></div>
+            <div class="card-header">
+                <h3 class="card-title">Análisis preliminar</h3>
+                <div class="card-actions"><span class="badge @ResultadosAnalisisVideo.Color(Model.ResultadoAnalisis)">@ResultadosAnalisisVideo.Etiqueta(Model.ResultadoAnalisis)</span></div>
+            </div>
             <div class="card-body">
+                @if (Model.TieneAnalisis)
+                {
+                    <dl class="row mb-2">
+                        <dt class="col-5">Duración</dt>
+                        <dd class="col-7">@(Model.DuracionSeg is null ? "Sin dato" : AnalizadorVideo.Duracion(Model.DuracionSeg.Value))</dd>
+                        <dt class="col-5">Resolución</dt>
+                        <dd class="col-7">
+                            @if (Model.Ancho is null || Model.Alto is null)
+                            {
+                                <text>Sin dato</text>
+                            }
+                            else
+                            {
+                                <text>@Model.Ancho × @Model.Alto · @(Model.Alto > Model.Ancho ? "vertical" : "horizontal")</text>
+                            }
+                        </dd>
+                    </dl>
+                }
                 @if (Model.AnalisisPreliminar is not null)
                 {
-                    <p class="mb-2">@Model.AnalisisPreliminar</p>
+                    <ul class="mb-2 ps-3">
+                        @foreach (var linea in Model.AnalisisPreliminar.Split('\n'))
+                        {
+                            <li>@linea</li>
+                        }
+                    </ul>
+                }
+                else if (Model.TieneAnalisis)
+                {
+                    <p class="mb-2">La duración y la resolución permiten revisar el ejercicio.</p>
                 }
                 else
                 {
-                    <p class="text-secondary mb-2">No disponible: todavía no hay una tecnología de análisis aprobada. Evalúa el video directamente.</p>
+                    <p class="text-secondary mb-2">No se pudieron leer los datos del archivo. Evalúa el video directamente.</p>
                 }
-                <p class="text-secondary small mb-0">Solo tú ves esta sección. El socio recibe únicamente tu devolución.</p>
+                <p class="text-secondary small mb-0">Revisión automática del archivo: no evalúa la técnica, eso lo decides tú. Solo tú ves esta sección; el socio recibe únicamente tu devolución.</p>
             </div>
         </div>
         @if (pendiente)
@@ -45,6 +75,24 @@
             <form method="post" asp-action="Revisar" asp-route-id="@Model.Id" class="card mt-3" data-confirmar="¿Enviar la devolución al socio? Después no se puede modificar.">
                 <div class="card-header"><h3 class="card-title">Tu devolución</h3></div>
                 <div class="card-body">
+                    @if (Model.TieneAnalisis)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label required">Análisis preliminar</label>
+                            <div class="form-selectgroup w-100">
+                                <label class="form-selectgroup-item flex-fill">
+                                    <input type="radio" name="AnalisisConfirmado" value="true" class="form-selectgroup-input" required />
+                                    <span class="form-selectgroup-label"><i class="ti ti-check me-1"></i>Lo confirmo</span>
+                                </label>
+                                <label class="form-selectgroup-item flex-fill">
+                                    <input type="radio" name="AnalisisConfirmado" value="false" class="form-selectgroup-input" />
+                                    <span class="form-selectgroup-label"><i class="ti ti-pencil me-1"></i>Lo corrijo</span>
+                                </label>
+                            </div>
+                            <textarea name="CorreccionAnalisis" class="form-control mt-2" rows="2" maxlength="500"
+                                      placeholder="Si lo corriges, indica qué: por ejemplo, «se ve bien la postura aunque el video es corto»."></textarea>
+                        </div>
+                    }
                     <div class="mb-3">
                         <label class="form-label required">Valoración final</label>
                         <select name="Valoracion" class="form-select" required>
@@ -74,6 +122,14 @@
                 </div>
                 <div class="card-body">
                     <p>@Model.Observacion</p>
+                    @if (Model.AnalisisConfirmado == true)
+                    {
+                        <p class="small mb-2"><i class="ti ti-check text-green me-1"></i>Confirmaste el análisis preliminar.</p>
+                    }
+                    else if (Model.AnalisisConfirmado == false)
+                    {
+                        <p class="small mb-2"><i class="ti ti-pencil text-orange me-1"></i>Corregiste el análisis preliminar: @Model.CorreccionAnalisis</p>
+                    }
                     <div class="text-secondary small">Enviada el @Reloj.ALocal(Model.RevisadoEn!.Value).ToString("dd/MM/yyyy HH:mm")</div>
                 </div>
             </div>

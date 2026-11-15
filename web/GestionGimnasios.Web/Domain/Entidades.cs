@@ -670,10 +670,18 @@ public class VideoTecnica
     public long TamanoBytes { get; set; }
     public DateTime EnviadoEn { get; set; } = DateTime.UtcNow;
     public string Estado { get; set; } = EstadosVideoTecnica.Pendiente;
-    /// <summary>Solo lo ve el entrenador. Nulo mientras no haya una tecnología de análisis aprobada (CU-35, alterno 2a).</summary>
+    /// <summary>Resultado de la revisión automática del archivo (ResultadosAnalisisVideo). Solo lo ve el entrenador.</summary>
+    public string? ResultadoAnalisis { get; set; }
+    /// <summary>Observaciones de la revisión automática, una por línea. No evalúa la técnica (CU-35, alterno 2a).</summary>
     public string? AnalisisPreliminar { get; set; }
+    public double? DuracionSeg { get; set; }
+    public int? Ancho { get; set; }
+    public int? Alto { get; set; }
     public string? Valoracion { get; set; }
     public string? Observacion { get; set; }
+    /// <summary>Validación humana del análisis preliminar: true si el entrenador lo confirma, false si lo corrige.</summary>
+    public bool? AnalisisConfirmado { get; set; }
+    public string? CorreccionAnalisis { get; set; }
     public DateTime? RevisadoEn { get; set; }
 
     public Usuario? Cliente { get; set; }

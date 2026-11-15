@@ -120,6 +120,28 @@ public static class EstadosVideoTecnica
     public const string Revisado = "REVISADO";
 }
 
+/// <summary>Resultado de la revisión automática del archivo de video (RF-01). No evalúa la técnica.</summary>
+public static class ResultadosAnalisisVideo
+{
+    public const string Apto = "APTO";
+    public const string ConObservaciones = "CON_OBSERVACIONES";
+    public const string NoDisponible = "NO_DISPONIBLE";
+
+    public static string Etiqueta(string? resultado) => resultado switch
+    {
+        Apto => "Apto para revisar",
+        ConObservaciones => "Con observaciones",
+        _ => "No disponible",
+    };
+
+    public static string Color(string? resultado) => resultado switch
+    {
+        Apto => "bg-green-lt",
+        ConObservaciones => "bg-orange-lt",
+        _ => "bg-secondary-lt",
+    };
+}
+
 /// <summary>Valoración final que el entrenador da a la técnica (RF-01).</summary>
 public static class ValoracionesTecnica
 {

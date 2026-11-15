@@ -20,7 +20,7 @@
     </div>
     <div class="table-responsive">
         <table class="table table-vcenter card-table">
-            <thead><tr><th>Socio</th><th>Ejercicio</th><th>Enviado</th><th>Estado</th><th>Valoración</th><th class="w-1"></th></tr></thead>
+            <thead><tr><th>Socio</th><th>Ejercicio</th><th>Enviado</th><th>Análisis preliminar</th><th>Estado</th><th>Valoración</th><th class="w-1"></th></tr></thead>
             <tbody>
             @foreach (var v in Model)
             {
@@ -29,6 +29,7 @@
                     <td class="fw-medium">@v.Socio</td>
                     <td>@v.Ejercicio <div class="text-secondary small">@v.GrupoMuscular</div></td>
                     <td class="text-secondary">@Reloj.ALocal(v.EnviadoEn).ToString("dd/MM/yyyy HH:mm")</td>
+                    <td><span class="badge @ResultadosAnalisisVideo.Color(v.ResultadoAnalisis)">@ResultadosAnalisisVideo.Etiqueta(v.ResultadoAnalisis)</span></td>
                     <td><span class="badge @(pendiente ? "bg-yellow-lt" : "bg-green-lt")">@(pendiente ? "Por revisar" : "Revisado")</span></td>
                     <td>@(v.Valoracion is null ? "" : ValoracionesTecnica.Etiqueta(v.Valoracion))</td>
                     <td><a class="btn btn-sm btn-outline-primary" asp-action="Detalle" asp-route-id="@v.Id">@(pendiente ? "Revisar" : "Ver")</a></td>
@@ -36,7 +37,7 @@
             }
             @if (Model.Count == 0)
             {
-                <tr><td colspan="6" class="text-center text-secondary py-4">No hay videos con este estado.</td></tr>
+                <tr><td colspan="7" class="text-center text-secondary py-4">No hay videos con este estado.</td></tr>
             }
             </tbody>
         </table>
