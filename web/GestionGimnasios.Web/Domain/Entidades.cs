@@ -710,6 +710,10 @@ public class PlanNutricional
     public string? Notas { get; set; }
     /// <summary>JSON: día → comida → descripción, como el meal_plan del proyecto base.</summary>
     public string? PlanComidas { get; set; }
+    /// <summary>Pautas para los días de entrenamiento (RF-06): las escribe el profesional, el sistema no las genera.</summary>
+    public string? PautaAntesEntrenar { get; set; }
+    public string? PautaDespuesEntrenar { get; set; }
+    public string? Hidratacion { get; set; }
     public DateTime CreadoEn { get; set; } = DateTime.UtcNow;
     public DateTime ActualizadoEn { get; set; } = DateTime.UtcNow;
 }

@@ -1338,11 +1338,23 @@ namespace GestionGimnasios.Web.Data.Migraciones
                         .HasPrecision(6, 1)
                         .HasColumnType("decimal(6,1)");
 
+                    b.Property<string>("Hidratacion")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<int?>("KcalDiarias")
                         .HasColumnType("int");
 
                     b.Property<string>("Notas")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PautaAntesEntrenar")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PautaDespuesEntrenar")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("PlanComidas")
                         .HasColumnType("nvarchar(max)");

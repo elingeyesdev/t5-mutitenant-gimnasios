@@ -593,3 +593,9 @@ datos sensibles:
 - **Postcondición:** ninguna (consulta).
 - **Regla:** el contenido nutricional pertenece al plan que asignó el profesional; no son sugerencias
   clínicas automáticas.
+- **Implementación:** el entrenador o el nutricionista definen en el panel web («Planes
+  nutricionales») el objetivo diario, el menú y las pautas para antes y después de entrenar y de
+  hidratación. La app consulta `GET /api/simulaciones/ejercicios/{id}`, que devuelve la demostración
+  del ejercicio (video o imagen del catálogo) y esas pautas tal como las escribió el profesional; si el
+  plan no tiene pautas, devuelve un aviso y ninguna recomendación (`SimulacionesService`). Una
+  simulación 3D necesitaría la aprobación del docente.

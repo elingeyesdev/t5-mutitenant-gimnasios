@@ -247,3 +247,21 @@ public static class Dias
 
     public static string Largo(DayOfWeek dia) => Largos[((int)dia + 6) % 7];
 }
+
+/// <summary>Días y comidas del menú del plan nutricional: las mismas claves que usa la app.</summary>
+public static class MenuNutricional
+{
+    public static readonly string[] Dias = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"];
+    public static readonly string[] Comidas = ["desayuno", "almuerzo", "merienda", "cena"];
+
+    public static string Dia(string dia) => dia switch
+    {
+        "LUNES" => "Lunes", "MARTES" => "Martes", "MIERCOLES" => "Miércoles", "JUEVES" => "Jueves",
+        "VIERNES" => "Viernes", "SABADO" => "Sábado", "DOMINGO" => "Domingo", _ => dia,
+    };
+
+    public static string Comida(string comida) => comida switch
+    {
+        "desayuno" => "Desayuno", "almuerzo" => "Almuerzo", "merienda" => "Merienda", "cena" => "Cena", _ => comida,
+    };
+}

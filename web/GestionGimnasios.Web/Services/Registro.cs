@@ -29,6 +29,7 @@ public static class Registro
         services.AddScoped<AccesosService>();
         services.AddScoped<BeneficiosService>();
         services.AddScoped<PersonalService>();
+        services.AddScoped<SimulacionesService>();
         services.AddScoped<ReportesService>();
         services.AddScoped<AlertasService>();
         services.AddScoped<MensajesService>();

@@ -66,6 +66,7 @@ public static class Menu
         new("Máquinas", "ti-barbell", "Maquinas", "Index", 4, Grupo: "Gestión"),
         new("Rutinas", "ti-list-check", "Rutinas", "Index", 3, Grupo: "Gestión"),
         new("Videos de técnica", "ti-video", "VideosTecnica", "Index", 3, Grupo: "Gestión", NivelMaximo: 3),
+        new("Planes nutricionales", "ti-salad", "Nutricion", "Index", 3, Grupo: "Gestión", NivelMaximo: 3),
         new("Planes", "ti-receipt", "Suscripciones", "Planes", 5, Grupo: "Gestión"),
         new("Sucursales", "ti-building-store", "Sucursales", "Index", 4, Grupo: "Gestión"),
         new("Mapa de sucursales", "ti-map-pin", "Sucursales", "Mapa", 4, Grupo: "Gestión"),

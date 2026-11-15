@@ -254,6 +254,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, UsuarioActual?
             e.Property(x => x.ProteinaG).HasPrecision(6, 1);
             e.Property(x => x.CarbohidratosG).HasPrecision(6, 1);
             e.Property(x => x.GrasaG).HasPrecision(6, 1);
+            e.Property(x => x.PautaAntesEntrenar).HasMaxLength(500);
+            e.Property(x => x.PautaDespuesEntrenar).HasMaxLength(500);
+            e.Property(x => x.Hidratacion).HasMaxLength(500);
         });
         b.Entity<ReglaInactividad>(e => e.HasIndex(x => x.CadenaId).IsUnique());
         b.Entity<AlertaInactividad>(e =>
