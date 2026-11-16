@@ -61,7 +61,10 @@ public class FiltroUsuarios
 
 public class PerfilForm
 {
+    // Desde el panel un nombre borrado llega como texto vacío (y se rechaza); la app manda nulo lo que no cambió.
+    [System.ComponentModel.DataAnnotations.DisplayFormat(ConvertEmptyStringToNull = false)]
     public string? Nombres { get; set; }
+    [System.ComponentModel.DataAnnotations.DisplayFormat(ConvertEmptyStringToNull = false)]
     public string? Apellidos { get; set; }
     public string? Telefono { get; set; }
     public DateOnly? FechaNacimiento { get; set; }
@@ -75,7 +78,7 @@ public class PerfilForm
     public string? NombreUsuario { get; set; }
 }
 
-public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alcances, Almacenamiento archivos, SuscripcionesService suscripciones)
+public partial class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alcances, Almacenamiento archivos, SuscripcionesService suscripciones)
 {
     // ── Consultas ────────────────────────────────────────────────────────
 
@@ -157,10 +160,8 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
 
     public async Task<UsuarioDto> CrearAsync(UsuarioForm f, bool registroPublico = false)
     {
-        var email = f.Email.Trim().ToLowerInvariant();
-        if (string.IsNullOrWhiteSpace(email) || !email.Contains('@')) throw ErrorNegocio.Solicitud("El correo no es válido.");
+        var email = ValidarDatos(f);
         if (string.IsNullOrWhiteSpace(f.Password) || f.Password.Length < 6) throw ErrorNegocio.Solicitud("La contraseña debe tener al menos 6 caracteres.");
-        if (string.IsNullOrWhiteSpace(f.Nombres) || string.IsNullOrWhiteSpace(f.Apellidos)) throw ErrorNegocio.Solicitud("Nombres y apellidos son obligatorios.");
         if (!string.IsNullOrWhiteSpace(f.Ci) && await db.Perfiles.AnyAsync(p => p.Ci == f.Ci.Trim()))
             throw ErrorNegocio.Solicitud("El Carnet de Identidad (CI) ya está registrado en otra cuenta.");
         if (await db.Usuarios.AnyAsync(u => u.Email == email))
@@ -244,7 +245,8 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
                 throw ErrorNegocio.Prohibido("No puedes editar a un usuario de nivel igual o superior al tuyo.");
         }
 
-        var email = f.Email.Trim().ToLowerInvariant();
+        var email = ValidarDatos(f);
+        if (!string.IsNullOrEmpty(f.Password) && f.Password.Length < 6) throw ErrorNegocio.Solicitud("La contraseña debe tener al menos 6 caracteres.");
         if (email != u.Email)
         {
             if (await db.Usuarios.AnyAsync(x => x.Email == email && x.Id != id)) throw ErrorNegocio.Conflicto("Ya existe un usuario con este email");
@@ -320,10 +322,14 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
             p = new PerfilUsuario { UsuarioId = u.Id, Nombres = u.Email.Split('@')[0] };
             db.Perfiles.Add(p);
         }
-        if (f.Nombres is not null) p.Nombres = f.Nombres;
-        if (f.Apellidos is not null) p.Apellidos = f.Apellidos;
-        if (f.Telefono is not null) p.Telefono = f.Telefono;
-        if (f.Genero is not null) p.Genero = f.Genero;
+        // Solo se cambia lo que llega (la app manda nulo lo que no tocó), pero lo que llega se valida.
+        if (f.Nombres is not null) p.Nombres = Reglas.Obligatorio(f.Nombres, "Los nombres", 100);
+        if (f.Apellidos is not null) p.Apellidos = Reglas.Obligatorio(f.Apellidos, "Los apellidos", 100);
+        if (f.Telefono is not null) p.Telefono = Reglas.Telefono(f.Telefono);
+        if (f.Genero is not null) { Reglas.UnoDe(f.Genero, Generos, "El género"); p.Genero = f.Genero; }
+        Reglas.Rango(f.AlturaCm, 50, 250, "La altura (cm)");
+        Reglas.Rango(f.Edad, 5, 100, "La edad");
+        Reglas.FechaNacimiento(f.FechaNacimiento);
         if (f.AlturaCm is not null) p.AlturaCm = f.AlturaCm;
         if (f.NivelExperiencia is not null) p.NivelExperiencia = f.NivelExperiencia;
         if (f.CondicionesMedicas is not null) p.CondicionesMedicas = f.CondicionesMedicas;
@@ -343,6 +349,25 @@ public class UsuariosService(AppDbContext db, UsuarioActual actual, Alcances alc
         await db.SaveChangesAsync();
         return APerfil(p);
     }
+
+    public static readonly string[] Generos = ["Masculino", "Femenino", "Otro"];
+
+    /// <summary>Datos comunes al crear y editar: correo, nombres, teléfono, CI y fecha de nacimiento.</summary>
+    private static string ValidarDatos(UsuarioForm f)
+    {
+        var email = (f.Email ?? "").Trim().ToLowerInvariant();
+        if (!CorreoValido().IsMatch(email) || email.Length > 150) throw ErrorNegocio.Solicitud("El correo no es válido.");
+        f.Nombres = Reglas.Obligatorio(f.Nombres, "Los nombres", 100);
+        f.Apellidos = Reglas.Obligatorio(f.Apellidos, "Los apellidos", 100);
+        f.Telefono = Reglas.Telefono(f.Telefono);
+        f.Ci = Reglas.Opcional(f.Ci, "El CI", 20);
+        if (f.Genero is not null) Reglas.UnoDe(f.Genero, Generos, "El género");
+        Reglas.FechaNacimiento(f.FechaNacimiento);
+        return email;
+    }
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
+    private static partial System.Text.RegularExpressions.Regex CorreoValido();
 
     public async Task<string> GuardarAvatarAsync(IFormFile archivo)
     {

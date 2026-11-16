@@ -9,9 +9,9 @@
             <div class="card-header"><h3 class="card-title">Datos personales</h3></div>
             <div class="card-body">
                 <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Nombres</label><input name="Nombres" value="@p?.Nombres" class="form-control" /></div>
-                    <div class="col-md-6"><label class="form-label">Apellidos</label><input name="Apellidos" value="@p?.Apellidos" class="form-control" /></div>
-                    <div class="col-md-6"><label class="form-label">Teléfono</label><input name="Telefono" value="@p?.Telefono" class="form-control" /></div>
+                    <div class="col-md-6"><label class="form-label required">Nombres</label><input name="Nombres" value="@p?.Nombres" class="form-control" required maxlength="100" /></div>
+                    <div class="col-md-6"><label class="form-label required">Apellidos</label><input name="Apellidos" value="@p?.Apellidos" class="form-control" required maxlength="100" /></div>
+                    <div class="col-md-6"><label class="form-label">Teléfono</label><input name="Telefono" value="@p?.Telefono" type="tel" class="form-control" pattern="+?[0-9][0-9 -]{6,19}" title="Solo números, espacios y guiones (7 a 15 dígitos)" maxlength="20" /></div>
                     <div class="col-md-6"><label class="form-label">Fecha de nacimiento</label><input name="FechaNacimiento" type="date" value="@p?.FechaNacimiento?.ToString("yyyy-MM-dd")" class="form-control" /></div>
                 </div>
             </div>

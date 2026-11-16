@@ -158,6 +158,10 @@ public class SuscripcionesService(AppDbContext db, UsuarioActual actual, Alcance
         var plan = await db.Planes.FirstOrDefaultAsync(p => p.Id == f.PlanId && p.Activo) ?? throw ErrorNegocio.NoEncontrado($"Plan {f.PlanId} no encontrado");
         if (!await db.Usuarios.AnyAsync(u => u.Id == f.UsuarioId && u.Activo)) throw ErrorNegocio.NoEncontrado($"Usuario {f.UsuarioId} no encontrado.");
         if (f.Meses is < 1 or > 24) throw ErrorNegocio.Solicitud("La duración debe ser de 1 a 24 meses.");
+        Reglas.Rango(f.MontoPagado, 0, MaximoMonto, "El monto pagado");
+        if (f.MontoPagado is > 0) Reglas.UnoDe(f.Metodo, MetodosPago, "El método de pago");
+        if (f.Inicio is DateOnly i && (i < Reloj.Hoy.AddMonths(-1) || i > Reloj.Hoy.AddMonths(3)))
+            throw ErrorNegocio.Solicitud("El inicio debe estar entre un mes atrás y tres meses adelante.");
 
         var sucursalId = f.SucursalPrincipalId is int sid ? alcances.ForzarSucursal(sid) : actual.SucursalFiltro;
         Sucursal? sucursal = sucursalId is null ? null : await alcances.ExigirSucursalAsync(sucursalId.Value, "No puede asignar suscripciones a otra sucursal");
@@ -195,7 +199,9 @@ public class SuscripcionesService(AppDbContext db, UsuarioActual actual, Alcance
 
     public async Task<PagoDto> RegistrarPagoAsync(int suscripcionId, PagoForm f)
     {
-        if (f.Monto <= 0) throw ErrorNegocio.Solicitud("El monto debe ser mayor a 0.");
+        if (f.Monto <= 0 || f.Monto > MaximoMonto) throw ErrorNegocio.Solicitud($"El monto debe ser mayor a 0 y hasta {MaximoMonto:N0} Bs.");
+        Reglas.UnoDe(f.Metodo, MetodosPago, "El método de pago");
+        Reglas.UnoDe(f.Estado, EstadosPago, "El estado del pago");
         var s = await SuscripcionesVisibles().FirstOrDefaultAsync(x => x.Id == suscripcionId) ?? throw ErrorNegocio.NoEncontrado($"Suscripción {suscripcionId} no encontrada");
         var p = new PagoSuscripcion { SuscripcionId = s.Id, Monto = f.Monto, Metodo = f.Metodo, Estado = f.Estado };
         db.Pagos.Add(p);
@@ -240,10 +246,18 @@ public class SuscripcionesService(AppDbContext db, UsuarioActual actual, Alcance
         return p;
     }
 
+    public const decimal MaximoMonto = 100_000;
+    public static readonly string[] MetodosPago = ["EFECTIVO", "TRANSFERENCIA", "QR", "TARJETA"];
+    public static readonly string[] EstadosPago = ["PAGADO", "PENDIENTE"];
+
     private static void ValidarPlan(PlanForm f)
     {
-        if (string.IsNullOrWhiteSpace(f.Nombre)) throw ErrorNegocio.Solicitud("El nombre del plan es obligatorio.");
-        if (f.PrecioMensual <= 0) throw ErrorNegocio.Solicitud("El precio debe ser mayor a 0.");
+        f.Nombre = Reglas.Obligatorio(f.Nombre, "El nombre del plan", 100);
+        f.Descripcion = Reglas.Opcional(f.Descripcion, "La descripción", 1000);
+        if (f.PrecioMensual <= 0 || f.PrecioMensual > MaximoMonto) throw ErrorNegocio.Solicitud($"El precio mensual debe ser mayor a 0 y hasta {MaximoMonto:N0} Bs.");
+        Reglas.Rango(f.MaxSucursales, 1, 1000, "El máximo de sucursales");
+        f.Beneficios = f.Beneficios.Select(b => b.Trim()).Where(b => b.Length > 0).ToList();
+        if (f.Beneficios.Any(b => b.Length > 150)) throw ErrorNegocio.Solicitud("Cada beneficio del plan puede tener hasta 150 caracteres.");
     }
 
     private static void CopiarPlan(PlanForm f, PlanSuscripcion p)

@@ -1,6 +1,7 @@
 using GestionGimnasios.Web.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionGimnasios.Web.Controllers;
 
@@ -26,6 +27,11 @@ public abstract class PanelController : Controller
             Error(e.Message);
             return (siFalla ?? siguiente)();
         }
+        catch (DbUpdateException e)
+        {
+            Error(NoSeGuardo(e));
+            return (siFalla ?? siguiente)();
+        }
     }
 
     /// <summary>Para formularios que se vuelven a mostrar con sus datos cuando falla una regla.</summary>
@@ -42,6 +48,21 @@ public abstract class PanelController : Controller
             ModelState.AddModelError(string.Empty, e.Message);
             return false;
         }
+        catch (DbUpdateException e)
+        {
+            ModelState.AddModelError(string.Empty, NoSeGuardo(e));
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Red de seguridad: si un dato llega a la base sin pasar por una regla (por ejemplo, un texto
+    /// demasiado largo), se registra el error y el usuario ve un mensaje en lugar de la página de error.
+    /// </summary>
+    private string NoSeGuardo(DbUpdateException e)
+    {
+        HttpContext.RequestServices.GetRequiredService<ILogger<PanelController>>().LogError(e, "No se pudo guardar en {Ruta}", Request.Path);
+        return "No se pudo guardar. Revisa que los datos estén completos y que los textos no sean demasiado largos.";
     }
 }
 

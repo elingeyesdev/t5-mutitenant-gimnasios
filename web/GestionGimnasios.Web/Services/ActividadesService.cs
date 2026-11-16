@@ -130,6 +130,8 @@ public class ActividadesService(AppDbContext db, UsuarioActual usuario, Alcances
         var dia = NormalizarDia(f.DiaSemana);
         if (f.Fin <= f.Inicio) throw ErrorNegocio.Solicitud("La hora de fin debe ser posterior a la de inicio.");
         if (f.CupoMaximo < 1) throw ErrorNegocio.Solicitud("El cupo máximo debe ser al menos 1.");
+        var capacidad = await db.Sucursales.IgnoreQueryFilters().Where(s => s.Id == a.SucursalId).Select(s => s.CapacidadMaxima).FirstAsync();
+        if (f.CupoMaximo > capacidad) throw ErrorNegocio.Solicitud($"El cupo no puede superar la capacidad de la sucursal ({capacidad} personas).");
 
         if (f.InstructorId is int instructorId)
         {
@@ -277,7 +279,8 @@ public class ActividadesService(AppDbContext db, UsuarioActual usuario, Alcances
 
     private static void Validar(ActividadForm f)
     {
-        if (string.IsNullOrWhiteSpace(f.Nombre)) throw ErrorNegocio.Solicitud("El nombre de la actividad es obligatorio.");
-        if (f.DuracionMin is < 0) throw ErrorNegocio.Solicitud("La duración no puede ser negativa.");
+        f.Nombre = Reglas.Obligatorio(f.Nombre, "El nombre de la actividad", 150);
+        f.Descripcion = Reglas.Opcional(f.Descripcion, "La descripción", 1000);
+        Reglas.Rango(f.DuracionMin, 1, 600, "La duración (minutos)");
     }
 }

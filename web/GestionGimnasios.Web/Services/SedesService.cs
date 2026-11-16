@@ -54,7 +54,7 @@ public class SedesService(AppDbContext db, UsuarioActual usuario, Alcances alcan
 
     public async Task<CadenaDto> CrearCadenaAsync(CadenaForm f)
     {
-        if (string.IsNullOrWhiteSpace(f.Nombre)) throw ErrorNegocio.Solicitud("El nombre de la cadena es obligatorio.");
+        ValidarCadena(f);
         if (await db.Cadenas.AnyAsync(c => c.Nombre == f.Nombre.Trim()))
             throw ErrorNegocio.Conflicto("Ya existe una Marca registrada con ese nombre.");
         var c = new Cadena { Nombre = f.Nombre.Trim(), Descripcion = f.Descripcion, Activa = f.Activa };
@@ -66,6 +66,7 @@ public class SedesService(AppDbContext db, UsuarioActual usuario, Alcances alcan
     public async Task ActualizarCadenaAsync(int id, CadenaForm f)
     {
         var c = await db.Cadenas.FindAsync(id) ?? throw ErrorNegocio.NoEncontrado($"Cadena {id} no encontrada");
+        ValidarCadena(f);
         if (await db.Cadenas.AnyAsync(x => x.Nombre == f.Nombre.Trim() && x.Id != id))
             throw ErrorNegocio.Conflicto("Ya existe una Marca registrada con ese nombre.");
         c.Nombre = f.Nombre.Trim();
@@ -120,6 +121,7 @@ public class SedesService(AppDbContext db, UsuarioActual usuario, Alcances alcan
 
     public async Task<SucursalDto> CrearSucursalAsync(SucursalForm f)
     {
+        ValidarSucursal(f);
         ValidarHorarios(f.Horarios);
         if (!await db.Cadenas.AnyAsync(c => c.Id == f.CadenaId))
             throw ErrorNegocio.Solicitud("La cadena especificada no existe.");
@@ -146,6 +148,7 @@ public class SedesService(AppDbContext db, UsuarioActual usuario, Alcances alcan
     public async Task<SucursalDto> ActualizarSucursalAsync(int id, SucursalForm f)
     {
         await alcances.ExigirSucursalAsync(id);
+        ValidarSucursal(f);
         ValidarHorarios(f.Horarios);
         var s = await db.Sucursales.Include(x => x.Ubicacion).Include(x => x.Horarios).FirstAsync(x => x.Id == id);
         if (await db.Sucursales.IgnoreQueryFilters().AnyAsync(x => x.CadenaId == s.CadenaId && x.Nombre == f.Nombre.Trim() && x.Id != id))
@@ -316,6 +319,36 @@ public class SedesService(AppDbContext db, UsuarioActual usuario, Alcances alcan
         if (hoy is null) return false;
         var hora = TimeOnly.FromDateTime(ahora);
         return hora >= hoy.Abre && hora < hoy.Cierra;
+    }
+
+    private static void ValidarCadena(CadenaForm f)
+    {
+        f.Nombre = Reglas.Obligatorio(f.Nombre, "El nombre de la cadena", 100);
+        f.Descripcion = Reglas.Opcional(f.Descripcion, "La descripción", 500);
+    }
+
+    public const int MaximaCapacidad = 5000;
+
+    /// <summary>
+    /// Datos mínimos para que la sucursal funcione: nombre, capacidad, dirección, un punto real en
+    /// el mapa y al menos un día de atención (sin horario no se pueden crear clases ni turnos).
+    /// </summary>
+    private static void ValidarSucursal(SucursalForm f)
+    {
+        f.Nombre = Reglas.Obligatorio(f.Nombre, "El nombre de la sucursal", 150);
+        f.Descripcion = Reglas.Opcional(f.Descripcion, "La descripción", 1000);
+        if (f.CapacidadMaxima is < 1 or > MaximaCapacidad)
+            throw ErrorNegocio.Solicitud($"La capacidad máxima debe estar entre 1 y {MaximaCapacidad} personas.");
+        if (f.Ubicacion is { } u)
+        {
+            var direccion = Reglas.Obligatorio(u.Direccion, "La dirección", 250);
+            var ciudad = Reglas.Obligatorio(u.Ciudad, "La ciudad", 100);
+            if (u.Latitud is < -90 or > 90 || u.Longitud is < -180 or > 180 || (u.Latitud == 0 && u.Longitud == 0))
+                throw ErrorNegocio.Solicitud("Marca la ubicación de la sucursal en el mapa.");
+            f.Ubicacion = u with { Direccion = direccion, Ciudad = ciudad };
+        }
+        if (f.Horarios is { Count: > 0 } horarios && horarios.All(h => h.EsFeriado))
+            throw ErrorNegocio.Solicitud("La sucursal debe atender al menos un día de la semana.");
     }
 
     /// <summary>Igual que validateScheduleOverlaps: no se permiten rangos superpuestos el mismo día.</summary>

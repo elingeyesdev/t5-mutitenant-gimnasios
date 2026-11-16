@@ -103,7 +103,11 @@ public class RolesService(AppDbContext db, UsuarioActual actual)
 
     public async Task<PermisoDto> CrearPermisoAsync(PermisoForm f)
     {
-        var codigo = f.Codigo.Trim().ToUpperInvariant();
+        var codigo = Reglas.Obligatorio(f.Codigo, "El código del permiso", 100).ToUpperInvariant();
+        f.Nombre = Reglas.Obligatorio(f.Nombre, "El nombre del permiso", 150);
+        f.Recurso = Reglas.Obligatorio(f.Recurso, "El recurso", 100);
+        f.Accion = Reglas.Obligatorio(f.Accion, "La acción", 100);
+        f.Descripcion = Reglas.Opcional(f.Descripcion, "La descripción", 500);
         if (await db.Permisos.AnyAsync(p => p.Codigo == codigo)) throw ErrorNegocio.Conflicto("Ya existe un permiso con ese código.");
         var p = new Permiso { Codigo = codigo, Nombre = f.Nombre, Descripcion = f.Descripcion, Recurso = f.Recurso, Accion = f.Accion };
         db.Permisos.Add(p);
@@ -151,8 +155,8 @@ public class RolesService(AppDbContext db, UsuarioActual actual)
 
     public async Task<ParametroDto> GuardarParametroAsync(ParametroForm f)
     {
-        var clave = f.Clave.Trim();
-        if (string.IsNullOrEmpty(clave)) throw ErrorNegocio.Solicitud("La clave es obligatoria.");
+        var clave = Reglas.Obligatorio(f.Clave, "La clave", 100);
+        f.Valor = Reglas.Obligatorio(f.Valor, "El valor", 1000);
         var p = await db.Parametros.FirstOrDefaultAsync(x => x.Clave == clave);
         if (p is null)
         {

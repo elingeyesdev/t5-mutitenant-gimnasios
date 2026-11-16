@@ -209,8 +209,11 @@ public class BeneficiosService(AppDbContext db, UsuarioActual actual, Suscripcio
 
     public static void Validar(BeneficioForm f)
     {
-        if (string.IsNullOrWhiteSpace(f.Nombre)) throw ErrorNegocio.Solicitud("El nombre del beneficio es obligatorio.");
+        f.Nombre = Infrastructure.Reglas.Obligatorio(f.Nombre, "El nombre del beneficio", 150);
+        f.Descripcion = Infrastructure.Reglas.Opcional(f.Descripcion, "La descripción", 1000);
+        f.Condiciones = Infrastructure.Reglas.Opcional(f.Condiciones, "Las condiciones", 1000);
         if (!TiposBeneficio.Todos.Contains(f.Tipo)) throw ErrorNegocio.Solicitud("Tipo de beneficio no válido.");
+        if (f.VigenteDesde == default || f.VigenteHasta == default) throw ErrorNegocio.Solicitud("Indica desde y hasta cuándo es válido el beneficio.");
         if (f.VigenteHasta < f.VigenteDesde) throw ErrorNegocio.Solicitud("La vigencia termina antes de empezar.");
         if (f.LimitePorSocio < 1) throw ErrorNegocio.Solicitud("Cada socio debe poder canjearlo al menos una vez.");
         if (f.CuposTotales is < 1) throw ErrorNegocio.Solicitud("Los cupos totales deben ser al menos 1, o déjalos vacíos.");

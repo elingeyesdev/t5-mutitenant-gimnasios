@@ -179,7 +179,7 @@ public class RutinasController(RutinasService rutinas, EjerciciosService ejercic
     [HttpPost]
     public async Task<IActionResult> Crear(RutinaForm f)
     {
-        f.Ejercicios = f.Ejercicios.Where(e => e.EjercicioId > 0).ToList();
+        f.Ejercicios = FilasConDatos(f.Ejercicios);
         if (await GuardarAsync(() => rutinas.CrearAsync(f), $"Rutina {f.Nombre} guardada.")) return RedirectToAction(nameof(Index));
         await CargarListas();
         return View("Formulario", f);
@@ -201,7 +201,7 @@ public class RutinasController(RutinasService rutinas, EjerciciosService ejercic
     [HttpPost]
     public async Task<IActionResult> Editar(int id, RutinaForm f)
     {
-        f.Ejercicios = f.Ejercicios.Where(e => e.EjercicioId > 0).ToList();
+        f.Ejercicios = FilasConDatos(f.Ejercicios);
         if (await GuardarAsync(() => rutinas.ActualizarAsync(id, f), "Rutina actualizada.")) return RedirectToAction(nameof(Index));
         await CargarListas();
         ViewBag.Rutina = await rutinas.ObtenerAsync(id);
@@ -211,6 +211,14 @@ public class RutinasController(RutinasService rutinas, EjerciciosService ejercic
     [HttpPost]
     public Task<IActionResult> Eliminar(int id) =>
         IntentarAsync(() => rutinas.EliminarAsync(id), "Rutina eliminada.", () => RedirectToAction(nameof(Index)));
+
+    /// <summary>
+    /// Quita las filas que el entrenador dejó totalmente vacías. Una fila con datos pero sin
+    /// ejercicio se conserva para que la validación le avise, en vez de perder lo escrito.
+    /// </summary>
+    public static List<RutinaEjercicioForm> FilasConDatos(List<RutinaEjercicioForm> filas) =>
+        filas.Where(e => e.EjercicioId > 0 || e.Series is not null || !string.IsNullOrWhiteSpace(e.Repeticiones)
+                         || e.PesoKg is not null || e.DescansoSeg is not null || !string.IsNullOrWhiteSpace(e.Notas)).ToList();
 
     private async Task CargarListas()
     {
