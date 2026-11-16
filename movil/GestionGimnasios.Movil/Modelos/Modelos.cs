@@ -244,6 +244,27 @@ public record Ejercicio(
     [JsonIgnore] public string Detalle => $"{GrupoMuscular} · {Textos.Dificultad(Dificultad)}{(Equipo is null ? "" : " · " + Equipo)}";
 }
 
+public record VideoTecnica(
+    int Id, string Ejercicio, string? Comentario, string Entrenador, DateTime EnviadoEn, string Estado,
+    string? Valoracion, string? Observacion, DateTime? RevisadoEn)
+{
+    [JsonIgnore] public string EstadoTexto => Estado switch
+    {
+        "PENDIENTE" => "Pendiente de revisión",
+        "REVISADO" => "Revisado",
+        _ => Textos.Estado(Estado),
+    };
+    [JsonIgnore] public string FechaEnvio => Hora.FechaHora(EnviadoEn);
+    [JsonIgnore] public string FechaRevision => RevisadoEn is null ? "" : $"Revisado: {Hora.FechaHora(RevisadoEn.Value)}";
+    [JsonIgnore] public string ValoracionTexto => Valoracion switch
+    {
+        "ADECUADA" => "Técnica adecuada",
+        "MEJORABLE" => "Puede mejorar",
+        "INCORRECTA" => "Técnica incorrecta",
+        _ => Valoracion ?? "",
+    };
+}
+
 public record RutinaEjercicio(
     int Id, int EjercicioId, string Ejercicio, string GrupoMuscular, string? YoutubeVideoId, string TipoRegistro,
     int Orden, int? Series, string? Repeticiones, decimal? PesoKg, string? DiaSemana, int? DescansoSeg, string? Notas)

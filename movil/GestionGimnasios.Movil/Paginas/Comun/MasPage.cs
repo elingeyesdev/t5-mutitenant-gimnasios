@@ -43,6 +43,7 @@ public class MasPage : PaginaBase
             opciones.Add(("Entrenamiento", "Plan nutricional", () => new MiNutricionPage()));
             opciones.Add(("Entrenamiento", "Entrenadores y nutricionistas", () => new AsesoresPage()));
             opciones.Add(("Entrenamiento", "Objetivos, restricciones y contactos", () => new DatosEntrenamientoPage()));
+            opciones.Add(("Entrenamiento", "Revisión de técnica", () => new VideosTecnicaPage()));
             opciones.Add(("Cuenta", "Autorizaciones de perfil", () => new ConsentimientoPage()));
             opciones.Add(("Beneficios", "Beneficios y canjes", () => new BeneficiosPage()));
             opciones.Add(("Comunicación", "Mensajes", () => new ConversacionesPage()));
