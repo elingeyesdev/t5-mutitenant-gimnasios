@@ -80,7 +80,7 @@ public class SucursalesController(SedesService sedes) : PanelController
     private static SucursalForm NuevoFormulario(int cadenaId) => new()
     {
         CadenaId = cadenaId,
-        Ubicacion = new UbicacionDto("", "Santa Cruz", -17.7833m, -63.1821m),
+        Ubicacion = new UbicacionDto("", "Santa Cruz", 0, 0), // sin punto: el usuario lo marca en el mapa
         Horarios = Domain.Dias.Cortos.Select(d => new HorarioSucursalDto(0, d,
             d == "DOM" ? new TimeOnly(8, 0) : d == "SAB" ? new TimeOnly(7, 0) : new TimeOnly(6, 0),
             d == "DOM" ? new TimeOnly(13, 0) : d == "SAB" ? new TimeOnly(18, 0) : new TimeOnly(22, 0), false)).ToList(),
