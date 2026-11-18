@@ -32,6 +32,11 @@
 
                 <Label x:Name="TituloEjercicios" Text="Ejercicios" Style="{StaticResource Seccion}" />
                 <VerticalStackLayout x:Name="Ejercicios">
+                    <BindableLayout.EmptyViewTemplate>
+                        <DataTemplate>
+                            <Label Text="Esta rutina todavía no tiene ejercicios configurados." Style="{StaticResource Vacio}" />
+                        </DataTemplate>
+                    </BindableLayout.EmptyViewTemplate>
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="m:RutinaEjercicio">
                             <Border Style="{StaticResource Tarjeta}">
@@ -43,7 +48,7 @@
                                     <Label Text="{Binding GrupoMuscular}" TextColor="{StaticResource Primary}" FontSize="13" />
                                     <Label Text="{Binding Prescripcion}" Style="{StaticResource Detalle}" />
                                     <Label Text="{Binding Notas}" FontSize="13" FontAttributes="Italic" />
-                                    <Button Text="Ver video del ejercicio" Style="{StaticResource Chico}" IsVisible="{Binding TieneVideo}"
+                                    <Button Text="Ver ejercicio" Style="{StaticResource Chico}"
                                             HorizontalOptions="Start" Clicked="OnVideo" Margin="0,4,0,0" />
                                 </VerticalStackLayout>
                             </Border>

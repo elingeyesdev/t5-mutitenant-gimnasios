@@ -1,0 +1,18 @@
+Procedencia de la animación de Sentadilla Libre
+
+Recurso local: Resources/Images/simulacion_sentadilla.gif
+Fuente: Flow Exercise Dataset
+Repositorio: https://github.com/ozansozuozgit/flow-exercise-dataset
+Ejercicio de origen: 0043 - barbell full squat
+Cuadros utilizados: assets/0043/frame-00.svg, frame-01.svg y frame-02.svg
+Secuencia: 0, 1, 2, 1
+Duración indicada por Flow: 180 ms por cuadro
+
+Los cuadros SVG personalizados de Flow se distribuyen bajo la dedicación
+CC0-1.0, en la medida de los derechos que Flow puede dedicar. Se conserva
+esta referencia de procedencia junto con el recurso convertido localmente.
+La animación es una ilustración orientativa: Flow no garantiza la autorización
+de derechos de terceros ni una revisión profesional de la técnica.
+
+La aplicación no incorpora el repositorio completo, sus datos ni sus medios
+externos; únicamente incluye esta animación convertida para uso local.

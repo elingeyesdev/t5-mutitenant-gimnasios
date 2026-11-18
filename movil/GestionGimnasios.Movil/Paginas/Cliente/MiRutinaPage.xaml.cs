@@ -44,7 +44,7 @@ public partial class MiRutinaPage : PaginaBase
 
     private async void OnVideo(object? sender, EventArgs e)
     {
-        if ((sender as BindableObject)?.BindingContext is RutinaEjercicio r && r.TieneVideo)
-            await Launcher.Default.OpenAsync($"https://www.youtube.com/watch?v={r.YoutubeVideoId}");
+        if ((sender as BindableObject)?.BindingContext is RutinaEjercicio r)
+            await IrAsync(new SimulacionEjercicioPage(r.EjercicioId));
     }
 }

@@ -284,6 +284,29 @@ public record Rutina(
     [JsonIgnore] public string EntrenadorTexto => Entrenador is null ? "" : $"Asignada por {Entrenador}";
 }
 
+public record PautasNutricionales(
+    string Profesional, DateTime ActualizadoEn, int? KcalDiarias, decimal? ProteinaG, decimal? CarbohidratosG,
+    decimal? GrasaG, string? AntesDeEntrenar, string? DespuesDeEntrenar, string? Hidratacion)
+{
+    [JsonIgnore] public string Macros
+    {
+        get
+        {
+            var valores = new List<string>();
+            if (KcalDiarias is int kcal) valores.Add($"{kcal} kcal");
+            if (ProteinaG is decimal proteina) valores.Add($"P {proteina:0.#} g");
+            if (CarbohidratosG is decimal carbohidratos) valores.Add($"C {carbohidratos:0.#} g");
+            if (GrasaG is decimal grasa) valores.Add($"G {grasa:0.#} g");
+            return valores.Count == 0 ? "Objetivos nutricionales no especificados" : string.Join(" · ", valores);
+        }
+    }
+}
+
+public record Simulacion(
+    int EjercicioId, string Ejercicio, string? Descripcion, string GrupoMuscular, List<string> GruposSecundarios,
+    string? Equipo, string Dificultad, string TipoSimulacion, string? YoutubeVideoId, string? ImagenUrl,
+    PautasNutricionales? Nutricion, string? AvisoNutricion);
+
 public record Serie(
     int Id, int NumeroSerie, int? EjercicioId, string? Ejercicio, string? GrupoMuscular, int? RutinaEjercicioId,
     int? Repeticiones, decimal? PesoKg, int? DuracionSeg, int? DistanciaM, int? DescansoSeg, int? EsfuerzoPercibido, DateTime CompletadaEn)
@@ -363,9 +386,21 @@ public record FichaCliente(int ClienteId, Perfil Perfil, Metrica? UltimaMetrica,
 
 public record PlanNutricional(
     int Id, int AsesorId, string Asesor, int ClienteId, string Cliente, int? KcalDiarias, decimal? ProteinaG, decimal? CarbohidratosG, decimal? GrasaG,
-    string? Notas, Dictionary<string, Dictionary<string, string>> PlanComidas, DateTime ActualizadoEn)
+    string? Notas, Dictionary<string, Dictionary<string, string>> PlanComidas, DateTime ActualizadoEn,
+    string? PautaAntesEntrenar = null, string? PautaDespuesEntrenar = null, string? Hidratacion = null)
 {
-    [JsonIgnore] public string Macros => $"{KcalDiarias ?? 0} kcal · P {ProteinaG ?? 0:0} g · C {CarbohidratosG ?? 0:0} g · G {GrasaG ?? 0:0} g";
+    [JsonIgnore] public string Macros
+    {
+        get
+        {
+            var valores = new List<string>();
+            if (KcalDiarias is int kcal) valores.Add($"{kcal} kcal");
+            if (ProteinaG is decimal proteina) valores.Add($"P {proteina:0.#} g");
+            if (CarbohidratosG is decimal carbohidratos) valores.Add($"C {carbohidratos:0.#} g");
+            if (GrasaG is decimal grasa) valores.Add($"G {grasa:0.#} g");
+            return valores.Count == 0 ? "Objetivos nutricionales no especificados" : string.Join(" · ", valores);
+        }
+    }
 }
 
 public record Cita(int Id, int PacienteId, string Paciente, string? AvatarUrl, DateOnly Fecha, TimeOnly Hora, string Tipo, string Estado, string? Notas)
