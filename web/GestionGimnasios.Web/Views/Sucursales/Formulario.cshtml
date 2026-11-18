@@ -1,5 +1,6 @@
 @model SucursalForm
 @inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@inject OpcionesGeocodificacion Geo
 @{
     var sucursal = ViewBag.Sucursal as SucursalDto;
     var editando = sucursal is not null;
@@ -69,14 +70,23 @@
                         <div class="col-md-8"><label class="form-label required">Dirección</label><input id="ubicacion-direccion" name="Ubicacion.Direccion" value="@Model.Ubicacion?.Direccion" class="form-control" required maxlength="250" placeholder="Calle, número y zona" /></div>
                         <div class="col-md-4"><label class="form-label required">Ciudad</label><input id="ubicacion-ciudad" name="Ubicacion.Ciudad" value="@(Model.Ubicacion?.Ciudad ?? "Santa Cruz")" class="form-control" required maxlength="100" /></div>
                     </div>
-                    <div data-selector-ubicacion data-direccion="#ubicacion-direccion" data-ciudad="#ubicacion-ciudad">
+                    <div data-selector-ubicacion data-direccion="#ubicacion-direccion" data-ciudad="#ubicacion-ciudad"
+                         data-buscar-url="@(Geo.Habilitada ? Url.Action("BuscarLugar") : "")"
+                         data-direccion-url="@(Geo.Habilitada ? Url.Action("DireccionDelPunto") : "")">
                         <label class="form-label required">Ubicación en el mapa</label>
-                        <div class="input-group mb-2">
-                            <input type="search" class="form-control" data-buscar-texto placeholder="Busca un lugar o dirección (ej. Av. San Martín 600)" />
-                            <button type="button" class="btn" data-buscar><i class="ti ti-search me-1"></i>Buscar</button>
-                        </div>
+                        @if (Geo.Habilitada)
+                        {
+                            <div class="input-group mb-2">
+                                <input type="search" class="form-control" data-buscar-texto autocomplete="off" placeholder="Busca un lugar o dirección (ej. Av. San Martín 600)" />
+                                <button type="button" class="btn" data-buscar><i class="ti ti-search me-1"></i>Buscar</button>
+                            </div>
+                        }
                         <div class="mapa mapa-selector" data-mapa></div>
                         <div class="form-hint mt-2" data-estado></div>
+                        @if (Geo.Habilitada)
+                        {
+                            <div class="form-hint small">Búsqueda de direcciones con datos de © colaboradores de OpenStreetMap (Nominatim).</div>
+                        }
                         <input type="hidden" name="Ubicacion.Latitud" value="@(marcada ? u!.Latitud.ToString(inv) : "")" data-latitud />
                         <input type="hidden" name="Ubicacion.Longitud" value="@(marcada ? u!.Longitud.ToString(inv) : "")" data-longitud />
                     </div>

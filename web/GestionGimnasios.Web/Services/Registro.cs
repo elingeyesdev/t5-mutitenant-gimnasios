@@ -14,6 +14,11 @@ public static class Registro
         services.AddScoped<UsuariosService>();
         services.AddScoped<RolesService>();
         services.AddScoped<SedesService>();
+        var geo = configuration.GetSection("Geocodificacion").Get<OpcionesGeocodificacion>() ?? new OpcionesGeocodificacion();
+        services.AddSingleton(geo);
+        services.AddSingleton(new TurnoGeocodificacion());
+        services.AddMemoryCache();
+        services.AddHttpClient<GeocodificacionService>(c => GeocodificacionService.Configurar(c, geo));
         services.AddScoped<MaquinasService>();
         services.AddScoped<ActividadesService>();
         services.AddScoped<EjerciciosService>();

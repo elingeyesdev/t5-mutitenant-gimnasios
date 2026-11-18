@@ -26,11 +26,29 @@ public class CadenasController(SedesService sedes) : PanelController
 
 /// <summary>Sucursales, su ubicación y horario de atención (HU-04, HU-05).</summary>
 [Authorize(Politicas.Admin)]
-public class SucursalesController(SedesService sedes) : PanelController
+public class SucursalesController(SedesService sedes, GeocodificacionService geo) : PanelController
 {
     public async Task<IActionResult> Index() => View(await sedes.SucursalesAsync());
 
     public async Task<IActionResult> Mapa() => View(await sedes.SucursalesAsync());
+
+    /// <summary>Busca una dirección para el mapa del formulario (503 si el servicio no está disponible).</summary>
+    [HttpGet]
+    public async Task<IActionResult> BuscarLugar(string? texto, string? ciudad, CancellationToken ct)
+    {
+        var r = await geo.BuscarAsync(texto, ciudad, ct);
+        if (!r.Disponible) return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        return Json(new { encontrado = r.Valor is not null, latitud = r.Valor?.Latitud, longitud = r.Valor?.Longitud });
+    }
+
+    /// <summary>Sugiere la dirección del punto marcado en el mapa (503 si el servicio no está disponible).</summary>
+    [HttpGet]
+    public async Task<IActionResult> DireccionDelPunto(double latitud, double longitud, CancellationToken ct)
+    {
+        var r = await geo.DireccionAsync(latitud, longitud, ct);
+        if (!r.Disponible) return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        return Json(new { encontrada = r.Valor is not null, direccion = r.Valor?.Direccion, ciudad = r.Valor?.Ciudad });
+    }
 
     [Authorize(Politicas.SuperAdmin)]
     public async Task<IActionResult> Crear(int? cadenaId)
