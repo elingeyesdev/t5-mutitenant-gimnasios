@@ -186,9 +186,34 @@ public class RutinasService(AppDbContext db, UsuarioActual actual, DatosPersonal
         return (actual.CadenaId, sucursalSolicitada);
     }
 
+    public const int MaximoSeries = 20;
+    public const int MaximoDescansoSeg = 600;
+    public const decimal MaximoPesoKg = 500;
+
+    /// <summary>
+    /// Una rutina sin ejercicios no le sirve al socio: se exige al menos uno, con sus series y
+    /// repeticiones (o el tiempo, en ejercicios de cardio o isométricos).
+    /// </summary>
     private async Task Validar(RutinaForm f)
     {
-        if (string.IsNullOrWhiteSpace(f.Nombre)) throw ErrorNegocio.Solicitud("El nombre de la rutina es obligatorio.");
+        f.Nombre = Reglas.Obligatorio(f.Nombre, "El nombre de la rutina", 150);
+        f.Descripcion = Reglas.Opcional(f.Descripcion, "La descripción", 1000);
+        Reglas.UnoDe(f.Dificultad, EjerciciosService.Dificultades, "La dificultad");
+        Reglas.Rango(f.DuracionSemanas, 1, 52, "La duración en semanas");
+        if (f.Ejercicios.Count == 0) throw ErrorNegocio.Solicitud("Agrega al menos un ejercicio a la rutina.");
+        for (var i = 0; i < f.Ejercicios.Count; i++)
+        {
+            var e = f.Ejercicios[i];
+            var fila = $"del ejercicio {i + 1}";
+            if (e.EjercicioId <= 0) throw ErrorNegocio.Solicitud($"Elige el ejercicio de la fila {i + 1}.");
+            if (e.Series is null) throw ErrorNegocio.Solicitud($"Indica las series {fila}.");
+            Reglas.Rango(e.Series, 1, MaximoSeries, $"las series {fila}");
+            e.Repeticiones = Reglas.Obligatorio(e.Repeticiones, $"las repeticiones o el tiempo {fila}", 20);
+            Reglas.Rango(e.PesoKg, 0, MaximoPesoKg, $"el peso (kg) {fila}");
+            Reglas.Rango(e.DescansoSeg, 0, MaximoDescansoSeg, $"el descanso (segundos) {fila}");
+            if (!string.IsNullOrEmpty(e.DiaSemana) && !Dias.Largos.Contains(e.DiaSemana)) throw ErrorNegocio.Solicitud($"Elige un día válido {fila}.");
+            e.Notas = Reglas.Opcional(e.Notas, $"las notas {fila}", 300);
+        }
         var ids = f.Ejercicios.Select(e => e.EjercicioId).Distinct().ToList();
         var existentes = await db.Ejercicios.CountAsync(e => ids.Contains(e.Id));
         if (existentes != ids.Count) throw ErrorNegocio.Solicitud("Uno o más ejercicios no existen en el catálogo.");

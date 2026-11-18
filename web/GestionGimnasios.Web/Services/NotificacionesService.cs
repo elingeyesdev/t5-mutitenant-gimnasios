@@ -121,6 +121,8 @@ public class NotificacionesService(AppDbContext db, UsuarioActual actual, Usuari
     public async Task<int> EnviarAvisoAsync(AvisoForm f)
     {
         if (string.IsNullOrWhiteSpace(f.Titulo) || string.IsNullOrWhiteSpace(f.Cuerpo)) throw ErrorNegocio.Solicitud("Título y mensaje son obligatorios.");
+        f.Titulo = Reglas.Obligatorio(f.Titulo, "El título", 150);
+        f.Cuerpo = Reglas.Obligatorio(f.Cuerpo, "El mensaje", 2000);
         var q = usuarios.UsuariosVisibles().Where(u => u.Activo);
         if (f.UsuarioId is not null) q = q.Where(u => u.Id == f.UsuarioId);
         if (f.SucursalId is not null) q = q.Where(u => u.Roles.Any(r => r.SucursalId == f.SucursalId) || u.Membresias.Any(m => m.SucursalId == f.SucursalId));

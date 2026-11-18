@@ -114,6 +114,24 @@ public class EjerciciosService(AppDbContext db, Almacenamiento archivos)
         if (string.IsNullOrWhiteSpace(f.GrupoMuscular)) throw ErrorNegocio.Solicitud("El grupo muscular es obligatorio.");
         if (!Dificultades.Contains(f.Dificultad)) throw ErrorNegocio.Solicitud("Dificultad no válida.");
         if (!TiposRegistro.Contains(f.TipoRegistro)) throw ErrorNegocio.Solicitud("Tipo de registro no válido.");
+        f.Nombre = Reglas.Obligatorio(f.Nombre, "El nombre del ejercicio", 150);
+        f.Descripcion = Reglas.Opcional(f.Descripcion, "La descripción", 2000);
+        f.YoutubeVideoId = VideoDeYoutube(f.YoutubeVideoId);
+    }
+
+    /// <summary>
+    /// Acepta el enlace completo de YouTube (watch, youtu.be o shorts) o solo su identificador
+    /// de 11 caracteres, y guarda el identificador.
+    /// </summary>
+    public static string? VideoDeYoutube(string? texto)
+    {
+        var t = texto?.Trim();
+        if (string.IsNullOrEmpty(t)) return null;
+        var m = System.Text.RegularExpressions.Regex.Match(t, @"(?:youtu\.be/|[?&]v=|/shorts/|/embed/)([A-Za-z0-9_-]{11})");
+        var id = m.Success ? m.Groups[1].Value : t;
+        if (!System.Text.RegularExpressions.Regex.IsMatch(id, "^[A-Za-z0-9_-]{11}$"))
+            throw ErrorNegocio.Solicitud("El video de YouTube no es válido: pega el enlace del video (por ejemplo https://youtu.be/RCxikBS5Qy8).");
+        return id;
     }
 
     private static void Copiar(EjercicioForm f, Ejercicio e)

@@ -280,6 +280,11 @@ public class PersonalService(AppDbContext db, UsuarioActual actual, Alcances alc
     public async Task<PlanNutricionalDto> GuardarPlanAsync(int clienteId, PlanNutricionalForm f)
     {
         await datos.ExigirAsesorAsync(clienteId);
+        Reglas.Rango(f.KcalDiarias, 800, 6000, "Las calorías diarias");
+        Reglas.Rango(f.ProteinaG, 0, 500, "La proteína (g)");
+        Reglas.Rango(f.CarbohidratosG, 0, 1000, "Los carbohidratos (g)");
+        Reglas.Rango(f.GrasaG, 0, 500, "La grasa (g)");
+        f.Notas = Reglas.Opcional(f.Notas, "Las notas", 1000);
         var p = await db.PlanesNutricionales.FirstOrDefaultAsync(x => x.AsesorId == actual.Id && x.ClienteId == clienteId);
         if (p is null) db.PlanesNutricionales.Add(p = new PlanNutricional { AsesorId = actual.Id, ClienteId = clienteId });
         p.KcalDiarias = f.KcalDiarias;
@@ -291,6 +296,7 @@ public class PersonalService(AppDbContext db, UsuarioActual actual, Alcances alc
         if (f.PautaAntesEntrenar is not null) p.PautaAntesEntrenar = ValidarPauta(f.PautaAntesEntrenar, "antes de entrenar");
         if (f.PautaDespuesEntrenar is not null) p.PautaDespuesEntrenar = ValidarPauta(f.PautaDespuesEntrenar, "después de entrenar");
         if (f.Hidratacion is not null) p.Hidratacion = ValidarPauta(f.Hidratacion, "de hidratación");
+        if (PlanVacio(p)) throw ErrorNegocio.Solicitud("El plan está vacío: completa el objetivo diario, el menú o alguna pauta antes de guardarlo.");
         p.ActualizadoEn = DateTime.UtcNow;
         await db.SaveChangesAsync();
         await notificaciones.NotificarAsync(clienteId, TiposNotificacion.Asesoria, "Plan nutricional actualizado", $"{actual.Nombre} actualizó tu plan nutricional.");
@@ -328,6 +334,13 @@ public class PersonalService(AppDbContext db, UsuarioActual actual, Alcances alc
 
     public const int MaximoPauta = 500;
     public const int MaximoComida = 300;
+
+    /// <summary>Un plan sin objetivo, menú, notas ni pautas no le dice nada al socio.</summary>
+    public static bool PlanVacio(PlanNutricional p) =>
+        p.KcalDiarias is null && p.ProteinaG is null && p.CarbohidratosG is null && p.GrasaG is null
+        && string.IsNullOrWhiteSpace(p.Notas) && string.IsNullOrWhiteSpace(p.PautaAntesEntrenar)
+        && string.IsNullOrWhiteSpace(p.PautaDespuesEntrenar) && string.IsNullOrWhiteSpace(p.Hidratacion)
+        && (string.IsNullOrWhiteSpace(p.PlanComidas) || p.PlanComidas.Trim() is "{}" or "null");
 
     /// <summary>Texto vacío borra la pauta.</summary>
     public static string? ValidarPauta(string texto, string nombre)

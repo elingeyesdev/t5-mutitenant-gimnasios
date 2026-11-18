@@ -160,6 +160,8 @@ public class EntrenamientoService(AppDbContext db, UsuarioActual actual, DatosPe
     {
         if (f.Series.Count == 0 && (f.DuracionSeg ?? 0) < 60)
             throw ErrorNegocio.Solicitud("No se puede guardar una sesión de menos de 1 minuto sin series registradas.");
+        Reglas.Rango(f.DuracionSeg, 0, 24 * 3600, "La duración de la sesión (segundos)");
+        Reglas.Rango(f.Calorias, 0, 10_000, "Las calorías");
         if (f.RutinaId is int rutinaId && !await db.Rutinas.AnyAsync(r => r.Id == rutinaId && (r.AsignadaAId == actual.Id || r.EsPlantilla || r.EntrenadorId == actual.Id)))
             throw ErrorNegocio.Prohibido("La rutina indicada no está asignada a tu cuenta.");
 
@@ -256,6 +258,10 @@ public class EntrenamientoService(AppDbContext db, UsuarioActual actual, DatosPe
         var usuarioId = f.UsuarioId ?? actual.Id;
         if (usuarioId != actual.Id) await datos.ExigirAsync(usuarioId);
         if (usuarioId == actual.Id && actual.EsGerente) throw ErrorNegocio.Solicitud("Los gerentes no pueden registrar métricas físicas.");
+        ValidarMetrica(f);
+        if (f.PesoKg is null && f.GrasaPct is null && f.MasaMuscularKg is null && f.CinturaCm is null && f.PechoCm is null && f.CaderaCm is null
+            && f.BrazoCm is null && f.MusloCm is null && f.PantorrillaCm is null && f.AlturaCm is null && f.Edad is null)
+            throw ErrorNegocio.Solicitud("Registra al menos una medida.");
 
         var m = new MetricaFisica
         {
@@ -280,6 +286,7 @@ public class EntrenamientoService(AppDbContext db, UsuarioActual actual, DatosPe
     /// <summary>Actualiza las circunferencias del último registro (saveMyCircumferences).</summary>
     public async Task<MetricaDto> GuardarCircunferenciasAsync(MetricaForm f)
     {
+        ValidarMetrica(f);
         var m = await db.Metricas.Where(x => x.UsuarioId == actual.Id).OrderByDescending(x => x.RegistradaEn).FirstOrDefaultAsync();
         if (m is null) db.Metricas.Add(m = new MetricaFisica { UsuarioId = actual.Id, SucursalId = actual.SucursalId });
         m.CinturaCm = f.CinturaCm ?? m.CinturaCm;
@@ -323,9 +330,35 @@ public class EntrenamientoService(AppDbContext db, UsuarioActual actual, DatosPe
             .OrderByDescending(s => s.CreadaEn).Select(s => s.SucursalPrincipalId).FirstOrDefaultAsync();
     }
 
+    /// <summary>Valores posibles para una serie: evita negativos o cifras imposibles que distorsionan el progreso.</summary>
+    public static void ValidarSerie(SerieForm s)
+    {
+        Reglas.Rango(s.NumeroSerie, 1, 100, "El número de serie");
+        Reglas.Rango(s.Repeticiones, 0, 1000, "Las repeticiones");
+        Reglas.Rango(s.PesoKg, 0, 1000, "El peso (kg)");
+        Reglas.Rango(s.DuracionSeg, 0, 24 * 3600, "La duración (segundos)");
+        Reglas.Rango(s.DistanciaM, 0, 200_000, "La distancia (metros)");
+        Reglas.Rango(s.DescansoSeg, 0, 3600, "El descanso (segundos)");
+        Reglas.Rango(s.EsfuerzoPercibido, 1, 10, "El esfuerzo percibido");
+    }
+
+    /// <summary>Medidas corporales dentro de rangos humanos.</summary>
+    public static void ValidarMetrica(MetricaForm f)
+    {
+        Reglas.Rango(f.PesoKg, 20, 400, "El peso (kg)");
+        Reglas.Rango(f.AlturaCm, 50, 250, "La altura (cm)");
+        Reglas.Rango(f.Edad, 5, 100, "La edad");
+        Reglas.Rango(f.GrasaPct, 2, 70, "El porcentaje de grasa");
+        Reglas.Rango(f.MasaMuscularKg, 5, 200, "La masa muscular (kg)");
+        foreach (var (valor, nombre) in new[] { (f.CinturaCm, "La cintura"), (f.PechoCm, "El pecho"), (f.CaderaCm, "La cadera"), (f.BrazoCm, "El brazo"), (f.MusloCm, "El muslo"), (f.PantorrillaCm, "La pantorrilla") })
+            Reglas.Rango(valor, 10, 250, $"{nombre} (cm)");
+        f.Notas = Reglas.Opcional(f.Notas, "Las notas", 500);
+    }
+
     private async Task<List<SerieEntrenamiento>> SeriesValidasAsync(IEnumerable<SerieForm> series)
     {
         var lista = series.ToList();
+        foreach (var s in lista) ValidarSerie(s);
         var ids = lista.Where(s => s.EjercicioId is > 0).Select(s => s.EjercicioId!.Value).Distinct().ToList();
         var validos = (await db.Ejercicios.Where(e => ids.Contains(e.Id)).Select(e => e.Id).ToListAsync()).ToHashSet();
         var rutinaEjercicios = lista.Where(s => s.RutinaEjercicioId is > 0).Select(s => s.RutinaEjercicioId!.Value).Distinct().ToList();

@@ -1,4 +1,5 @@
 @model RutinaForm
+@inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
 @{
     var rutina = ViewBag.Rutina as RutinaDto;
     var editando = rutina is not null;
@@ -7,57 +8,100 @@
     ViewData["Title"] = editando ? rutina!.Nombre : "Nueva rutina";
     ViewData["Pretitulo"] = "Rutinas";
     string[] dias = ["", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO"];
-    var filas = Model.Ejercicios.Count + 3;
+    string[] nombresDia = ["Cualquier día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+    // Siempre al menos una fila para empezar; el resto se agrega con el botón.
+    var filas = Model.Ejercicios.Count > 0 ? Model.Ejercicios : [new RutinaEjercicioForm()];
+    var esEntrenador = Actual.Nivel < GestionGimnasios.Web.Domain.Niveles.Recepcionista;
+}
+@functions {
+    static string Dificultad(string d) => d switch { "PRINCIPIANTE" => "Principiante", "INTERMEDIO" => "Intermedio", "AVANZADO" => "Avanzado", _ => d };
 }
 <form method="post" asp-action="@(editando ? "Editar" : "Crear")" asp-route-id="@rutina?.Id">
     <div class="row row-cards">
-        <div class="col-lg-4">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header"><h3 class="card-title">Rutina</h3></div>
                 <div class="card-body">
-                    <div class="mb-3"><label class="form-label required">Nombre</label><input asp-for="Nombre" class="form-control" required /></div>
-                    <div class="mb-3"><label class="form-label">Descripción</label><textarea asp-for="Descripcion" class="form-control" rows="2"></textarea></div>
+                  <div class="row g-3">
+                   <div class="col-lg-6">
+                    <div class="mb-3"><label class="form-label required">Nombre</label><input asp-for="Nombre" class="form-control" required maxlength="150" placeholder="Ej. Fuerza tren superior" /></div>
+                    <div class="mb-3"><label class="form-label">Descripción</label><textarea asp-for="Descripcion" class="form-control" rows="2" maxlength="1000" placeholder="Objetivo o indicaciones generales"></textarea></div>
                     <div class="row g-2 mb-3">
                         <div class="col-7">
-                            <label class="form-label">Dificultad</label>
+                            <label class="form-label required">Dificultad</label>
                             <select asp-for="Dificultad" class="form-select">
                                 @foreach (var d in EjerciciosService.Dificultades)
                                 {
-                                    <option>@d</option>
+                                    <option value="@d">@Dificultad(d)</option>
                                 }
                             </select>
                         </div>
-                        <div class="col-5"><label class="form-label">Semanas</label><input asp-for="DuracionSemanas" type="number" min="1" class="form-control" /></div>
+                        <div class="col-5"><label class="form-label">Semanas</label><input asp-for="DuracionSemanas" type="number" min="1" max="52" class="form-control" placeholder="Ej. 4" /></div>
                     </div>
+                   </div>
+                   <div class="col-lg-6">
                     <div class="mb-3">
                         <label class="form-label">Alumno</label>
-                        <select asp-for="AsignadaAId" class="form-select">
-                            <option value="">Sin asignar</option>
-                            @foreach (var (id, nombre) in alumnos)
-                            {
-                                <option value="@id">@nombre</option>
-                            }
-                        </select>
-                        <small class="form-hint">El entrenador solo asigna a sus alumnos con asesoría activa. Al asignar, la rutina anterior del alumno se desactiva.</small>
+                        @if (alumnos.Count == 0)
+                        {
+                            <input type="hidden" name="AsignadaAId" value="" />
+                            <div class="alert alert-info mb-0">
+                                @if (esEntrenador)
+                                {
+                                    <span>Aún no tienes alumnos con asesoría activa. Puedes guardarla como plantilla y asignarla cuando un socio te elija como entrenador.</span>
+                                }
+                                else
+                                {
+                                    <span>No hay socios en tu sucursal para asignarle la rutina.</span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <select asp-for="AsignadaAId" class="form-select">
+                                <option value="">Sin asignar (la asigno después)</option>
+                                @foreach (var (id, nombre) in alumnos)
+                                {
+                                    <option value="@id">@nombre</option>
+                                }
+                            </select>
+                            <small class="form-hint">@(esEntrenador ? "Solo aparecen tus alumnos con asesoría activa. " : "")Al asignarla, la rutina anterior del alumno se desactiva.</small>
+                        }
                     </div>
                     <label class="form-check"><input asp-for="EsPlantilla" type="checkbox" class="form-check-input" /><span class="form-check-label">Guardar como plantilla</span></label>
+                    <small class="form-hint">Una plantilla sirve de base para crear rutinas de otros alumnos.</small>
+                   </div>
+                  </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-8">
+        <div class="col-12">
             <div class="card">
-                <div class="card-header"><h3 class="card-title">Ejercicios</h3></div>
+                <div class="card-header">
+                    <h3 class="card-title">Ejercicios</h3>
+                    <div class="card-actions"><button type="button" class="btn btn-outline-primary btn-sm" data-agregar-ejercicio><i class="ti ti-plus me-1"></i>Agregar ejercicio</button></div>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-vcenter card-table">
-                        <thead><tr><th style="min-width:220px">Ejercicio</th><th>Series</th><th>Reps</th><th>Peso kg</th><th>Descanso s</th><th>Día</th></tr></thead>
-                        <tbody>
-                        @for (var i = 0; i < filas; i++)
-                        {
-                            var e = i < Model.Ejercicios.Count ? Model.Ejercicios[i] : new RutinaEjercicioForm();
+                        <thead>
                             <tr>
+                                <th style="min-width:220px">Ejercicio <span class="text-danger">*</span></th>
+                                <th>Series <span class="text-danger">*</span></th>
+                                <th>Reps o tiempo <span class="text-danger">*</span></th>
+                                <th>Peso kg</th>
+                                <th>Descanso s</th>
+                                <th>Día</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody data-filas-ejercicios>
+                        @for (var i = 0; i < filas.Count; i++)
+                        {
+                            var e = filas[i];
+                            <tr data-fila-ejercicio>
                                 <td>
-                                    <select name="Ejercicios[@i].EjercicioId" class="form-select form-select-sm">
-                                        <option value="0">—</option>
+                                    <select name="Ejercicios[@i].EjercicioId" class="form-select form-select-sm" required>
+                                        <option value="">Elegir…</option>
                                         @foreach (var g in ejercicios.GroupBy(x => x.GrupoMuscular))
                                         {
                                             <optgroup label="@g.Key">
@@ -70,26 +114,58 @@
                                     </select>
                                     <input type="hidden" name="Ejercicios[@i].Orden" value="@i" />
                                 </td>
-                                <td><input name="Ejercicios[@i].Series" value="@e.Series" type="number" min="1" class="form-control form-control-sm" style="width:70px" /></td>
-                                <td><input name="Ejercicios[@i].Repeticiones" value="@e.Repeticiones" class="form-control form-control-sm" style="width:80px" placeholder="8-10" /></td>
-                                <td><input name="Ejercicios[@i].PesoKg" value="@e.PesoKg" type="number" step="0.5" min="0" class="form-control form-control-sm" style="width:80px" /></td>
-                                <td><input name="Ejercicios[@i].DescansoSeg" value="@e.DescansoSeg" type="number" min="0" class="form-control form-control-sm" style="width:80px" /></td>
+                                <td><input name="Ejercicios[@i].Series" value="@e.Series" type="number" min="1" max="@RutinasService.MaximoSeries" class="form-control form-control-sm" style="width:70px" placeholder="3" required /></td>
+                                <td><input name="Ejercicios[@i].Repeticiones" value="@e.Repeticiones" class="form-control form-control-sm" style="width:90px" placeholder="8-10" maxlength="20" required /></td>
+                                <td><input name="Ejercicios[@i].PesoKg" value="@e.PesoKg" type="number" step="0.5" min="0" max="@RutinasService.MaximoPesoKg" class="form-control form-control-sm" style="width:80px" /></td>
+                                <td><input name="Ejercicios[@i].DescansoSeg" value="@e.DescansoSeg" type="number" min="0" max="@RutinasService.MaximoDescansoSeg" class="form-control form-control-sm" style="width:80px" placeholder="60" /></td>
                                 <td>
-                                    <select name="Ejercicios[@i].DiaSemana" class="form-select form-select-sm">
-                                        @foreach (var d in dias)
+                                    <select name="Ejercicios[@i].DiaSemana" class="form-select form-select-sm" style="min-width:140px">
+                                        @for (var d = 0; d < dias.Length; d++)
                                         {
-                                            <option value="@d" selected="@(d == (e.DiaSemana ?? ""))">@(d == "" ? "—" : d[..3])</option>
+                                            <option value="@dias[d]" selected="@(dias[d] == (e.DiaSemana ?? ""))">@nombresDia[d]</option>
                                         }
                                     </select>
                                 </td>
+                                <td><button type="button" class="btn btn-ghost-danger btn-icon btn-sm" data-quitar-ejercicio title="Quitar ejercicio" aria-label="Quitar ejercicio"><i class="ti ti-x"></i></button></td>
                             </tr>
                         }
                         </tbody>
                     </table>
                 </div>
-                <div class="card-footer text-secondary small">Las filas sin ejercicio se ignoran. Guarda y vuelve a editar para agregar más filas.</div>
+                <div class="card-footer text-secondary small">Cada ejercicio necesita sus series y repeticiones; en cardio o planchas escribe el tiempo (ej. «30 s» o «20 min»).</div>
             </div>
         </div>
     </div>
     <div class="mt-3 d-flex gap-2"><button class="btn btn-primary"><i class="ti ti-device-floppy me-1"></i>Guardar rutina</button><a class="btn btn-link" asp-action="Index">Volver</a></div>
 </form>
+@section Scripts {
+    <script>
+        // Agregar y quitar ejercicios sin recargar; los nombres se renumeran para que lleguen en orden.
+        (() => {
+            const cuerpo = document.querySelector('[data-filas-ejercicios]');
+            const renumerar = () => cuerpo.querySelectorAll('[data-fila-ejercicio]').forEach((fila, i) => {
+                fila.querySelectorAll('[name^="Ejercicios["]').forEach((campo) => {
+                    campo.name = campo.name.replace(/^Ejercicios\[\d+\]/, `Ejercicios[${i}]`);
+                    if (campo.name.endsWith('.Orden')) campo.value = i;
+                });
+            });
+            document.querySelector('[data-agregar-ejercicio]').addEventListener('click', () => {
+                const nueva = cuerpo.querySelector('[data-fila-ejercicio]').cloneNode(true);
+                nueva.querySelectorAll('input:not([type=hidden]), select').forEach((c) => { c.value = ''; });
+                cuerpo.appendChild(nueva);
+                renumerar();
+                nueva.querySelector('select').focus();
+            });
+            cuerpo.addEventListener('click', (e) => {
+                const boton = e.target.closest('[data-quitar-ejercicio]');
+                if (!boton) return;
+                if (cuerpo.querySelectorAll('[data-fila-ejercicio]').length === 1) {
+                    boton.closest('tr').querySelectorAll('input:not([type=hidden]), select').forEach((c) => { c.value = ''; });
+                    return;
+                }
+                boton.closest('tr').remove();
+                renumerar();
+            });
+        })();
+    </script>
+}
