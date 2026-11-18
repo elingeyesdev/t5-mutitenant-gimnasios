@@ -32,3 +32,9 @@
   .page-wrapper { margin: 0 !important; }
   .card { break-inside: avoid; border: 1px solid #ddd; box-shadow: none; }
 }
+
+/* Mapas de sucursales (Leaflet). */
+.mapa { border-radius: var(--tblr-border-radius); border: 1px solid var(--tblr-border-color); z-index: 0; }
+.mapa-selector { height: 320px; }
+.mapa-sucursales { height: 520px; }
+.leaflet-container { cursor: pointer; font-family: inherit; }

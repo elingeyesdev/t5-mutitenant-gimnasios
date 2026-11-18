@@ -26,11 +26,29 @@ public class CadenasController(SedesService sedes) : PanelController
 
 /// <summary>Sucursales, su ubicación y horario de atención (HU-04, HU-05).</summary>
 [Authorize(Politicas.Admin)]
-public class SucursalesController(SedesService sedes) : PanelController
+public class SucursalesController(SedesService sedes, GeocodificacionService geo) : PanelController
 {
     public async Task<IActionResult> Index() => View(await sedes.SucursalesAsync());
 
     public async Task<IActionResult> Mapa() => View(await sedes.SucursalesAsync());
+
+    /// <summary>Busca una dirección para el mapa del formulario (503 si el servicio no está disponible).</summary>
+    [HttpGet]
+    public async Task<IActionResult> BuscarLugar(string? texto, string? ciudad, CancellationToken ct)
+    {
+        var r = await geo.BuscarAsync(texto, ciudad, ct);
+        if (!r.Disponible) return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        return Json(new { encontrado = r.Valor is not null, latitud = r.Valor?.Latitud, longitud = r.Valor?.Longitud });
+    }
+
+    /// <summary>Sugiere la dirección del punto marcado en el mapa (503 si el servicio no está disponible).</summary>
+    [HttpGet]
+    public async Task<IActionResult> DireccionDelPunto(double latitud, double longitud, CancellationToken ct)
+    {
+        var r = await geo.DireccionAsync(latitud, longitud, ct);
+        if (!r.Disponible) return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        return Json(new { encontrada = r.Valor is not null, direccion = r.Valor?.Direccion, ciudad = r.Valor?.Ciudad });
+    }
 
     [Authorize(Politicas.SuperAdmin)]
     public async Task<IActionResult> Crear(int? cadenaId)
@@ -80,7 +98,7 @@ public class SucursalesController(SedesService sedes) : PanelController
     private static SucursalForm NuevoFormulario(int cadenaId) => new()
     {
         CadenaId = cadenaId,
-        Ubicacion = new UbicacionDto("", "Santa Cruz", -17.7833m, -63.1821m),
+        Ubicacion = new UbicacionDto("", "Santa Cruz", 0, 0), // sin punto: el usuario lo marca en el mapa
         Horarios = Domain.Dias.Cortos.Select(d => new HorarioSucursalDto(0, d,
             d == "DOM" ? new TimeOnly(8, 0) : d == "SAB" ? new TimeOnly(7, 0) : new TimeOnly(6, 0),
             d == "DOM" ? new TimeOnly(13, 0) : d == "SAB" ? new TimeOnly(18, 0) : new TimeOnly(22, 0), false)).ToList(),

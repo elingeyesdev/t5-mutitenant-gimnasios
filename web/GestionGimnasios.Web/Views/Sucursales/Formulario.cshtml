@@ -1,5 +1,6 @@
 @model SucursalForm
 @inject GestionGimnasios.Web.Infrastructure.UsuarioActual Actual
+@inject OpcionesGeocodificacion Geo
 @{
     var sucursal = ViewBag.Sucursal as SucursalDto;
     var editando = sucursal is not null;
@@ -9,6 +10,15 @@
     var horarios = Model.Horarios ?? [];
     string[] nombres = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
     var inv = System.Globalization.CultureInfo.InvariantCulture;
+    var u = Model.Ubicacion;
+    var marcada = u is not null && !(u.Latitud == 0 && u.Longitud == 0);
+}
+@section Estilos {
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/lib/leaflet/leaflet.js" asp-append-version="true"></script>
+    <script src="~/js/mapa.js" asp-append-version="true"></script>
 }
 @section Acciones {
     @if (editando && Actual.EsSuperAdmin)
@@ -42,10 +52,10 @@
                             </select>
                         }
                     </div>
-                    <div class="mb-3"><label class="form-label required">Nombre</label><input asp-for="Nombre" class="form-control" required /></div>
+                    <div class="mb-3"><label class="form-label required">Nombre</label><input asp-for="Nombre" class="form-control" required maxlength="150" /></div>
                     <div class="mb-3"><label class="form-label">Descripción</label><textarea asp-for="Descripcion" class="form-control" rows="2"></textarea></div>
                     <div class="row g-3">
-                        <div class="col-6"><label class="form-label required">Capacidad máxima</label><input asp-for="CapacidadMaxima" type="number" min="1" class="form-control" required /></div>
+                        <div class="col-6"><label class="form-label required">Capacidad máxima</label><input asp-for="CapacidadMaxima" type="number" min="1" max="5000" class="form-control" required /><small class="form-hint">Personas a la vez dentro de la sucursal.</small></div>
                         <div class="col-6">
                             <label class="form-label">Estado</label>
                             <label class="form-check form-switch mt-2"><input asp-for="Activa" class="form-check-input" type="checkbox" /><span class="form-check-label">Activa</span></label>
@@ -56,16 +66,30 @@
             <div class="card mt-3">
                 <div class="card-header"><h3 class="card-title">Ubicación</h3></div>
                 <div class="card-body">
-                    <div class="mb-3"><label class="form-label required">Dirección</label><input name="Ubicacion.Direccion" value="@Model.Ubicacion?.Direccion" class="form-control" required /></div>
-                    <div class="row g-3">
-                        <div class="col-md-4"><label class="form-label required">Ciudad</label><input name="Ubicacion.Ciudad" value="@(Model.Ubicacion?.Ciudad ?? "Santa Cruz")" class="form-control" required /></div>
-                        <div class="col-md-4"><label class="form-label required">Latitud</label><input name="Ubicacion.Latitud" value="@Model.Ubicacion?.Latitud.ToString(inv)" class="form-control" required pattern="-?[0-9]+(\.[0-9]+)?" /></div>
-                        <div class="col-md-4"><label class="form-label required">Longitud</label><input name="Ubicacion.Longitud" value="@Model.Ubicacion?.Longitud.ToString(inv)" class="form-control" required pattern="-?[0-9]+(\.[0-9]+)?" /></div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8"><label class="form-label required">Dirección</label><input id="ubicacion-direccion" name="Ubicacion.Direccion" value="@Model.Ubicacion?.Direccion" class="form-control" required maxlength="250" placeholder="Calle, número y zona" /></div>
+                        <div class="col-md-4"><label class="form-label required">Ciudad</label><input id="ubicacion-ciudad" name="Ubicacion.Ciudad" value="@(Model.Ubicacion?.Ciudad ?? "Santa Cruz")" class="form-control" required maxlength="100" /></div>
                     </div>
-                    @if (Model.Ubicacion is { } u && u.Latitud != 0)
-                    {
-                        <a class="btn btn-link px-0 mt-2" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=@u.Latitud.ToString(inv)&mlon=@u.Longitud.ToString(inv)#map=17/@u.Latitud.ToString(inv)/@u.Longitud.ToString(inv)"><i class="ti ti-external-link me-1"></i>Ver en OpenStreetMap</a>
-                    }
+                    <div data-selector-ubicacion data-direccion="#ubicacion-direccion" data-ciudad="#ubicacion-ciudad"
+                         data-buscar-url="@(Geo.Habilitada ? Url.Action("BuscarLugar") : "")"
+                         data-direccion-url="@(Geo.Habilitada ? Url.Action("DireccionDelPunto") : "")">
+                        <label class="form-label required">Ubicación en el mapa</label>
+                        @if (Geo.Habilitada)
+                        {
+                            <div class="input-group mb-2">
+                                <input type="search" class="form-control" data-buscar-texto autocomplete="off" placeholder="Busca un lugar o dirección (ej. Av. San Martín 600)" />
+                                <button type="button" class="btn" data-buscar><i class="ti ti-search me-1"></i>Buscar</button>
+                            </div>
+                        }
+                        <div class="mapa mapa-selector" data-mapa></div>
+                        <div class="form-hint mt-2" data-estado></div>
+                        @if (Geo.Habilitada)
+                        {
+                            <div class="form-hint small">Búsqueda de direcciones con datos de © colaboradores de OpenStreetMap (Nominatim).</div>
+                        }
+                        <input type="hidden" name="Ubicacion.Latitud" value="@(marcada ? u!.Latitud.ToString(inv) : "")" data-latitud />
+                        <input type="hidden" name="Ubicacion.Longitud" value="@(marcada ? u!.Longitud.ToString(inv) : "")" data-longitud />
+                    </div>
                 </div>
             </div>
         </div>
@@ -74,7 +98,7 @@
                 <div class="card-header"><h3 class="card-title">Horario de atención</h3></div>
                 <div class="table-responsive">
                     <table class="table table-vcenter card-table">
-                        <thead><tr><th>Día</th><th>Abre</th><th>Cierra</th><th>Cerrado</th></tr></thead>
+                        <thead><tr><th>Día</th><th>Abre</th><th>Cierra</th><th>Cerrado ese día</th></tr></thead>
                         <tbody>
                         @for (var i = 0; i < Dias.Cortos.Length; i++)
                         {
@@ -92,7 +116,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card-footer text-secondary small">Los horarios de clases y los turnos del personal deben caer dentro de este horario.</div>
+                <div class="card-footer text-secondary small">Marca «Cerrado ese día» en los días que no atiende; debe atender al menos un día. Los horarios de clases y los turnos del personal deben caer dentro de este horario.</div>
             </div>
         </div>
     </div>
