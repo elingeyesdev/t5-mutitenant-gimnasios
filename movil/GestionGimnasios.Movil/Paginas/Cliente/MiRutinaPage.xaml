@@ -30,24 +30,17 @@
                     <Button Grid.Column="1" Text="Entrenamiento libre" Style="{StaticResource Secundario}" Clicked="OnLibre" />
                 </Grid>
 
-                <Label x:Name="TituloEjercicios" Text="Ejercicios" Style="{StaticResource Seccion}" />
+                <Label Text="Ejercicios" Style="{StaticResource Seccion}" />
+                <SearchBar x:Name="BuscarEjercicios" Placeholder="Buscar ejercicio..." TextChanged="OnBuscarEjercicios" />
+                <Label x:Name="VacioEjercicios" Text="No hay ejercicios disponibles." Style="{StaticResource Vacio}" IsVisible="False" />
                 <VerticalStackLayout x:Name="Ejercicios">
-                    <BindableLayout.EmptyViewTemplate>
-                        <DataTemplate>
-                            <Label Text="Esta rutina todavía no tiene ejercicios configurados." Style="{StaticResource Vacio}" />
-                        </DataTemplate>
-                    </BindableLayout.EmptyViewTemplate>
                     <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="m:RutinaEjercicio">
+                        <DataTemplate x:DataType="m:Ejercicio">
                             <Border Style="{StaticResource Tarjeta}">
                                 <VerticalStackLayout Spacing="2">
-                                    <Grid ColumnDefinitions="*,Auto">
-                                        <Label Text="{Binding Ejercicio}" Style="{StaticResource Nombre}" />
-                                        <Label Grid.Column="1" Text="{Binding DiaTexto}" Style="{StaticResource Detalle}" />
-                                    </Grid>
-                                    <Label Text="{Binding GrupoMuscular}" TextColor="{StaticResource Primary}" FontSize="13" />
-                                    <Label Text="{Binding Prescripcion}" Style="{StaticResource Detalle}" />
-                                    <Label Text="{Binding Notas}" FontSize="13" FontAttributes="Italic" />
+                                    <Label Text="{Binding Nombre}" Style="{StaticResource Nombre}" />
+                                    <Label Text="{Binding Detalle}" Style="{StaticResource Detalle}" />
+                                    <Label Text="{Binding Descripcion}" Style="{StaticResource Detalle}" />
                                     <Button Text="Ver ejercicio" Style="{StaticResource Chico}"
                                             HorizontalOptions="Start" Clicked="OnVideo" Margin="0,4,0,0" />
                                 </VerticalStackLayout>
