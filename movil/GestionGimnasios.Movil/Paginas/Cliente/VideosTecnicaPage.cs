@@ -16,6 +16,7 @@ public class VideosTecnicaPage : PaginaBase
     private readonly VerticalStackLayout cuerpo = new() { Spacing = 0 };
     private readonly ActivityIndicator indicador = new() { IsVisible = false, IsRunning = false, HorizontalOptions = LayoutOptions.Center, Margin = new Thickness(0, 12) };
     private readonly RefreshView refresco;
+    private Ejercicio? ejercicioSeleccionado;
 
     public VideosTecnicaPage()
     {
@@ -37,7 +38,7 @@ public class VideosTecnicaPage : PaginaBase
         indicador.IsVisible = indicador.IsRunning = true;
         try
         {
-            var ejercicios = await Api.GetAsync<List<Ejercicio>>("/api/ejercicios");
+            var ejercicios = TextoEjercicio.Ordenar(await Api.GetAsync<List<Ejercicio>>("/api/ejercicios"), null);
             var videos = await Api.GetAsync<List<VideoTecnica>>("/api/videos-tecnica/mios");
             var vistas = new List<View>
             {
@@ -49,12 +50,12 @@ public class VideosTecnicaPage : PaginaBase
             if (ejercicios.Count == 0)
                 vistas.Add(Vacio("No hay ejercicios disponibles para seleccionar."));
 
-            var ejercicio = new Picker
+            var ejercicioTexto = new Label
             {
-                Title = "Selecciona un ejercicio",
-                ItemsSource = ejercicios,
-                ItemDisplayBinding = new Binding(nameof(Ejercicio.Nombre)),
-                IsEnabled = ejercicios.Count > 0,
+                Text = ejercicioSeleccionado is null
+                    ? "Ningún ejercicio seleccionado"
+                    : $"Ejercicio seleccionado: {ejercicioSeleccionado.Nombre}",
+                Style = Estilo("Detalle"),
             };
             var comentario = new Editor { Placeholder = "Comentario para tu entrenador (opcional)", AutoSize = EditorAutoSizeOption.TextChanges, MaxLength = 500 };
             var videoTexto = new Label { Text = "No seleccionaste un video", Style = Estilo("Detalle"), Margin = new Thickness(0, 4) };
@@ -62,7 +63,16 @@ public class VideosTecnicaPage : PaginaBase
             string? nombre = null;
             string? tipo = null;
 
-            vistas.Add(ejercicio);
+            var seleccionarEjercicio = new Button { Text = "Seleccionar ejercicio", Style = Estilo("Secundario"), HorizontalOptions = LayoutOptions.Start };
+            seleccionarEjercicio.Clicked += async (_, _) =>
+            {
+                var seleccionado = await SelectorEjercicioPage.ElegirAsync(Navigation, ejercicios);
+                if (seleccionado is null) return;
+                ejercicioSeleccionado = seleccionado;
+                ejercicioTexto.Text = $"Ejercicio seleccionado: {seleccionado.Nombre}";
+            };
+            vistas.Add(ejercicioTexto);
+            vistas.Add(seleccionarEjercicio);
             vistas.Add(comentario);
             vistas.Add(videoTexto);
             var seleccionar = new Button { Text = "Seleccionar video", Style = Estilo("Secundario"), HorizontalOptions = LayoutOptions.Start };
@@ -89,8 +99,7 @@ public class VideosTecnicaPage : PaginaBase
             enviar.Clicked += async (_, _) =>
             {
                 if (Ocupado) return;
-                var seleccionado = ejercicio.SelectedItem as Ejercicio;
-                if (seleccionado is null)
+                if (ejercicioSeleccionado is null)
                 {
                     await AvisarAsync("Video", "Selecciona un ejercicio.");
                     return;
@@ -114,7 +123,7 @@ public class VideosTecnicaPage : PaginaBase
                     {
                         using var contenido = new MemoryStream(video);
                         await Api.SubirAsync<VideoTecnica>("/api/videos-tecnica", contenido, nombre, tipo,
-                            ("ejercicioId", seleccionado.Id.ToString(CultureInfo.InvariantCulture)), ("comentario", texto ?? ""));
+                            ("ejercicioId", ejercicioSeleccionado.Id.ToString(CultureInfo.InvariantCulture)), ("comentario", texto ?? ""));
                         await AvisarAsync("Video enviado", "Tu video quedó pendiente de revisión por tu entrenador.");
                         await CargarAsync();
                     }))

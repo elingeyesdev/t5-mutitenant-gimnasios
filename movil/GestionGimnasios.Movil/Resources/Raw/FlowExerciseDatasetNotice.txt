@@ -1,0 +1,294 @@
+Procedencia de la animación de Sentadilla Libre
+
+Recurso local: Resources/Images/simulacion_sentadilla.gif
+Fuente: Flow Exercise Dataset
+Repositorio: https://github.com/ozansozuozgit/flow-exercise-dataset
+Ejercicio de origen: 0043 - barbell full squat
+Cuadros utilizados: assets/0043/frame-00.svg, frame-01.svg y frame-02.svg
+Secuencia: 0, 1, 2, 1
+Duración indicada por Flow: 180 ms por cuadro
+Duración utilizada en la conversión local: 350 ms por cuadro (ciclo aproximado de 1,4 segundos)
+
+Los cuadros SVG personalizados de Flow se distribuyen bajo la dedicación
+CC0-1.0, en la medida de los derechos que Flow puede dedicar. Se conserva
+esta referencia de procedencia junto con el recurso convertido localmente.
+La animación es una ilustración orientativa: Flow no garantiza la autorización
+de derechos de terceros ni una revisión profesional de la técnica.
+
+La aplicación no incorpora el repositorio completo, sus datos ni sus medios
+externos; únicamente incluye las animaciones convertidas que se enumeran aquí
+para uso local.
+
+Primer lote adicional revisado visualmente
+
+- Press de Banca Plano — Flow 0025, barbell bench press — simulacion_press_banca_plano.gif
+- Press Inclinado con Barra — Flow 0047, barbell incline bench press — simulacion_press_inclinado_barra.gif
+- Press Inclinado con Mancuernas — Flow 0314, dumbbell incline bench press — simulacion_press_inclinado_mancuernas.gif
+- Flexiones de Brazo (Push-ups) — Flow 0662, push-up — simulacion_flexiones_brazo.gif
+- Press Declinado con Barra — Flow 0033, barbell decline bench press — PENDIENTE: el ángulo del banco no se pudo justificar visualmente frente a una variante plana.
+- Sentadilla Frontal — Flow 0042, barbell front squat — simulacion_sentadilla_frontal.gif
+- Sentadilla en Máquina Smith — Flow 0770, smith squat — simulacion_sentadilla_smith.gif
+- Prensa de Piernas 45° — Flow 0739, sled 45° leg press — simulacion_prensa_piernas_45.gif
+- Sentadilla Hack — Flow 0743, sled hack squat — simulacion_sentadilla_hack.gif
+- Extensión de Cuádriceps — Flow 0585, lever leg extension — simulacion_extension_cuadriceps.gif
+- Curl de Femoral Tumbado — Flow 0586, lever lying leg curl — simulacion_curl_femoral_tumbado.gif
+
+Cada conversión utiliza los tres SVG originales en la secuencia 0, 1, 2, 1,
+350 ms por cuadro y bucle infinito. La licencia declarada para los cuadros
+es CC0-1.0; la procedencia y las limitaciones de revisión profesional son las
+indicadas por Flow. La aprobación docente y la validación profesional del
+movimiento siguen pendientes.
+
+Segundo lote evaluado visualmente
+
+- Aperturas en Máquina (Peck Deck) — Flow 0596, lever seated fly — simulacion_aperturas_peck_deck.gif
+- Fondos en Paralelas (Pecho) — Flow 0251, chest dip — simulacion_fondos_paralelas_pecho.gif
+- Cruces en Polea Baja — Flow 0179, cable low fly — simulacion_cruces_polea_baja.gif
+- Cruces en Polea Alta — Flow 1270, cable upper chest crossovers — simulacion_cruces_polea_alta.gif
+- Curl de Femoral Sentado — Flow 0599, lever seated leg curl — simulacion_curl_femoral_sentado.gif
+- Peso Muerto Rumano con Barra — Flow 0085, barbell romanian deadlift — simulacion_peso_muerto_rumano_barra.gif
+- Peso Muerto Rumano con Mancuernas — Flow 1459, dumbbell romanian deadlift — simulacion_peso_muerto_rumano_mancuernas.gif
+- Abducción de Cadera en Máquina — Flow 0597, lever seated hip abduction — simulacion_abduccion_cadera_maquina.gif
+- Aducción de Cadera en Máquina — Flow 0598, lever seated hip adduction — simulacion_adduccion_cadera_maquina.gif
+- Elevación de Talones Sentado — Flow 0594, lever seated calf raise — simulacion_elevacion_talones_sentado.gif
+
+Los diez recursos del segundo lote fueron incorporados tras revisar sus tres
+cuadros SVG. Usan la secuencia 0, 1, 2, 1, 350 ms por cuadro y bucle infinito.
+La correspondencia visual es orientativa y requiere aprobación docente y
+validación profesional antes de considerarse material de instrucción.
+
+Correcciones del segundo lote
+
+- Cruces en Polea Baja — Flow 0179, cable low fly — simulacion_cruces_polea_baja.gif
+  Secuencia final: 0, 1, 0, 1. Se excluyó el cuadro 2 porque elevaba el recorrido
+  de las manos y dejaba de representar claramente la variante de polea baja.
+- Curl de Femoral Sentado — Flow 0599, lever seated leg curl — simulacion_curl_femoral_sentado.gif
+  Secuencia final: 0, 1, 0, 1. Se excluyó el cuadro 2 por la deformación visible
+  de la pierna y la máquina.
+- Elevación de Talones Sentado — Flow 0594, lever seated calf raise — simulacion_elevacion_talones_sentado.gif
+  Secuencia final: 0, 1, 0, 1. Se excluyó el cuadro 2 porque separaba el cuerpo
+  del asiento de forma poco natural.
+
+Las tres correcciones mantienen 350 ms por cuadro, ciclo aproximado de 1,4
+segundos, resolución 320×320 y bucle infinito. Los cuadros 0 y 1 conservan
+el movimiento perceptible y la variante del ejercicio.
+
+Tercer lote evaluado visualmente
+
+- Aperturas con Mancuernas — Flow 0308, dumbbell fly — simulacion_aperturas_mancuernas.gif
+- Pullover con Mancuerna — Flow 0375, dumbbell pullover — simulacion_pullover_mancuerna.gif
+- Zancadas (Lunges) Estáticas — Flow 0336, dumbbell lunge — simulacion_zancadas_estaticas.gif
+- Sentadilla Búlgara — Flow 0410, dumbbell single leg split squat — simulacion_sentadilla_bulgara.gif
+- Elevación de Talones de Pie — Flow 0605, lever standing calf raise — simulacion_elevacion_talones_pie.gif
+- Dominadas Libres (Pronas) — Flow 0652, pull-up — simulacion_dominadas_libres.gif
+- Dominadas Supinas (Chin-ups) — Flow 1326, chin-up — simulacion_dominadas_supinas.gif
+- Dominadas Asistidas — Flow 0017, assisted pull-up — simulacion_dominadas_asistidas.gif
+- Jalón al Pecho Agarre Abierto — Flow 2330, cable lat pulldown full range of motion — simulacion_jalon_pecho_abierto.gif
+- Remo con Barra — Flow 0027, barbell bent over row — simulacion_remo_barra.gif
+
+Los diez recursos del tercer lote tienen tres cuadros SVG originales revisados
+visualmente. Usan la secuencia 0, 1, 2, 1, 350 ms por cuadro, resolución
+320×320 y bucle infinito. No se incorporó Jalón al Pecho Agarre Cerrado:
+las variantes disponibles de Flow no demostraron una coincidencia técnica
+suficientemente precisa. Tampoco se incorporaron las variantes de Hip Thrust
+porque el dataset no ofreció una correspondencia inequívoca con el catálogo.
+
+Corrección de conversión del tercer lote
+
+Los diez GIFs del tercer lote fueron reconstruidos sobre el fondo oscuro
+aprobado (#151D26), utilizando los cuadros rasterizados con transparencia
+compuesta y no los PNG de previsualización con fondo blanco. Se conserva la
+secuencia original 0, 1, 2, 1, 350 ms por cuadro, duración aproximada de 1,4
+segundos y bucle infinito. Los GIFs anteriores y los tres GIFs simplificados
+del segundo lote no fueron modificados.
+
+Todos los recursos proceden del Flow Exercise Dataset. La licencia declarada
+para los cuadros es CC0-1.0, en la medida de los derechos que Flow puede
+dedicar. La procedencia no garantiza derechos de terceros, revisión profesional
+del movimiento ni aprobación docente para uso como material de instrucción.
+
+Cuarto lote evaluado visualmente
+
+- Remo en Punta (T-Bar) — Flow 0606, lever t bar row — DESCARTADO: Flow utiliza
+  una máquina de palanca y el catálogo local registra el ejercicio con Barra.
+- Peso Muerto Convencional — Flow 0032, barbell deadlift — simulacion_peso_muerto_convencional.gif
+- Remo Gironda (Sentado en Polea) — Flow 0861, cable seated row — simulacion_remo_gironda.gif
+- Remo con Mancuerna a 1 Mano — Flow 0292, dumbbell one arm bent-over row — simulacion_remo_mancuerna_una_mano.gif
+- Remo en Máquina (Chest Supported) — Flow 1350, lever seated row — simulacion_remo_maquina_chest_supported.gif
+- Pulldown con Brazo Recto — Flow 0238, cable straight arm pulldown — simulacion_pulldown_brazo_recto.gif
+- Press Arnold — Flow 2137, dumbbell arnold press — simulacion_press_arnold.gif
+- Elevaciones Laterales con Mancuernas — Flow 0334, dumbbell lateral raise — simulacion_elevaciones_laterales_mancuernas.gif
+- Elevaciones Laterales en Polea — Flow 0178, cable lateral raise — simulacion_elevaciones_laterales_polea.gif
+- Elevaciones Frontales — Flow 0310, dumbbell front raise — simulacion_elevaciones_frontales.gif
+
+Los nueve recursos incorporados tienen tres cuadros SVG originales revisados
+visualmente y utilizan la secuencia 0, 1, 2, 1, 350 ms por cuadro, resolución
+320×320 y bucle infinito. En Press Arnold, las poses muestran la progresión
+desde las mancuernas junto a los hombros hasta la extensión superior y la
+fuente describe la rotación de las muñecas característica del movimiento.
+
+Ronda final de ejercicios pendientes
+
+Se incorporaron 25 animaciones adicionales, todas con tres cuadros SVG
+revisados visualmente, secuencia 0, 1, 2, 1, 350 ms por cuadro, resolución
+320×320 y bucle infinito:
+
+- Flow 0033 — Press Declinado con Barra — simulacion_press_declinado_barra.gif
+- Flow 1457 — Press Militar con Barra — simulacion_press_militar_barra.gif
+- Flow 0426 — Press Militar con Mancuernas — simulacion_press_militar_mancuernas.gif
+- Flow 0095 — Encogimientos con Barra (Trapecios) — simulacion_encogimientos_barra.gif
+- Flow 0406 — Encogimientos con Mancuernas — simulacion_encogimientos_mancuernas.gif
+- Flow 0031 — Curl de Bíceps con Barra Recta — simulacion_curl_biceps_barra_recta.gif
+- Flow 0447 — Curl de Bíceps con Barra EZ — simulacion_curl_biceps_barra_ez.gif
+- Flow 0285 — Curl de Bíceps Alterno — simulacion_curl_biceps_alterno.gif
+- Flow 0313 — Curl Martillo — simulacion_curl_martillo.gif
+- Flow 0592 — Curl Predicador en Máquina — simulacion_curl_predicador_maquina.gif
+- Flow 0201 — Extensión de Tríceps en Polea Alta — simulacion_extension_triceps_polea_alta.gif
+- Flow 0200 — Extensión de Tríceps con Cuerda — simulacion_extension_triceps_cuerda.gif
+- Flow 1748 — Press Francés con Barra EZ — simulacion_press_frances_barra_ez.gif
+- Flow 0333 — Patada de Tríceps con Mancuerna — simulacion_patada_triceps_mancuerna.gif
+- Flow 2138 — Bicicleta Estática — simulacion_bicicleta_estatica.gif
+- Flow 2612 — Salto a la Comba — simulacion_salto_comba.gif
+- Flow 1160 — Burpees — simulacion_burpees.gif
+- Flow 0549 — Kettlebell Swing — simulacion_kettlebell_swing.gif
+- Flow 0630 — Mountain Climbers — simulacion_mountain_climbers.gif
+- Flow 0274 — Crunches (Encogimientos) — simulacion_crunches.gif
+- Flow 0687 — Russian Twist (Giros Rusos) — simulacion_russian_twist.gif
+- Flow 0620 — Elevación de Piernas Tumbado — simulacion_elevacion_piernas_tumbado.gif
+- Flow 0383 — Pájaros (Posteriores con Mancuerna) — simulacion_pajaros_mancuernas.gif
+- Flow 0602 — Pájaros en Máquina (Peck Deck Inverso) — simulacion_pajaros_maquina.gif
+- Flow 0175 — Crunches en Polea Alta — simulacion_crunches_polea_alta.gif
+
+Ejercicios que permanecen pendientes o descartados:
+
+- Hip Thrust con Barra y Hip Thrust en Máquina: Flow solo ofrece una variante
+  con banda, equipo y ejecución diferentes.
+- Jalón al Pecho Agarre Cerrado: el candidato con agarre paralelo no tiene
+  animación y el candidato genérico no acredita la variante cerrada.
+- Remo en Punta (T-Bar): el recurso Flow 0606 utiliza máquina de palanca y el
+  catálogo local registra Barra.
+- Face Pull: no se encontró una animación Flow equivalente.
+- Curl Araña (Spider Curl): Flow ofrece variantes reverse spider o con un solo
+  brazo, no la variante local suficientemente coincidente.
+- Cinta / Trotadora, Remo Ergómetro, Elíptica y Escaladora: los candidatos
+  disponibles no tienen cuadros SVG animados.
+- Bicicleta de Spinning: el candidato disponible corresponde a bicicleta
+  estática genérica y no identifica la variante de spinning.
+- Saltos al Cajón: el candidato Flow 1374 corresponde a bajar del cajón con
+  estabilización a una pierna, no al salto al cajón local.
+- Jumping Jacks, Battle Ropes, Rueda Abdominal, Woodchoppers en Polea y
+  Estiramiento Gato-Camello: no se encontró una animación Flow compatible.
+- En la revisión preliminar, Plancha Abdominal y Plancha Lateral: los
+  candidatos disponibles agregaban inclinación, giro, apoyo o carga, por lo
+  que todavía no se habían incorporado por aproximación.
+- Extensión Tras Nuca con Mancuerna: el candidato visual disponible es una
+  extensión unilateral de pie y no coincide suficientemente con la variante
+  local.
+
+Ampliación preparada para revisión manual
+
+Se incorporaron nueve GIF nuevos y se reutilizó el GIF existente de Bicicleta
+Estática para la variante de Spinning. Estas correspondencias no se presentan
+como equivalencias exactas en todos los casos y requieren aprobación manual y
+revisión profesional:
+
+- Flow 1409 — Hip Thrust con Barra — simulacion_hip_thrust_barra.gif. Flow
+  muestra un glute bridge con barra y pies en el suelo; el catálogo local pide
+  Hip Thrust. Se deja visible para revisión, no como equivalencia exacta.
+- Flow 2330 — Jalón al Pecho Agarre Cerrado — simulacion_jalon_pecho_cerrado.gif.
+  La animación muestra jalón con barra y agarre más amplio que el cerrado.
+- Flow 2188 — Extensión Tras Nuca con Mancuerna —
+  simulacion_extension_tras_nuca_mancuerna.gif. Es una extensión sentada con
+  ambas manos; la posición local no especifica postura.
+- Flow 2138 — Bicicleta de Spinning — reutiliza
+  simulacion_bicicleta_estatica.gif. La ilustración es de bicicleta estática
+  erguida y no de una postura específica de spinning.
+- Flow 2331 — Elíptica — simulacion_eliptica.gif. Flow la denomina cycle cross
+  trainer y la clasifica como máquina de palanca; visualmente corresponde a un
+  cross trainer.
+- Flow 1374 — Saltos al Cajón (Box Jumps) — simulacion_saltos_cajon.gif. La
+  secuencia muestra salto/descenso con estabilización a una pierna, no una
+  repetición estándar de salto al cajón.
+- Flow 1775 — Plancha Lateral — recurso GIF anterior, reemplazado por una
+  imagen estática de su primera pose tras la revisión final.
+- Flow 0796 — Rueda Abdominal (Ab Wheel) — simulacion_rueda_abdominal.gif. Es
+  la variante avanzada de rollout de pie; la variante de rodillas Flow 0857
+  no tiene cuadros animados.
+- Flow 3224 — Jumping Jacks — simulacion_jumping_jacks.gif. Coincide con la
+  ejecución de jumping jack bajo el nombre alternativo jack jump.
+- Flow 0128 — Battle Ropes — simulacion_battle_ropes.gif. Coincidencia de
+  equipo y movimiento de ondas alternas.
+
+Recurso estático local
+
+- Flow 3665 — Plancha Abdominal (Plank) —
+  simulacion_plancha_abdominal.png. Se incorporó únicamente el primer cuadro,
+  que representa una plancha alta estática. No se muestra la secuencia dinámica
+  de Power Point Plank como si fuera la plancha isométrica completa.
+
+No se incorporaron imágenes locales para Cinta / Trotadora, Escaladora ni
+Estiramiento Gato-Camello: los candidatos de Flow son solo instrucciones o no
+representan el movimiento solicitado. Hip Thrust en Máquina, Remo en Punta
+T-Bar, Face Pull, Curl Araña, Remo Ergómetro y Woodchoppers en Polea continúan
+dependiendo de YouTube cuando el backend entrega un identificador válido, con
+la advertencia de que esos enlaces no fueron validados como correspondencias
+exactas.
+
+Revisión final de Plancha Lateral e Hip Thrust en Máquina
+
+- Flow 1775 — Plancha Lateral: la primera pose (`frame-00.svg`) muestra una
+  plancha lateral isométrica con el cuerpo alineado y las piernas apiladas,
+  sin elevación de la pierna superior. Se sustituyó el GIF anterior por la
+  imagen estática `simulacion_plancha_lateral.png`, de 320×320 y fondo
+  `#151D26`. Los cuadros posteriores corresponden a la variante dinámica de
+  aducción de cadera y ya no se reproducen en la aplicación.
+- Flow 0756 — `smith hip raise`: se revisaron los tres cuadros SVG. La persona
+  apoya la espalda alta en un banco, coloca una barra sobre la pelvis dentro
+  de una jaula Smith y realiza una elevación de cadera. Es visualmente cercano
+  a un Hip Thrust en Máquina, pero el equipo específico es Smith y no una
+  máquina de Hip Thrust dedicada; el catálogo local solo indica `Máquina`.
+  Se clasifica como alternativa visual de variante diferente, no como
+  equivalencia exacta, y no se incorpora para evitar confundir el equipo o la
+  técnica del ejercicio local.
+
+La prioridad de demostración en la aplicación es: GIF local compatible,
+imagen local compatible, imagen remota válida, botón de YouTube mediante acción
+del usuario y, finalmente, el mensaje «Demostración visual pendiente de
+incorporar». Las variantes de esta sección permanecen pendientes de aprobación
+manual y profesional. Los cuadros Flow declaran licencia CC0-1.0 en el
+dataset, sin garantía sobre derechos de terceros ni sobre la corrección
+profesional del movimiento.
+
+Auditoría de cobertura actual
+
+La auditoría del catálogo activo y de los mapeos de
+`SimulacionEjercicioPage` confirma el siguiente estado:
+
+- 85 ejercicios activos en `web/GestionGimnasios.Web/Data/Seed/ejercicios.json`.
+- 73 archivos GIF locales y 2 imágenes PNG estáticas.
+- 74 ejercicios con GIF asociado: 73 archivos distintos, porque
+  `simulacion_bicicleta_estatica.gif` se reutiliza para Bicicleta Estática y
+  Bicicleta de Spinning.
+- 2 ejercicios con imagen estática: Plancha Abdominal (Plank) y Plancha
+  Lateral.
+- 76 ejercicios con algún recurso local; 9 continúan sin recurso local
+  compatible.
+- No se encontraron referencias a archivos inexistentes, recursos locales
+  huérfanos ni nombres base duplicados entre extensiones de imagen.
+
+Los 70 GIFs con tres poses válidas usan la secuencia `0,1,2,1`; los tres GIFs
+simplificados documentados arriba usan `0,1,0,1`. Todos fueron auditados a
+320×320 y 350 ms por cuadro. Las imágenes estáticas también son de 320×320 y
+usan el fondo `#151D26`.
+
+Los ejercicios que permanecen pendientes de recurso local son: Cinta /
+Trotadora, Curl Araña (Spider Curl), Escaladora (Stairmaster), Estiramiento
+Gato-Camello, Face Pull, Hip Thrust en Máquina, Remo Ergómetro, Remo en Punta
+(T-Bar) y Woodchoppers en Polea. La evaluación de Hip Thrust en Máquina frente
+a Flow 0756 se mantiene como variante diferente de Smith y no se presenta
+como equivalencia.
+
+Las secciones anteriores conservan el historial de revisión por lotes. Este
+apartado refleja el estado final de los archivos y mapeos actuales. La fuente
+externa requiere aprobación docente para usos adicionales y ninguna
+correspondencia sustituye una revisión profesional de la técnica.

@@ -28,7 +28,7 @@ public class EntrenarPage : PaginaBase
     private readonly Label descanso = new() { FontSize = 15, TextColor = Colores.TextoSobrePrimario };
     private readonly Label resumen = new() { FontSize = 13, TextColor = Colores.TextoSobrePrimario };
     private readonly VerticalStackLayout bloques = new() { Spacing = 0 };
-    private readonly Picker selector = new() { Title = "Elige un ejercicio para agregar" };
+    private readonly List<Ejercicio> catalogo = [];
     private readonly Entry deporte = new() { Placeholder = "Ej.: cardio en cinta, fútbol, natación" };
     private readonly Editor notas = new() { Placeholder = "¿Cómo te sentiste? (opcional)", AutoSize = EditorAutoSizeOption.TextChanges };
     private IDispatcherTimer? timer;
@@ -39,8 +39,6 @@ public class EntrenarPage : PaginaBase
     {
         this.rutina = rutina;
         Title = rutina?.Nombre ?? "Entrenamiento libre";
-        selector.ItemDisplayBinding = new Binding(nameof(Ejercicio.Nombre));
-
         var cabecera = new Border
         {
             Style = Estilo("TarjetaDestacada"),
@@ -53,11 +51,10 @@ public class EntrenarPage : PaginaBase
         if (rutina is null)
         {
             var agregar = new Button { Text = "Agregar ejercicio", Style = Estilo("Secundario") };
-            agregar.Clicked += (_, _) => AgregarElegido();
+            agregar.Clicked += async (_, _) => await AgregarElegidoAsync();
             cuerpo.Add(new Label { Text = "Actividad", Style = Estilo("Seccion") });
             cuerpo.Add(deporte);
             cuerpo.Add(new Label { Text = "Ejercicios (opcional)", Style = Estilo("Seccion") });
-            cuerpo.Add(selector);
             cuerpo.Add(agregar);
         }
         else
@@ -81,8 +78,8 @@ public class EntrenarPage : PaginaBase
         timer.Tick += OnTick;
         timer.Start();
         DeviceDisplay.Current.KeepScreenOn = true;
-        if (rutina is null && selector.ItemsSource is null)
-            selector.ItemsSource = await Api.GetAsync<List<Ejercicio>>("/api/ejercicios");
+        if (rutina is null && catalogo.Count == 0)
+            catalogo.AddRange(TextoEjercicio.Ordenar(await Api.GetAsync<List<Ejercicio>>("/api/ejercicios"), null));
     }
 
     protected override void OnDisappearing()
@@ -106,11 +103,23 @@ public class EntrenarPage : PaginaBase
         }
     }
 
-    private void AgregarElegido()
+    private async Task AgregarElegidoAsync()
     {
-        if (selector.SelectedItem is not Ejercicio e) return;
-        bloques.Add(CrearBloque(new Bloque(e.Id, null, e.Nombre, e.TipoRegistro, 60), e.Detalle, null, null));
-        selector.SelectedItem = null;
+        if (catalogo.Count == 0)
+        {
+            await AvisarAsync("Ejercicios", "No hay ejercicios disponibles para agregar.");
+            return;
+        }
+        var e = await SelectorEjercicioPage.ElegirAsync(Navigation, catalogo);
+        if (e is null) return;
+        if (bloques.Children.OfType<Border>().Any(x => x.BindingContext is int id && id == e.Id))
+        {
+            await AvisarAsync("Ejercicio", "Ese ejercicio ya está agregado a la sesión.");
+            return;
+        }
+        var bloque = CrearBloque(new Bloque(e.Id, null, e.Nombre, e.TipoRegistro, 60), e.Detalle, null, null);
+        bloque.BindingContext = e.Id;
+        bloques.Add(bloque);
     }
 
     private View CrearBloque(Bloque b, string detalle, string? repsSugeridas, decimal? pesoSugerido)
