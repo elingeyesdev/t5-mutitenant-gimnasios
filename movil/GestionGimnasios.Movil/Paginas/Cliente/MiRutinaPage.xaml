@@ -6,8 +6,11 @@
               x:Class="GestionGimnasios.Movil.Paginas.Cliente.MiRutinaPage"
               Title="Entrenar">
     <RefreshView x:Name="Refresco" Refreshing="OnRefrescar">
-        <ScrollView>
-            <VerticalStackLayout Padding="16" Spacing="4">
+        <CollectionView x:Name="EjerciciosCatalogo"
+                        ItemsLayout="VerticalList"
+                        SelectionMode="None">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="16,16,16,4" Spacing="4">
                 <Border x:Name="SinRutina" Style="{StaticResource Tarjeta}" IsVisible="False">
                     <VerticalStackLayout Spacing="6">
                         <Label Text="Aún no tienes una rutina asignada" Style="{StaticResource Nombre}" />
@@ -54,25 +57,29 @@
 
                 <Label Text="Todos los ejercicios" Style="{StaticResource Seccion}" />
                 <SearchBar x:Name="BuscarEjercicios" Placeholder="Buscar ejercicio..." TextChanged="OnBuscarEjercicios" />
-                <Label x:Name="VacioEjercicios" Text="No hay ejercicios disponibles." Style="{StaticResource Vacio}" IsVisible="False" />
-                <VerticalStackLayout x:Name="EjerciciosCatalogo">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="m:Ejercicio">
-                            <Border Style="{StaticResource Tarjeta}">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="{Binding Nombre}" Style="{StaticResource Nombre}" />
-                                    <Label Text="{Binding Detalle}" Style="{StaticResource Detalle}" />
-                                    <Label Text="{Binding Descripcion}" Style="{StaticResource Detalle}" />
-                                    <Button Text="Ver ejercicio" Style="{StaticResource Chico}"
-                                            HorizontalOptions="Start" Clicked="OnVideo" Margin="0,4,0,0" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
+                <Label x:Name="VacioEjercicios" Text="No hay ejercicios disponibles."
+                       Style="{StaticResource Vacio}" IsVisible="False" />
                 </VerticalStackLayout>
+            </CollectionView.Header>
 
-                <Label Text="Últimos entrenamientos" Style="{StaticResource Seccion}" />
-                <VerticalStackLayout x:Name="Sesiones">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:Ejercicio">
+                    <Border Style="{StaticResource Tarjeta}" Margin="16,4">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding Nombre}" Style="{StaticResource Nombre}" />
+                            <Label Text="{Binding Detalle}" Style="{StaticResource Detalle}" />
+                            <Label Text="{Binding Descripcion}" Style="{StaticResource Detalle}" />
+                            <Button Text="Ver ejercicio" Style="{StaticResource Chico}"
+                                    HorizontalOptions="Start" Clicked="OnVideo" Margin="0,4,0,0" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <VerticalStackLayout Padding="16,4,16,16" Spacing="4">
+                    <Label Text="Últimos entrenamientos" Style="{StaticResource Seccion}" />
+                    <VerticalStackLayout x:Name="Sesiones">
                     <BindableLayout.EmptyViewTemplate>
                         <DataTemplate>
                             <Label Text="Todavía no registraste entrenamientos." Style="{StaticResource Vacio}" />
@@ -88,8 +95,9 @@
                             </Border>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
-            </VerticalStackLayout>
-        </ScrollView>
+            </CollectionView.Footer>
+        </CollectionView>
     </RefreshView>
 </p:PaginaBase>
