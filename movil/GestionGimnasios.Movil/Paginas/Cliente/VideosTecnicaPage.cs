@@ -16,6 +16,7 @@ public class VideosTecnicaPage : PaginaBase
     private readonly VerticalStackLayout cuerpo = new() { Spacing = 0 };
     private readonly ActivityIndicator indicador = new() { IsVisible = false, IsRunning = false, HorizontalOptions = LayoutOptions.Center, Margin = new Thickness(0, 12) };
     private readonly RefreshView refresco;
+    private Ejercicio? ejercicioSeleccionado;
 
     public VideosTecnicaPage()
     {
@@ -49,8 +50,13 @@ public class VideosTecnicaPage : PaginaBase
             if (ejercicios.Count == 0)
                 vistas.Add(Vacio("No hay ejercicios disponibles para seleccionar."));
 
-            Ejercicio? ejercicioSeleccionado = null;
-            var ejercicioTexto = new Label { Text = "Ningún ejercicio seleccionado", Style = Estilo("Detalle") };
+            var ejercicioTexto = new Label
+            {
+                Text = ejercicioSeleccionado is null
+                    ? "Ningún ejercicio seleccionado"
+                    : $"Ejercicio seleccionado: {ejercicioSeleccionado.Nombre}",
+                Style = Estilo("Detalle"),
+            };
             var comentario = new Editor { Placeholder = "Comentario para tu entrenador (opcional)", AutoSize = EditorAutoSizeOption.TextChanges, MaxLength = 500 };
             var videoTexto = new Label { Text = "No seleccionaste un video", Style = Estilo("Detalle"), Margin = new Thickness(0, 4) };
             byte[]? video = null;

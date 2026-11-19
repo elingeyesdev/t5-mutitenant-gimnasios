@@ -30,10 +30,32 @@
                     <Button Grid.Column="1" Text="Entrenamiento libre" Style="{StaticResource Secundario}" Clicked="OnLibre" />
                 </Grid>
 
-                <Label Text="Ejercicios" Style="{StaticResource Seccion}" />
+                <Label Text="Ejercicios de mi rutina" Style="{StaticResource Seccion}" />
+                <Label x:Name="VacioEjerciciosRutina" Style="{StaticResource Vacio}" IsVisible="False" />
+                <VerticalStackLayout x:Name="EjerciciosRutina">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:RutinaEjercicio">
+                            <Border Style="{StaticResource Tarjeta}">
+                                <VerticalStackLayout Spacing="2">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Ejercicio}" Style="{StaticResource Nombre}" />
+                                        <Label Grid.Column="1" Text="{Binding DiaTexto}" Style="{StaticResource Detalle}" />
+                                    </Grid>
+                                    <Label Text="{Binding GrupoMuscular}" TextColor="{StaticResource Primary}" FontSize="13" />
+                                    <Label Text="{Binding Prescripcion}" Style="{StaticResource Detalle}" />
+                                    <Label Text="{Binding Notas}" FontSize="13" FontAttributes="Italic" />
+                                    <Button Text="Ver ejercicio" Style="{StaticResource Chico}"
+                                            HorizontalOptions="Start" Clicked="OnVideo" Margin="0,4,0,0" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="Todos los ejercicios" Style="{StaticResource Seccion}" />
                 <SearchBar x:Name="BuscarEjercicios" Placeholder="Buscar ejercicio..." TextChanged="OnBuscarEjercicios" />
                 <Label x:Name="VacioEjercicios" Text="No hay ejercicios disponibles." Style="{StaticResource Vacio}" IsVisible="False" />
-                <VerticalStackLayout x:Name="Ejercicios">
+                <VerticalStackLayout x:Name="EjerciciosCatalogo">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="m:Ejercicio">
                             <Border Style="{StaticResource Tarjeta}">

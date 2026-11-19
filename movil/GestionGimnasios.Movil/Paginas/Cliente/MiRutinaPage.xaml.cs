@@ -32,6 +32,12 @@ public partial class MiRutinaPage : PaginaBase
             Descripcion.Text = rutina.Descripcion;
         }
 
+        var ejerciciosRutina = rutina?.Ejercicios.OrderBy(e => e.Orden).ToList() ?? [];
+        VacioEjerciciosRutina.Text = rutina is null
+            ? "No tienes una rutina asignada."
+            : "Esta rutina todavía no tiene ejercicios configurados.";
+        VacioEjerciciosRutina.IsVisible = ejerciciosRutina.Count == 0;
+        BindableLayout.SetItemsSource(EjerciciosRutina, ejerciciosRutina);
         FiltrarEjercicios();
         BindableLayout.SetItemsSource(Sesiones, await sesionesTask);
     }
@@ -44,7 +50,7 @@ public partial class MiRutinaPage : PaginaBase
             ? "No hay ejercicios disponibles."
             : "No se encontraron ejercicios";
         VacioEjercicios.IsVisible = ejercicios.Count == 0;
-        BindableLayout.SetItemsSource(Ejercicios, ejercicios);
+        BindableLayout.SetItemsSource(EjerciciosCatalogo, ejercicios);
     }
 
     private void OnBuscarEjercicios(object? sender, TextChangedEventArgs e) => FiltrarEjercicios();
@@ -64,7 +70,14 @@ public partial class MiRutinaPage : PaginaBase
 
     private async void OnVideo(object? sender, EventArgs e)
     {
-        if ((sender as BindableObject)?.BindingContext is Ejercicio ejercicio)
-            await IrAsync(new SimulacionEjercicioPage(ejercicio.Id));
+        switch ((sender as BindableObject)?.BindingContext)
+        {
+            case RutinaEjercicio ejercicioRutina:
+                await IrAsync(new SimulacionEjercicioPage(ejercicioRutina.EjercicioId));
+                break;
+            case Ejercicio ejercicio:
+                await IrAsync(new SimulacionEjercicioPage(ejercicio.Id));
+                break;
+        }
     }
 }

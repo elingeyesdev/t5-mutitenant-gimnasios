@@ -29,19 +29,29 @@ Los criterios de aceptación se interpretan así:
 
 ## Flujo de uso del socio
 
+En **Entrenar**, el contenido aparece en este orden: **Mi rutina**, **Ejercicios de mi rutina**,
+**Todos los ejercicios** con buscador y **Últimos entrenamientos**. El catálogo general es
+independiente de la rutina asignada; si el socio no tiene rutina, la sección de ejercicios asignados
+muestra un estado vacío y las otras dos secciones siguen disponibles.
+
 ### Consultar ejercicios
 
 1. Abrir la pestaña **Entrenar**.
-2. Ver la rutina asignada, si existe.
-3. Consultar **Ejercicios**, que carga todos los ejercicios activos del catálogo mediante
+2. Revisar **Mi rutina**, con el nombre, dificultad, duración, entrenador y descripción asignados.
+3. En **Ejercicios de mi rutina**, consultar únicamente los ejercicios asignados, junto con día,
+   series, repeticiones, peso, descanso y notas cuando esos datos existan en la rutina.
+4. Consultar **Todos los ejercicios**, que carga todos los ejercicios activos del catálogo mediante
    `GET /api/ejercicios`, no únicamente los incluidos en la rutina.
-4. Buscar por nombre. La búsqueda ignora mayúsculas y acentos, y ordena primero las coincidencias
+5. Buscar por nombre. La búsqueda ignora mayúsculas y acentos, y ordena primero las coincidencias
    iniciales, después las coincidencias internas y finalmente por nombre.
-5. Pulsar **Ver ejercicio**.
-6. Consultar la demostración disponible y las pautas nutricionales.
+6. Pulsar **Ver ejercicio** en la rutina o en el catálogo general.
+7. Consultar la demostración disponible y las pautas nutricionales.
 
 La pantalla de detalle es `SimulacionEjercicioPage`. Incluye la información del ejercicio, la
 demostración, el plan nutricional y un `ScrollView` para acceder a todo el contenido.
+
+Si el socio no tiene rutina asignada, se muestra el aviso correspondiente en **Mi rutina**; el
+catálogo general y **Últimos entrenamientos** no se ocultan.
 
 ### Entrenamiento libre
 
@@ -60,7 +70,9 @@ selector no cambia el contrato del registro de entrenamientos.
 1. Ir a **Más → Revisión de técnica**.
 2. Pulsar **Seleccionar ejercicio**.
 3. Buscar y seleccionar un ejercicio en `SelectorEjercicioPage`.
-4. Continuar con el flujo existente de selección, grabación o envío del video.
+4. Regresar a la pantalla y comprobar que el nombre elegido permanece visible.
+5. Continuar con el flujo existente de selección, grabación o envío del video; el formulario usa el
+   identificador del ejercicio seleccionado.
 
 El selector buscable mejora la selección del ejercicio, pero no equivale a haber validado la
 grabación y el envío en un dispositivo Android físico. Ese flujo pertenece al issue #64.
@@ -160,13 +172,15 @@ máquina específica de Hip Thrust.
 ## Mejoras de usabilidad incluidas en el PR #90
 
 - Catálogo completo de ejercicios activos en Entrenar, independiente de la rutina asignada.
+- Restauración de la sección **Ejercicios de mi rutina** con los datos reales recibidos de la rutina.
+- Orden definitivo **Mi rutina → Ejercicios de mi rutina → Todos los ejercicios → Últimos entrenamientos**.
 - Búsqueda dinámica en el catálogo.
 - Orden por relevancia: inicio de nombre, coincidencia interna y orden alfabético.
 - Normalización de mayúsculas y acentos.
 - Actualización del resultado al escribir, conservando el control de búsqueda.
 - `ScrollView` para acceder a la rutina, catálogo, historial y pautas sin cortar la pantalla.
 - Selector buscable para **Entrenamiento libre → Agregar ejercicio**.
-- Selector buscable para **Más → Revisión de técnica**.
+- Selector buscable para **Más → Revisión de técnica**, conservando la selección al regresar.
 - Prevención de ejercicios duplicados en una sesión de entrenamiento libre.
 - Conservación de rutina asignada, entrenamiento libre e historial.
 
@@ -175,15 +189,15 @@ máquina específica de Hip Thrust.
 - `movil/GestionGimnasios.Movil/Paginas/Cliente/SimulacionEjercicioPage.cs`: consulta el detalle,
   selecciona el recurso visual y muestra las pautas nutricionales.
 - `movil/GestionGimnasios.Movil/Paginas/Cliente/MiRutinaPage.xaml`: rutina, catálogo, buscador,
-  historial y botones de entrenamiento.
+  ejercicios asignados, historial y botones de entrenamiento.
 - `movil/GestionGimnasios.Movil/Paginas/Cliente/MiRutinaPage.xaml.cs`: carga de rutina, catálogo y
-  sesiones; búsqueda y navegación al detalle.
+  sesiones; búsqueda, navegación al detalle y separación entre ejercicios asignados y catálogo.
 - `movil/GestionGimnasios.Movil/Paginas/Cliente/EntrenarPage.cs`: entrenamiento asignado o libre,
   selector y prevención de duplicados.
 - `movil/GestionGimnasios.Movil/Paginas/Cliente/SelectorEjercicioPage.cs`: selector reutilizable con
   búsqueda y `CollectionView`.
 - `movil/GestionGimnasios.Movil/Paginas/Cliente/VideosTecnicaPage.cs`: uso del selector dentro de
-  Revisión de técnica y flujo existente de videos.
+  Revisión de técnica, selección persistente y flujo existente de videos.
 - `movil/GestionGimnasios.Movil/Modelos/TextoEjercicio.cs`: normalización y orden de resultados.
 - `movil/GestionGimnasios.Movil/Modelos/Modelos.cs`: modelos de ejercicio, rutina, simulación, plan y
   sesiones.
@@ -203,8 +217,10 @@ máquina específica de Hip Thrust.
   previa de Sentadilla Libre y Jumping Jacks.
 - Visualización de las imágenes estáticas de Plancha Abdominal y Plancha Lateral.
 - Visualización de pautas nutricionales junto con las demostraciones.
+- Orden de las secciones de Entrenar y estado vacío para socios sin rutina.
 - Búsqueda dinámica del catálogo y apertura de ejercicios.
-- Revisión del selector compartido para entrenamiento libre y Revisión de técnica.
+- Revisión del selector compartido para entrenamiento libre y Revisión de técnica, incluida la
+  conservación de la selección al volver.
 - `git diff --check` correcto.
 
 La comprobación de selectores, foco y desplazamiento se complementa con la inspección del código de
@@ -233,19 +249,22 @@ Closes #65 · HU-51 · EDT 8.1
 
 ## Qué cambió
 - Agregué el catálogo completo de ejercicios en Entrenar con búsqueda normalizada y orden por relevancia.
+- Restauré la lista separada de ejercicios de la rutina y dejé el catálogo general debajo de ella.
 - Incorporé la navegación al detalle de ejercicio con GIFs e imágenes locales de Flow, manteniendo los fallbacks existentes.
 - Integré la visualización de las pautas nutricionales del plan asignado, sin generar recomendaciones clínicas automáticas.
-- Agregué el selector buscable reutilizable para entrenamiento libre y Revisión de técnica.
+- Agregué el selector buscable reutilizable para entrenamiento libre y Revisión de técnica, conservando la selección al regresar.
 - Conservé la rutina asignada, entrenamiento libre, historial y navegación existentes.
 - Documenté procedencia, licencias, correspondencias y limitaciones de los recursos visuales.
 
 ## Cómo probar
 1. Iniciar sesión como socio y abrir Entrenar.
-2. Verificar la rutina asignada, el catálogo completo y la búsqueda por nombre o acento.
-3. Abrir un ejercicio con "Ver ejercicio" y comprobar la demostración y las pautas nutricionales.
-4. Abrir Entrenamiento libre, usar Agregar ejercicio y buscar un ejercicio.
-5. Abrir Más → Revisión de técnica y comprobar el selector buscable.
-6. Confirmar que no se agregue dos veces el mismo ejercicio en una sesión libre.
+2. Verificar el orden Mi rutina, Ejercicios de mi rutina, Todos los ejercicios y Últimos entrenamientos.
+3. Confirmar que la rutina muestra sus días, series, repeticiones, notas y demás datos recibidos.
+4. Verificar el catálogo completo y la búsqueda por nombre o acento.
+5. Abrir un ejercicio con "Ver ejercicio" y comprobar la demostración y las pautas nutricionales.
+6. Abrir Entrenamiento libre, usar Agregar ejercicio y buscar un ejercicio.
+7. Abrir Más → Revisión de técnica, seleccionar un ejercicio, regresar y comprobar que la selección permanece.
+8. Confirmar que no se agregue dos veces el mismo ejercicio en una sesión libre.
 
 ## Evidencia
 Adjuntar capturas o un video real de la prueba Android realizada en el emulador aprobado.
