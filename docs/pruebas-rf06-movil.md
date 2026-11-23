@@ -25,6 +25,28 @@ estaba disponible y la aplicación mostró el error real «No se pudo conectar c
 (http://10.0.2.2:5253)». Después de encenderlo manualmente, el host respondió HTTP 401 sin sesión
 y el emulador abrió correctamente la conexión TCP hacia `10.0.2.2:5253`.
 
+## Rondas de pruebas
+
+### Primera ronda: backend no disponible
+
+En la primera ronda el backend no estaba iniciado o no respondía desde el emulador. La aplicación
+mostró el error de conexión y las comprobaciones que dependían de la API no pudieron completarse.
+Por eso, la conexión, la carga de rutina y catálogo, la búsqueda dentro de MAUI y las pautas
+nutricionales quedaron bloqueadas o sin resultado concluyente en esa ronda. El botón de los fallbacks
+externos tampoco pudo comprobarse dentro de MAUI. Estos resultados iniciales no se consideran
+aprobaciones funcionales.
+
+El ANR registrado durante el diagnóstico se documenta aparte en «Diagnóstico del ANR»; no debe
+confundirse con el bloqueo inicial causado por la falta de backend.
+
+### Segunda ronda: backend iniciado y resultados definitivos
+
+Después de iniciar manualmente el backend, se reinstaló la APK autocontenida, se conservó la sesión
+de Carlos y se repitieron las verificaciones correspondientes. Los resultados definitivos están en
+la matriz siguiente: los casos aprobados pasaron en esta segunda ronda, mientras que el caso sin
+plan nutricional continúa como **NO EJECUTADO** y los siete videos incorrectos continúan como
+**FALLIDOS**.
+
 ## Comportamiento implementado
 
 `SimulacionEjercicioPage` busca primero un GIF local, luego una imagen local, después una imagen
@@ -55,7 +77,7 @@ En esta verificación se comprobó la apertura externa de los nueve IDs únicos 
 no pudo observarse porque la API no respondió; el comportamiento de apertura está definido en
 `SimulacionEjercicioPage.cs`.
 
-## Casos RF-06
+## Casos RF-06 — segunda ronda
 
 | Caso | Resultado |
 |---|---|
