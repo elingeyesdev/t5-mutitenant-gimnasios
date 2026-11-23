@@ -1,3 +1,6 @@
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using GestionGimnasios.Movil.Modelos;
 
 namespace GestionGimnasios.Movil.Paginas.Cliente;
@@ -7,8 +10,14 @@ public partial class MiRutinaPage : PaginaBase
 {
     private Rutina? rutina;
     private List<Ejercicio> catalogo = [];
+    private readonly ColeccionEjercicios ejerciciosVisibles = [];
+    private CancellationTokenSource? filtroCancellation;
 
-    public MiRutinaPage() => InitializeComponent();
+    public MiRutinaPage()
+    {
+        InitializeComponent();
+        EjerciciosCatalogo.ItemsSource = ejerciciosVisibles;
+    }
 
     protected override async Task CargarAsync()
     {
@@ -38,22 +47,45 @@ public partial class MiRutinaPage : PaginaBase
             : "Esta rutina todavía no tiene ejercicios configurados.";
         VacioEjerciciosRutina.IsVisible = ejerciciosRutina.Count == 0;
         BindableLayout.SetItemsSource(EjerciciosRutina, ejerciciosRutina);
-        FiltrarEjercicios();
+        FiltrarEjercicios(BuscarEjercicios.Text);
         BindableLayout.SetItemsSource(Sesiones, await sesionesTask);
     }
 
-    private void FiltrarEjercicios()
+    private void FiltrarEjercicios(string? texto, bool conservarFoco = false)
     {
-        var consulta = TextoEjercicio.Normalizar(BuscarEjercicios.Text);
-        var ejercicios = TextoEjercicio.Ordenar(catalogo, BuscarEjercicios.Text);
+        var consulta = TextoEjercicio.Normalizar(texto);
+        var ejercicios = TextoEjercicio.Ordenar(catalogo, texto);
         VacioEjercicios.Text = consulta.Length == 0
             ? "No hay ejercicios disponibles."
             : "No se encontraron ejercicios";
         VacioEjercicios.IsVisible = ejercicios.Count == 0;
-        BindableLayout.SetItemsSource(EjerciciosCatalogo, ejercicios);
+        ejerciciosVisibles.Reemplazar(ejercicios);
+        if (conservarFoco)
+            Dispatcher.Dispatch(() => BuscarEjercicios.Focus());
     }
 
-    private void OnBuscarEjercicios(object? sender, TextChangedEventArgs e) => FiltrarEjercicios();
+    private async void OnBuscarEjercicios(object? sender, TextChangedEventArgs e)
+    {
+        filtroCancellation?.Cancel();
+        var cancellation = new CancellationTokenSource();
+        filtroCancellation = cancellation;
+
+        try
+        {
+            await Task.Delay(180, cancellation.Token);
+            if (!cancellation.IsCancellationRequested)
+                FiltrarEjercicios(e.NewTextValue, conservarFoco: true);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        finally
+        {
+            if (ReferenceEquals(filtroCancellation, cancellation))
+                filtroCancellation = null;
+            cancellation.Dispose();
+        }
+    }
 
     private async void OnRefrescar(object? sender, EventArgs e)
     {
@@ -78,6 +110,20 @@ public partial class MiRutinaPage : PaginaBase
             case Ejercicio ejercicio:
                 await IrAsync(new SimulacionEjercicioPage(ejercicio.Id));
                 break;
+        }
+    }
+
+    private sealed class ColeccionEjercicios : ObservableCollection<Ejercicio>
+    {
+        public void Reemplazar(IEnumerable<Ejercicio> ejercicios)
+        {
+            Items.Clear();
+            foreach (var ejercicio in ejercicios)
+                Items.Add(ejercicio);
+
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));
+            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
     }
 }
